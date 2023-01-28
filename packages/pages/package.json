@@ -1,0 +1,19 @@
+{
+  "name": "use-render-pages",
+  "version": "0.0.0-0",
+  "description": "",
+  "scripts": {
+    "build": "esbuild --bundle --minify --outfile=./public/static/js/main.js ./src/index.jsx",
+    "start": "esbuild --bundle --outfile=./public/static/js/main.js --servedir=./public ./src/index.jsx"
+  },
+  "author": "William Wong (https://github.com/compulim)",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.17.4"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "use-render": "file:../use-render/use-render-0.0.0-0.tgz"
+  }
+}

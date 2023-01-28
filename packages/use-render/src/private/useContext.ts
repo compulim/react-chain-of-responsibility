@@ -1,10 +1,10 @@
-import { Context, useContext as useReactContext } from 'react';
+import { useContext as useReactContext } from 'react';
 
 import UseRenderContext from './UseRenderContext';
 
-type ContextOf<T> = T extends Context<infer P> ? P : never;
+import type { UseRenderContextType } from './UseRenderContext';
 
-export default function useContext(): ContextOf<typeof UseRenderContext> {
+export default function useContext<P>(): UseRenderContextType<P> {
   const context = useReactContext(UseRenderContext);
 
   if (!context) {

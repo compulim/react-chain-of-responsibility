@@ -1,5 +1,9 @@
 import { createContext } from 'react';
 
-type UseRenderContextType = {};
+import type { ClassicElement, FunctionComponentElement } from 'react';
 
-export default createContext<UseRenderContextType>({});
+export type UseRenderContextType<P> = {
+  useRender: (props: P) => null | ClassicElement<P> | FunctionComponentElement<P>;
+};
+
+export default createContext<UseRenderContextType<any> | undefined>(undefined);
