@@ -25,7 +25,7 @@ test('should chain 2 functions', () => {
     (x: number, y: number): number =>
       next(x - 2, y - 2);
 
-  const enhancer = compose(multiplyBy10, minus2);
+  const enhancer = compose(minus2, multiplyBy10);
 
   expect(enhancer(sum)(123, 456)).toBe(1228 + 4558);
 });

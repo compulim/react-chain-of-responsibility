@@ -28,7 +28,7 @@ test('should chain 2 middleware', () => {
     (x: number, y: number): number =>
       next(x - value, y - value);
 
-  const enhancer = applyMiddleware(multiply, minus)(2);
+  const enhancer = applyMiddleware(minus, multiply)(2);
 
   expect(enhancer(sum)(123, 456)).toBe(123 * 2 - 2 + (456 * 2 - 2));
 });

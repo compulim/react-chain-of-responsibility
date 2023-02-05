@@ -1,8 +1,7 @@
-import useRender from './useRender';
-import UseRenderProvider from './UseRenderProvider';
+import createComponentStrategy from './createComponentStrategy';
+import wrapWith from './wrapWith';
 
-import type { Middleware } from './types';
+import type { ComponentMiddleware } from './types';
 
-export { useRender, UseRenderProvider };
-
-export type { Middleware };
+export { createComponentStrategy, wrapWith };
+export type { ComponentMiddleware };

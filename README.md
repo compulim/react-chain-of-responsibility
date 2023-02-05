@@ -1,6 +1,6 @@
 # `use-render`
 
-Render middleware for React.
+A Strategy pattern for UI components in React.
 
 ## Background
 
