@@ -4,6 +4,12 @@ A Strategy pattern for UI components in React.
 
 ## Background
 
+Strategy pattern:
+
+- In terms of input/output, all strategies in the same family are similar
+   - All components shares the same type of props
+   - All components renders same type of UI
+
 ## How to use
 
 ## API
