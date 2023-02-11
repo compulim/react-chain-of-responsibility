@@ -21,7 +21,7 @@ export default function wrapWith<WrapperComponent extends ComponentType<any> = C
           WrapperComponent,
           { ...props, ...injectedWrapperProps },
           // If there are no "WrappedComponent", don't override children. It will use the `props.children`.
-          ...(WrappedComponent ? [<WrappedComponent {...props} {...injectedWrappedProps} />] : [])
+          ...(WrappedComponent ? [<WrappedComponent {...injectedWrappedProps} {...props} />] : [])
         );
 
       WithWrapper.displayName = `WrappedWith${WrapperComponent.displayName}`;
@@ -30,7 +30,7 @@ export default function wrapWith<WrapperComponent extends ComponentType<any> = C
     }
 
     if (WrappedComponent) {
-      return (props: PropsOf<WrappedComponent>) => <WrappedComponent {...props} {...injectedWrappedProps} />;
+      return (props: PropsOf<WrappedComponent>) => <WrappedComponent {...injectedWrappedProps} {...props} />;
     }
 
     return EmptyComponent;
