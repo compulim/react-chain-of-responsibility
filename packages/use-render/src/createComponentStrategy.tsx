@@ -18,7 +18,7 @@ type ProxyProps<P extends {}, T extends {} = P> = P & {
   proxyTransform?: (props: P) => T;
 };
 
-export default function createComponentStrategy<P extends {}, S = undefined, T extends {} = P>(): {
+export default function createComponentStrategy<P extends {}, T extends {} = P, S = undefined>(): {
   Provider: ComponentType<ProviderProps<P, S, P | T>>;
   Proxy: ComponentType<ProxyProps<P, T>>;
   useComponent: () => (props: P) => ComponentType<P | T> | false | null | undefined;
