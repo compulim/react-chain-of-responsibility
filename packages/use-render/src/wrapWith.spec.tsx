@@ -59,3 +59,36 @@ describe('Wrapping <ListItem> with <OrderedList>', () => {
     expect(listItem.textContent).toBe('Hello, World!');
   });
 });
+
+test.each([false, null, undefined] as [false, null, undefined])('wrapping <ListItem> with `%s`', wrapper => {
+  const Wrapped = wrapWith(wrapper)(ListItem);
+
+  const result = render(<Wrapped>Hello, World!</Wrapped>);
+
+  const listItem = result.getByRole('listitem');
+
+  expect(listItem.textContent).toBe('Hello, World!');
+  expect(listItem.parentElement).toBe(result.container);
+});
+
+test.each([false, null, undefined] as [false, null, undefined])('wrapping `%s` with <OrderedList>', wrapping => {
+  const Wrapped = wrapWith(OrderedList)(wrapping);
+
+  const result = render(<Wrapped>Hello, World!</Wrapped>);
+
+  const listItem = result.getByRole('list');
+
+  expect(listItem.textContent).toBe('Hello, World!');
+  expect(listItem.parentElement).toBe(result.container);
+});
+
+test.each([false, null, undefined] as [false, null, undefined])(
+  'wrapping `%s` with the same type of component',
+  wrapperAndWrapping => {
+    const Wrapped = wrapWith(wrapperAndWrapping)(wrapperAndWrapping);
+
+    const result = render(<Wrapped>Hello, World!</Wrapped>);
+
+    expect(result.container.hasChildNodes()).toBe(false);
+  }
+);
