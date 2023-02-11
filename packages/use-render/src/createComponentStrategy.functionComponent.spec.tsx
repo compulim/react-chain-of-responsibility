@@ -1,12 +1,13 @@
 /** @jest-environment jsdom */
 
-import { render, RenderResult } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import React from 'react';
 
 import createComponentStrategy from './createComponentStrategy';
 import wrapWith from './wrapWith';
 
 import type { ComponentMiddleware } from './types';
+import type { RenderResult } from '@testing-library/react';
 
 type MediaProps = {
   alt?: string;
