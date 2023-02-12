@@ -5,28 +5,29 @@ import React from 'react';
 
 import wrapWith from './wrapWith';
 
-import type { PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 
-type SimpleProps = {
-  className?: string;
-};
+type ListItemProps = PropsWithChildren<{ className?: string; containerClassName?: string }>;
 
-const ListItem = ({ children, className }: PropsWithChildren<SimpleProps>) => (
+const ListItem: FC<ListItemProps> = ({ children, className }: ListItemProps) => (
   <li className={className} role="listitem">
     {children}
   </li>
 );
-const OrderedList = ({ children, className }: PropsWithChildren<SimpleProps>) => (
+
+type OrderedListProps = PropsWithChildren<{ className?: string }>;
+
+const OrderedList = ({ children, className }: OrderedListProps) => (
   <ol className={className} role="list">
     {children}
   </ol>
 );
 
 describe('Wrapping <ListItem> with <OrderedList>', () => {
-  const SingleListItem = wrapWith(OrderedList, { className: 'list' })(ListItem, { className: 'list-item' });
+  const SingleListItem = wrapWith(OrderedList, { className: 'list' })(ListItem);
 
   test('should render', () => {
-    const result = render(<SingleListItem>Hello, World!</SingleListItem>);
+    const result = render(<SingleListItem className="list-item">Hello, World!</SingleListItem>);
 
     const list = result.getByRole('list');
 
@@ -41,54 +42,64 @@ describe('Wrapping <ListItem> with <OrderedList>', () => {
     expect(listItem.parentElement).toBe(list);
     expect(listItem.textContent).toBe('Hello, World!');
   });
-
-  test('should render with props override', () => {
-    const result = render(<SingleListItem className="aloha-item">Hello, World!</SingleListItem>);
-
-    const list = result.getByRole('list');
-
-    expect(list).toBeTruthy();
-    expect(list).toHaveProperty('className', 'list');
-
-    const listItem = result.getByRole('listitem');
-
-    expect(listItem).toBeTruthy();
-    expect(listItem).toHaveProperty('className', 'aloha-item');
-
-    expect(listItem.parentElement).toBe(list);
-    expect(listItem.textContent).toBe('Hello, World!');
-  });
 });
 
 test.each([false, null, undefined] as [false, null, undefined])('wrapping <ListItem> with `%s`', wrapper => {
-  const Wrapped = wrapWith(wrapper)(ListItem);
+  // GIVEN: Wrapping <ListItem> with false/null/undefined.
+  const Wrapped = wrapWith(wrapper, {})(ListItem);
 
+  // WHEN: When rendering the wrapped component.
   const result = render(<Wrapped>Hello, World!</Wrapped>);
 
   const listItem = result.getByRole('listitem');
 
+  // THEN: It should render "Hello, World!".
   expect(listItem.textContent).toBe('Hello, World!');
+
+  // THEN: It should only render <ListItem /> in the container.
+  expect(result.container.childElementCount).toBe(1);
   expect(listItem.parentElement).toBe(result.container);
 });
 
 test.each([false, null, undefined] as [false, null, undefined])('wrapping `%s` with <OrderedList>', wrapping => {
-  const Wrapped = wrapWith(OrderedList)(wrapping);
+  // GIVEN: Wrapping false/null/undefined with <OrderedList>.
+  const Wrapped = wrapWith(OrderedList, {})(wrapping);
 
+  // WHEN: Rendering the wrapped component.
   const result = render(<Wrapped>Hello, World!</Wrapped>);
 
-  const listItem = result.getByRole('list');
+  const list = result.getByRole('list');
 
-  expect(listItem.textContent).toBe('Hello, World!');
-  expect(listItem.parentElement).toBe(result.container);
+  // THEN: It should not have content.
+  //       The wrapped component does not exists, passing `children` props there should render nothing.
+  expect(list.textContent).toBeFalsy();
+
+  // THEN: It should only render <OrderedList /> in the container.
+  expect(result.container.childElementCount).toBe(1);
+  expect(list.parentElement).toBe(result.container);
 });
 
 test.each([false, null, undefined] as [false, null, undefined])(
   'wrapping `%s` with the same type of component',
   wrapperAndWrapping => {
-    const Wrapped = wrapWith(wrapperAndWrapping)(wrapperAndWrapping);
+    // GIVEN: Wrapping false/null/undefined with false/null/undefined.
+    const Wrapped = wrapWith(wrapperAndWrapping, {})(wrapperAndWrapping);
 
+    // WHEN: Rendering the wrapped component.
     const result = render(<Wrapped>Hello, World!</Wrapped>);
 
+    // THEn: It should render nothing.
     expect(result.container.hasChildNodes()).toBe(false);
   }
 );
+
+describe('Wrapping a component with a prop-less component', () => {
+  // const Span = ({ children }: PropsWithChildren<{}>) => <span>{children}</span>;
+  const Span: FC<PropsWithChildren<{ xyz: number }>> = () => <span />;
+  const Button: FC<PropsWithChildren<{}>> = ({ children }: PropsWithChildren<{}>) => (
+    <button type="button">{children}</button>
+  );
+
+  const Component = wrapWith(Span, { xyz: 123 })(Button);
+  const Component2 = wrapWith(Button);
+});

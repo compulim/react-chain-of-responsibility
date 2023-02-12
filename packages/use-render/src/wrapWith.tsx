@@ -1,27 +1,41 @@
 import React, { createElement, Fragment } from 'react';
 
-import type { ComponentType } from 'react';
+import type { ComponentType, PropsWithChildren } from 'react';
 
+type EmptyProps = Record<any, never>;
 type PropsOf<T> = T extends ComponentType<infer P> ? P : never;
 
 const EmptyComponent = () => <Fragment />;
 
+export default function wrapWith<WrapperProps extends EmptyProps>(
+  WrapperComponent: ComponentType<PropsWithChildren<WrapperProps>> | false | null | undefined,
+  wrapperProps?: undefined | EmptyProps
+): <WrappedComponent extends ComponentType<any>>(
+  WrappedComponent: WrappedComponent | false | null | undefined
+) => ComponentType<PropsOf<WrappedComponent>>;
+
+export default function wrapWith<WrapperProps extends {}>(
+  WrapperComponent: ComponentType<PropsWithChildren<WrapperProps>> | false | null | undefined,
+  wrapperProps: WrapperProps
+): <WrappedComponent extends ComponentType<any>>(
+  WrappedComponent: WrappedComponent | false | null | undefined
+) => ComponentType<PropsOf<WrappedComponent>>;
+
 // TODO: We could probably open-source this function separately.
-export default function wrapWith<WrapperComponent extends ComponentType<any> = ComponentType<any>>(
-  WrapperComponent: WrapperComponent | false | null | undefined,
-  injectedWrapperProps?: PropsOf<WrapperComponent>
+export default function wrapWith<WrapperProps extends {}>(
+  WrapperComponent: ComponentType<PropsWithChildren<WrapperProps>> | false | null | undefined,
+  wrapperProps: WrapperProps extends EmptyProps ? EmptyProps | undefined : WrapperProps
 ) {
-  return function wrap<WrappedComponent extends ComponentType<any> = ComponentType<any>>(
-    WrappedComponent: WrappedComponent | false | null | undefined,
-    injectedWrappedProps?: PropsOf<WrappedComponent>
+  return function wrap<WrappedComponent extends ComponentType<any>>(
+    WrappedComponent: WrappedComponent | false | null | undefined
   ): ComponentType<PropsOf<WrappedComponent>> {
     if (WrapperComponent) {
       const WithWrapper = (props: PropsOf<WrappedComponent>) =>
         createElement(
           WrapperComponent,
-          { ...props, ...injectedWrapperProps },
-          // If there are no "WrappedComponent", don't override children. It will use the `props.children`.
-          ...(WrappedComponent ? [<WrappedComponent {...injectedWrappedProps} {...props} />] : [])
+          wrapperProps,
+          // If there are no "WrappedComponent", don't override children. It will override the `props.children`.
+          ...(WrappedComponent ? [<WrappedComponent {...props} />] : [])
         );
 
       WithWrapper.displayName = `WrappedWith${WrapperComponent.displayName}`;
@@ -30,7 +44,7 @@ export default function wrapWith<WrapperComponent extends ComponentType<any> = C
     }
 
     if (WrappedComponent) {
-      return (props: PropsOf<WrappedComponent>) => <WrappedComponent {...injectedWrappedProps} {...props} />;
+      return (props: PropsOf<WrappedComponent>) => <WrappedComponent {...props} />;
     }
 
     return EmptyComponent;
