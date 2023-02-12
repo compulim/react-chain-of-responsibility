@@ -24,23 +24,29 @@ const OrderedList = ({ children, className }: OrderedListProps) => (
 );
 
 describe('Wrapping <ListItem> with <OrderedList>', () => {
+  // GIVEN: Wrapping <ListItem> with <OrderedList>.
   const SingleListItem = wrapWith(OrderedList, { className: 'list' })(ListItem);
 
   test('should render', () => {
+    // WHEN: When rendering the wrapped component.
     const result = render(<SingleListItem className="list-item">Hello, World!</SingleListItem>);
 
     const list = result.getByRole('list');
 
+    // THEN: It should render <OrderedList>.
     expect(list).toBeTruthy();
     expect(list).toHaveProperty('className', 'list');
 
     const listItem = result.getByRole('listitem');
 
+    // THEN: It should render <ListItem>.
     expect(listItem).toBeTruthy();
     expect(listItem).toHaveProperty('className', 'list-item');
-
-    expect(listItem.parentElement).toBe(list);
     expect(listItem.textContent).toBe('Hello, World!');
+
+    // THEN: The <OrderedList> should has exactly one <ListItem>.
+    expect(list.childElementCount).toBe(1);
+    expect(listItem.parentElement).toBe(list);
   });
 });
 
@@ -92,14 +98,3 @@ test.each([false, null, undefined] as [false, null, undefined])(
     expect(result.container.hasChildNodes()).toBe(false);
   }
 );
-
-describe('Wrapping a component with a prop-less component', () => {
-  // const Span = ({ children }: PropsWithChildren<{}>) => <span>{children}</span>;
-  const Span: FC<PropsWithChildren<{ xyz: number }>> = () => <span />;
-  const Button: FC<PropsWithChildren<{}>> = ({ children }: PropsWithChildren<{}>) => (
-    <button type="button">{children}</button>
-  );
-
-  const Component = wrapWith(Span, { xyz: 123 })(Button);
-  const Component2 = wrapWith(Button);
-});
