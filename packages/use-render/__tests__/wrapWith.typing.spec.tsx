@@ -47,3 +47,5 @@ test.failing('should fail when wrong props is passed', () => compile('./__types_
 test.failing('should fail when props is passed to component which do not need props', () =>
   compile('./__types__/failing/extraneousProps.tsx')
 );
+
+test.failing('should fail when wrapper component does not allow children', () => compile('./__types__/failing/noChildren.tsx'));

@@ -8,7 +8,7 @@ type PropsOf<T> = T extends ComponentType<infer P> ? P : never;
 const EmptyComponent = () => <Fragment />;
 
 export default function wrapWith<WrapperProps extends EmptyProps>(
-  WrapperComponent: ComponentType<PropsWithChildren<WrapperProps>> | false | null | undefined,
+  WrapperComponent: ComponentType<PropsWithChildren<EmptyProps>> | false | null | undefined,
   wrapperProps?: undefined | EmptyProps
 ): <WrappedComponent extends ComponentType<any>>(
   WrappedComponent: WrappedComponent | false | null | undefined
