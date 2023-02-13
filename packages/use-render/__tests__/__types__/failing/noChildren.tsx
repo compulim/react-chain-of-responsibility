@@ -1,6 +1,5 @@
+import { wrapWith } from 'react-wrap-with';
 import React from 'react';
-
-import wrapWith from '../../../src/wrapWith';
 
 import type { FC } from 'react';
 
