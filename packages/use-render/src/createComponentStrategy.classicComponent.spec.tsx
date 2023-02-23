@@ -28,6 +28,8 @@ class Video extends Component<MediaProps> {
   render() {
     const { alt, 'data-testid': dataTestID, url } = this.props;
 
+    // False positive on "about" attribute.
+    // eslint-disable-next-line react/no-unknown-property
     return <video about={alt} data-testid={dataTestID} src={url} />;
   }
 }
