@@ -1,5 +1,5 @@
 {
-  "testPathIgnorePatterns": ["/node_modules/", "/__types__/"],
+  "testPathIgnorePatterns": ["/lib/", "/node_modules/", "/__types__/"],
   "transform": {
     "\\.[jt]sx?$": [
       "babel-jest",

@@ -21,6 +21,8 @@ const Image = ({ alt, 'data-testid': dataTestID, url }: MediaProps) => {
 };
 
 const Video = ({ alt, 'data-testid': dataTestID, url }: MediaProps) => {
+  // False positive on "about" attribute.
+  // eslint-disable-next-line react/no-unknown-property
   return <video about={alt} data-testid={dataTestID} src={url} />;
 };
 

@@ -5,20 +5,20 @@ import applyMiddleware from './private/applyMiddleware';
 import type { ComponentMiddleware } from './types';
 import type { PropsWithChildren } from 'react';
 
-type ProviderContext<P extends {}, T extends {} = P> = {
+type ProviderContext<P extends object, T extends object = P> = {
   useComponent: (props: P) => ComponentType<P | T> | false | null | undefined;
 };
 
-type ProviderProps<P extends {}, S = undefined, T extends {} = P> = PropsWithChildren<{
+type ProviderProps<P extends object, S = undefined, T extends object = P> = PropsWithChildren<{
   init?: S;
   middleware?: ComponentMiddleware<P, S, P | T>[];
 }>;
 
-type ProxyProps<P extends {}, T extends {} = P> = P & {
+type ProxyProps<P extends object, T extends object = P> = P & {
   proxyTransform?: (props: P) => T;
 };
 
-export default function createComponentStrategy<P extends {}, T extends {} = P, S = undefined>(): {
+export default function createComponentStrategy<P extends object, T extends object = P, S = undefined>(): {
   Provider: ComponentType<ProviderProps<P, S, P | T>>;
   Proxy: ComponentType<ProxyProps<P, T>>;
   useComponent: () => (props: P) => ComponentType<P | T> | false | null | undefined;
