@@ -1,7 +1,11 @@
+// Babel don't check if the typing in TypeScript tests are correct or not.
+// This is for "npm run test:typescript" to check typings in the test files.
 {
   "compilerOptions": {
     "esModuleInterop": true,
     "jsx": "react",
-    "strict": true
+    "moduleResolution": "node",
+    "strict": true,
+    "target": "ESNext"
   }
 }

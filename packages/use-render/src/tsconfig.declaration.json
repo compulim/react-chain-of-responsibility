@@ -4,5 +4,6 @@
     "declarationDir": "../lib/types/",
     "emitDeclarationOnly": true
   },
+  "exclude": ["**/*.spec.*", "**/*.test.*"],
   "extends": "./tsconfig.json"
 }
