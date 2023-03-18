@@ -4,7 +4,7 @@
 import { render } from '@testing-library/react';
 import React, { Fragment } from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 type Props = { children?: never };
 
@@ -22,7 +22,7 @@ afterEach(() => {
 
 test('when calling useComponent() outside of its <Provider> should throw', () => {
   // GIVEN: useComponent() from a newly created chain of responsibility.
-  const { useComponent } = createComponentChainOfResponsibility<undefined, Props>();
+  const { useComponent } = createChainOfResponsibility<undefined, Props>();
 
   const App = () => {
     useComponent();

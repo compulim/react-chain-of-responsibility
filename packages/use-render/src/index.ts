@@ -1,6 +1,6 @@
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 import type { ComponentMiddleware } from './types';
 
-export { createComponentChainOfResponsibility };
+export { createChainOfResponsibility };
 export type { ComponentMiddleware };

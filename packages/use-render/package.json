@@ -1,7 +1,7 @@
 {
   "name": "use-render",
   "version": "0.0.0-0",
-  "description": "Render middleware for React.",
+  "description": "Design pattern for React component customization.",
   "files": [
     "./lib/*"
   ],
@@ -10,9 +10,9 @@
       "import": "./lib/esmodules/index.js",
       "require": "./lib/commonjs/index.js"
     },
-    "./createComponentStrategy": {
-      "import": "./lib/esmodules/createComponentStrategy.js",
-      "require": "./lib/commonjs/createComponentStrategy.js"
+    "./createChainOfResponsibility": {
+      "import": "./lib/esmodules/createChainOfResponsibility.js",
+      "require": "./lib/commonjs/createChainOfResponsibility.js"
     }
   },
   "main": "./lib/commonjs/index.js",

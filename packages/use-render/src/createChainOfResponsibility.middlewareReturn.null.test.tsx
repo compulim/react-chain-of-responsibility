@@ -5,13 +5,13 @@ import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
 import React from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 type Props = { children?: never };
 
 test('middleware return null should render', () => {
   // GIVEN: A middleware returning null.
-  const { Provider, Proxy } = createComponentChainOfResponsibility<undefined, Props>();
+  const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
 
   const App = wrapWith(Provider, { middleware: [() => () => () => null] })(Proxy);
 

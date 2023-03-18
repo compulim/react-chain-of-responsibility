@@ -4,7 +4,7 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 type Props = { children?: never };
 
@@ -22,7 +22,7 @@ afterEach(() => {
 
 test('when rendering <Proxy> outside of its <Provider> should throw', () => {
   // GIVEN: A <Proxy> of a newly created chain of responsibility.
-  const { Proxy } = createComponentChainOfResponsibility<undefined, Props>();
+  const { Proxy } = createChainOfResponsibility<undefined, Props>();
 
   // WHEN: Render.
   // THEN: It should throw an error saying <Proxy> cannot be used outside of its corresponding <Provider>.

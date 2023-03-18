@@ -5,14 +5,14 @@ import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
 import React, { Fragment } from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 type Props = { children?: never };
 
 test('two providers of chain of responsibility nested should render', () => {
   // GIVEN: Two chain of responsibility each responsible for "Hello" and "World".
-  const { Provider: HelloProvider, Proxy: HelloProxy } = createComponentChainOfResponsibility<undefined, Props>();
-  const { Provider: WorldProvider, Proxy: WorldProxy } = createComponentChainOfResponsibility<undefined, Props>();
+  const { Provider: HelloProvider, Proxy: HelloProxy } = createChainOfResponsibility<undefined, Props>();
+  const { Provider: WorldProvider, Proxy: WorldProxy } = createChainOfResponsibility<undefined, Props>();
 
   // WHEN: Render <HelloProxy> and "WorldProxy".
   const App = wrapWith(HelloProvider, {

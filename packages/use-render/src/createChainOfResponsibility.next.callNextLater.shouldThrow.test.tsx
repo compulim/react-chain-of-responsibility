@@ -5,7 +5,7 @@ import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
 import React, { Fragment } from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 import type { ComponentType } from 'react';
 
@@ -15,7 +15,7 @@ const HelloWorldComponent = () => <Fragment>Hello, World!</Fragment>;
 
 test('when calling next after returned synchronously should throw', () => {
   // GIVEN: A spied middleware which returns <Fragment>Hello, World!</Fragment>.
-  const { Provider, Proxy } = createComponentChainOfResponsibility<undefined, Props>();
+  const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
   const enhancer = jest.fn<
     () => ComponentType<Props>,
     [(request: undefined) => ComponentType<Props> | false | null | undefined]

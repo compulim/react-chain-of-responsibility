@@ -5,15 +5,13 @@ import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
 import React from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
-
-import type { ComponentMiddleware } from './types';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 type Props = { children?: never };
 
 test('middleware return false should render', () => {
   // GIVEN: A middleware returning false.
-  const { Provider, Proxy } = createComponentChainOfResponsibility<undefined, Props>();
+  const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
 
   const App = wrapWith(Provider, { middleware: [() => () => () => false] })(Proxy);
 

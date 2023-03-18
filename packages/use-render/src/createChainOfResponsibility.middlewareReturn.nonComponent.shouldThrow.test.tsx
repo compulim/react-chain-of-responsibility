@@ -5,7 +5,7 @@ import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
 import React from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 import type { ComponentType } from 'react';
 
@@ -25,7 +25,7 @@ afterEach(() => {
 
 test('middleware return non-component should throw on render', () => {
   // GIVEN: A middleware which return a string.
-  const { Provider, Proxy } = createComponentChainOfResponsibility<undefined, Props>();
+  const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
 
   const App = wrapWith(Provider, { middleware: [() => () => () => 'Hello, World!' as unknown as ComponentType] })(
     Proxy

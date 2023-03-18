@@ -5,11 +5,11 @@ import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
 import React from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 test('constructing middleware using "types" should render', () => {
   // GIVEN: A chain of responsibility which specify init, props, and request.
-  const { Provider, Proxy, types } = createComponentChainOfResponsibility<string, { className: string }, string>();
+  const { Provider, Proxy, types } = createChainOfResponsibility<string, { className: string }, string>();
 
   const middleware: (typeof types.middleware)[] = [
     (init: typeof types.init) => next => (request: typeof types.request) =>

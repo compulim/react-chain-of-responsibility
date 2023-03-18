@@ -5,13 +5,13 @@ import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
 import React, { Fragment } from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 type Props = { children?: never };
 
 test('middleware return a component with content of init should render', () => {
   // GIVEN: A middleware return component with content of init object.
-  const { Provider, Proxy } = createComponentChainOfResponsibility<undefined, Props, string>();
+  const { Provider, Proxy } = createChainOfResponsibility<undefined, Props, string>();
 
   // WHEN: Render <Provider> with the init of "Hello, World!".
   const App = wrapWith(Provider, {

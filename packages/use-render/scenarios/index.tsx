@@ -5,7 +5,7 @@ import React, { Fragment, memo } from 'react';
 import { createComponentStrategy } from '../src/index';
 
 import type { ComponentMiddleware } from '../src/index';
-import type { PropsWithChildren } from 'react';
+import type { ComponentType, FunctionComponent, PropsWithChildren, ReactElement } from 'react';
 
 type LinkProps = PropsWithChildren<{ href: string }>;
 
@@ -39,10 +39,21 @@ const ExternalLink = memo(({ children, href }: LinkProps) => (
   </a>
 ));
 
+const withExternalLink = wrapWith(ExternalLink, {}, ['href']);
+
 const externalLinkMiddleware: ComponentMiddleware<LinkProps> = () => next => props => {
   const { href } = props;
+  const NextComponent: ComponentType<LinkProps> = next(props) || (() => <Fragment />);
 
-  return wrapWith(isExternalLink(href) && ExternalLink, { href })(next(props));
+  if (isExternalLink(href)) {
+    return props => (
+      <ExternalLink {...props}>
+        <NextComponent {...props} />
+      </ExternalLink>
+    );
+  }
+
+  return <NextComponent {...props} />;
 };
 
 // Middleware for decorating external links with "Open in new window" icon and alt text.
@@ -58,7 +69,15 @@ const AccessibleOpenInNewWindow = ({ children }: LinkProps) => {
 };
 
 const accessibleOpenInNewWindowDecorator: ComponentMiddleware<LinkProps> = () => next => props => {
-  return wrapWith(next(props), props)(isExternalLink(props.href) && AccessibleOpenInNewWindow);
+  const NextComponent = next(props);
+
+  if (!NextComponent) {
+    return NextComponent;
+  }
+
+  return props => React.createElement(NextComponent, props, isExternalLink(props.href) && AccessibleOpenInNewWindow);
+
+  // return wrapWith(next(props), {}, ['href'])(isExternalLink(props.href) && AccessibleOpenInNewWindow);
 };
 
 const App = () => {

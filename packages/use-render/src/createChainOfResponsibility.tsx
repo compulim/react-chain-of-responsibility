@@ -28,7 +28,7 @@ type Options = {
   allowModifiedRequest?: boolean;
 };
 
-export default function createComponentChainOfResponsibility<
+export default function createChainOfResponsibility<
   Request = undefined,
   Props = { children?: never },
   Init = undefined

@@ -5,14 +5,14 @@ import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
 import React, { Fragment } from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 type AppProps = { thing: string };
 type Props = { children?: never };
 
 test('disallow modifying request by default should render "orange"', () => {
   // GIVEN: A chain of responsibility without allowing or disallowing modifying request.
-  const { Provider, Proxy } = createComponentChainOfResponsibility<string, Props>({ allowModifiedRequest: false });
+  const { Provider, Proxy } = createChainOfResponsibility<string, Props>({ allowModifiedRequest: false });
 
   // WHEN: Render using a middleware that turn "orange" into "citric fruit" when passing to the next middleware.
   const RenderThing = wrapWith(Provider, {

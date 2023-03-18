@@ -7,7 +7,7 @@ import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
 import React from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 import type { ComponentMiddleware } from './types';
 import type { ComponentType, PropsWithChildren } from 'react';
@@ -54,7 +54,7 @@ describe('with a link middleware', () => {
     () => () => () => ExternalLink
   ];
 
-  const { Provider, Proxy, useComponent } = createComponentChainOfResponsibility<string, LinkProps, string[]>();
+  const { Provider, Proxy, useComponent } = createChainOfResponsibility<string, LinkProps, string[]>();
 
   describe.each(['hook', 'proxy'])('when rendering with %s', type => {
     let RenderLink: ComponentType<LinkProps>;

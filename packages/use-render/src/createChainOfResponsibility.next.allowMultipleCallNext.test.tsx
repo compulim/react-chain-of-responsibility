@@ -5,14 +5,14 @@ import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
 import React, { Fragment } from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 const HelloComponent = () => <Fragment>Hello</Fragment>;
 const WorldComponent = () => <Fragment>World</Fragment>;
 
 test('when calling multiple next in a middleware', () => {
   // GIVEN: A middleware which call downstreamer twice, with "hello", followed by "world".
-  const { Provider, Proxy } = createComponentChainOfResponsibility<string>({ allowModifiedRequest: true });
+  const { Provider, Proxy } = createChainOfResponsibility<string>({ allowModifiedRequest: true });
 
   const App = wrapWith(Provider, {
     middleware: [

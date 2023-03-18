@@ -5,7 +5,7 @@ import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
 import React, { Fragment } from 'react';
 
-import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
+import createChainOfResponsibility from './createChainOfResponsibility';
 
 import type { ComponentType } from 'react';
 
@@ -25,7 +25,7 @@ afterEach(() => {
 
 test('middleware return a React element should throw on render', () => {
   // GIVEN: A middleware which return a React element.
-  const { Provider, Proxy } = createComponentChainOfResponsibility<undefined, Props>();
+  const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
 
   const App = wrapWith(Provider, {
     middleware: [() => () => () => (<Fragment>Hello, World!</Fragment>) as unknown as ComponentType]
