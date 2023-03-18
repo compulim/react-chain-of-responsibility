@@ -1,6 +1,6 @@
-import createComponentStrategy from './createComponentStrategy';
+import createComponentChainOfResponsibility from './createComponentChainOfResponsibility';
 
 import type { ComponentMiddleware } from './types';
 
-export { createComponentStrategy };
+export { createComponentChainOfResponsibility };
 export type { ComponentMiddleware };
