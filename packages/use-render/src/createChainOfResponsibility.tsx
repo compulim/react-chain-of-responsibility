@@ -59,7 +59,6 @@ export default function createChainOfResponsibility<
   });
 
   const Provider: ComponentType<ProviderProps<Request, Props, Init>> = ({ children, init, middleware }) => {
-    // TODO: Add a sample to show that we can hide rows through middleware and build a row counter displaying number of visible rows.
     if (!Array.isArray(middleware) || middleware.some(middleware => typeof middleware !== 'function')) {
       throw new Error('middleware prop must be an array of functions');
     }

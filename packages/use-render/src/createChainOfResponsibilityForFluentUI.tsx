@@ -14,6 +14,7 @@ type UseRenderFunction<Props> = (options?: UseRenderFunctionOptions<Props>) => I
 export default function createChainOfResponsibilityForFluentUI<Props extends {}, Init = undefined>(
   options?: Parameters<typeof createChainOfResponsibility>[0]
 ): ReturnType<typeof createChainOfResponsibility<Props | undefined, Props, Init>> & {
+  // TODO: Rename to "useRenderFunctionCallback".
   useRenderFunction: UseRenderFunction<Props>;
 } {
   const returnValue = createChainOfResponsibility<Props | undefined, Props, Init>(options);
