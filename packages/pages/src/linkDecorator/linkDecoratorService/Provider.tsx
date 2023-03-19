@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { Provider as RawProvider, types } from './private/chainOfResponsibility';
 import ExternalLink from './private/ExternalLink';
