@@ -15,7 +15,7 @@ test('disallow modifying request explicitly should render "orange"', () => {
   const { Provider, Proxy } = createChainOfResponsibility<string, Props>({ allowModifiedRequest: false });
 
   // WHEN: Render using a middleware that turn "orange" into "citric fruit" when passing to the next middleware.
-  const RenderThing = wrapWith(Provider, {
+  const App = wrapWith(Provider, {
     middleware: [
       // Turns "orange" into "citric fruit".
       () => next => thing => thing === 'orange' ? next('citric fruit') : next(thing),
@@ -24,5 +24,5 @@ test('disallow modifying request explicitly should render "orange"', () => {
   })(({ thing }: AppProps) => <Proxy request={thing} />);
 
   // THEN: It should render "orange".
-  expect(render(<RenderThing thing="orange" />)).toHaveProperty('container.textContent', 'orange');
+  expect(render(<App thing="orange" />)).toHaveProperty('container.textContent', 'orange');
 });
