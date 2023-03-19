@@ -10,7 +10,7 @@ import type { IColumn, IDetailsColumnFieldProps } from '@fluentui/react';
 
 initializeIcons();
 
-const cellClassName = mergeStyles({ paddingLeft: 12 });
+const cellClassName = mergeStyles({ paddingBottom: 4, paddingLeft: 12, paddingTop: 4 });
 
 const { Provider, types, useRenderFunctionCallback } =
   createChainOfResponsibilityForFluentUI<IDetailsColumnFieldProps>();
