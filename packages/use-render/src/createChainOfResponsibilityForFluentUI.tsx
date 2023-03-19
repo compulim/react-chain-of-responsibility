@@ -18,21 +18,16 @@ export default function createChainOfResponsibilityForFluentUI<Props extends {},
 } {
   const returnValue = createChainOfResponsibility<Props | undefined, Props, Init>(options);
 
-  const { useComponent } = returnValue;
+  const { Proxy } = returnValue;
 
-  // TODO: Test if middleware changed, the returned callback should change.
   const useRenderFunction: UseRenderFunction<Props> = (options = {}) => {
     const { getKey } = options;
-    const getComponent = useComponent();
 
     return useCallback<IRenderFunction<Props>>(
-      (props, defaultRender) => {
-        // TODO: Test if calling <NextComponent item={something-else} /> can override the item passed to downstreamers.
-        const Component = getComponent(props, { defaultComponent: defaultRender });
-
-        return Component ? <Component {...(props as Props)} key={getKey?.(props)} /> : null;
-      },
-      [getComponent, getKey]
+      (props, defaultRender) => (
+        <Proxy {...(props as Props)} defaultComponent={defaultRender} key={getKey?.(props)} request={props} />
+      ),
+      [getKey]
     );
   };
 
