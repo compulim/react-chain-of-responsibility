@@ -44,13 +44,13 @@ export default function createChainOfResponsibility<
 ): {
   Provider: ComponentType<ProviderProps<Request, Props, Init>>;
   Proxy: ComponentType<ProxyProps<Request, Props>>;
-  useBuildComponent: () => UseBuildComponent<Request, Props>;
   types: {
     init: Init;
     middleware: ComponentMiddleware<Request, Props, Init>;
     props: Props;
     request: Request;
   };
+  useBuildComponent: () => UseBuildComponent<Request, Props>;
 } {
   const context = createContext<ProviderContext<Request, Props>>({
     get useBuildComponent(): ProviderContext<Request, Props>['useBuildComponent'] {
