@@ -8,6 +8,9 @@ type UseRenderFunctionOptions<Props> = { getKey?: (props: Props | undefined) => 
 
 type UseRenderFunction<Props> = (options?: UseRenderFunctionOptions<Props>) => IRenderFunction<Props>;
 
+// We are using the props as both "Request" and "Props".
+// This should eases migration from `onRender` to chain of responsibility.
+// Downside is, web developers could accidentally pass request as props and not honoring props modified by upstreamers.
 export default function createChainOfResponsibilityForFluentUI<Props extends {}, Init = undefined>(
   options?: Parameters<typeof createChainOfResponsibility>[0]
 ): ReturnType<typeof createChainOfResponsibility<Props | undefined, Props, Init>> & {

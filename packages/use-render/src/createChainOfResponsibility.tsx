@@ -60,8 +60,8 @@ export default function createChainOfResponsibility<
 
   const Provider: ComponentType<ProviderProps<Request, Props, Init>> = ({ children, init, middleware }) => {
     // TODO: Test if "middleware" prop is not an array.
+    // TODO: Test if we can hide rows through middleware and build a row counter.
 
-    // Probably we need to build the "enforce same request" in the compose.
     const patchedMiddleware: ComponentMiddleware<Request, Props, Init>[] = (middleware || []).map(fn => {
       return init => {
         const enhancer = fn(init);

@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 
-import FluentDemo from './fluent/Demo3';
+import FluentDemo from './fluent/Demo';
 
 const App = () => {
   return (
