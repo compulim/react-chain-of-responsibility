@@ -7,7 +7,7 @@ import React from 'react';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
-test('constructing middleware using "types" should render', () => {
+test('constructing middleware using all typings from "types" should render', () => {
   // GIVEN: A chain of responsibility which specify init, props, and request.
   const { Provider, Proxy, types } = createChainOfResponsibility<string, { className: string }, string>();
 

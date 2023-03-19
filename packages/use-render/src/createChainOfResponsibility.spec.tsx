@@ -1,7 +1,7 @@
 /** @jest-environment jsdom */
 /// <reference types="@types/jest" />
 
-// TODO: We should turn this as a sample.
+// TODO: Remove this test when we end-to-end test our samples.
 
 import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
