@@ -51,14 +51,20 @@ const decorateFieldWithRating: typeof types.middleware = () => next => request =
       return ItemRating;
     }
 
-    return false;
+    const NextComponent = next(request);
+
+    return NextComponent && (props => <NextComponent {...props} item={{ ...props.item, rating: 'Not rated' }} />);
   }
 
   return next(request);
 };
 
 const Inner = () => {
-  const renderFunction = useRenderFunction({ getKey: request => request?.itemIndex + '/' + request?.column.key });
+  // Key generation logic adopted from https://github.com/microsoft/fluentui/blob/7fde5c94869ff9841b142b7ff1d0a3df0ab58f74/packages/react/src/components/DetailsList/DetailsRowFields.tsx#L61.
+  const renderFunction = useRenderFunction({
+    getKey: request =>
+      `${request?.column.key}${typeof request?.cellValueKey !== undefined ? `-${request?.cellValueKey}` : ''}`
+  });
 
   // Currently, there is a bug in Fluent UI.
   // When we pass a different function to the "onRenderField" prop, it will not re-render the <DetailsList>.
