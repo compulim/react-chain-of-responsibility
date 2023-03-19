@@ -45,7 +45,7 @@ jobs:
 
     strategy:
       matrix:
-        package-name: [react-wrap-with]
+        package-name: [use-render]
 
     steps:
       - name: Download tarball artifact
