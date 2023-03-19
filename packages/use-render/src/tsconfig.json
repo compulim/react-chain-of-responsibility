@@ -4,7 +4,7 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "jsx": "react",
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "strict": true,
     "target": "ESNext"
   }

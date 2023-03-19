@@ -8,15 +8,18 @@
   "exports": {
     ".": {
       "import": "./lib/esmodules/index.js",
-      "require": "./lib/commonjs/index.js"
+      "require": "./lib/commonjs/index.js",
+      "types": "./lib/types/index.d.ts"
     },
     "./createChainOfResponsibility": {
       "import": "./lib/esmodules/createChainOfResponsibility.js",
-      "require": "./lib/commonjs/createChainOfResponsibility.js"
+      "require": "./lib/commonjs/createChainOfResponsibility.js",
+      "types": "./lib/types/createChainOfResponsibility.d.ts"
     },
     "./createChainOfResponsibilityForFluentUI": {
       "import": "./lib/esmodules/createChainOfResponsibilityForFluentUI.js",
-      "require": "./lib/commonjs/createChainOfResponsibilityForFluentUI.js"
+      "require": "./lib/commonjs/createChainOfResponsibilityForFluentUI.js",
+      "types": "./lib/types/createChainOfResponsibilityForFluentUI.d.ts"
     }
   },
   "main": "./lib/commonjs/index.js",
@@ -102,13 +105,13 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-test-renderer": "^17.0.2",
+    "react-wrap-with": "0.0.2-main.fa6cc79",
     "typescript": "^4.9.5"
   },
   "peerDependencies": {
     "react": ">=16.9.0"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "7.21.0",
-    "react-wrap-with": "^0.0.2-main.3baf65c"
+    "@babel/runtime-corejs3": "7.21.0"
   }
 }
