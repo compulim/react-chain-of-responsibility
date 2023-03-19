@@ -1,19 +1,19 @@
-import React, { ComponentType, createContext, isValidElement, useCallback, useContext, useMemo } from 'react';
+import React, { ComponentType, createContext, isValidElement, memo, useCallback, useContext, useMemo } from 'react';
 
 import applyMiddleware from './private/applyMiddleware';
 
 import type { ComponentMiddleware } from './types';
 import type { PropsWithChildren } from 'react';
 
-type UseComponentOptions<Props> = { defaultComponent?: ComponentType<Props> | false | null | undefined };
+type UseBuildComponentOptions<Props> = { defaultComponent?: ComponentType<Props> | false | null | undefined };
 
-type UseComponent<Request, Props> = (
+type UseBuildComponent<Request, Props> = (
   request: Request,
-  options?: UseComponentOptions<Props>
+  options?: UseBuildComponentOptions<Props>
 ) => ComponentType<Props> | false | null | undefined;
 
 type ProviderContext<Request, Props> = {
-  useComponent: UseComponent<Request, Props>;
+  useBuildComponent: UseBuildComponent<Request, Props>;
 };
 
 type ProviderProps<Request, Props, Init> = PropsWithChildren<{
@@ -22,8 +22,8 @@ type ProviderProps<Request, Props, Init> = PropsWithChildren<{
   (Init extends never | undefined ? { init?: Init } : { init: Init });
 
 type ProxyProps<Request, Props> = Request extends never | undefined
-  ? Props & { request?: Request }
-  : Props & { request: Request };
+  ? Props & { defaultComponent?: ComponentType<Props>; request?: Request }
+  : Props & { defaultComponent?: ComponentType<Props>; request: Request };
 
 type Options = {
   /**
@@ -44,7 +44,7 @@ export default function createChainOfResponsibility<
 ): {
   Provider: ComponentType<ProviderProps<Request, Props, Init>>;
   Proxy: ComponentType<ProxyProps<Request, Props>>;
-  useComponent: () => UseComponent<Request, Props>;
+  useBuildComponent: () => UseBuildComponent<Request, Props>;
   types: {
     init: Init;
     middleware: ComponentMiddleware<Request, Props, Init>;
@@ -53,14 +53,16 @@ export default function createChainOfResponsibility<
   };
 } {
   const context = createContext<ProviderContext<Request, Props>>({
-    get useComponent(): ProviderContext<Request, Props>['useComponent'] {
-      throw new Error('useComponent() hook cannot be used outside of its corresponding <Provider>');
+    get useBuildComponent(): ProviderContext<Request, Props>['useBuildComponent'] {
+      throw new Error('useBuildComponent() hook cannot be used outside of its corresponding <Provider>');
     }
   });
 
   const Provider: ComponentType<ProviderProps<Request, Props, Init>> = ({ children, init, middleware }) => {
-    // TODO: Test if "middleware" prop is not an array.
-    // TODO: Test if we can hide rows through middleware and build a row counter.
+    // TODO: Add a sample to show that we can hide rows through middleware and build a row counter displaying number of visible rows.
+    if (!Array.isArray(middleware) || middleware.some(middleware => typeof middleware !== 'function')) {
+      throw new Error('middleware prop must be an array of functions');
+    }
 
     const patchedMiddleware: ComponentMiddleware<Request, Props, Init>[] = (middleware || []).map(fn => {
       return init => {
@@ -106,41 +108,41 @@ export default function createChainOfResponsibility<
       [init, middleware]
     );
 
-    const useComponent = useCallback<UseComponent<Request, Props>>(
+    const useBuildComponent = useCallback<UseBuildComponent<Request, Props>>(
       (request, options = {}) => enhancer(() => options.defaultComponent)(request),
       [enhancer]
     );
 
-    const contextValue = useMemo<ProviderContext<Request, Props>>(() => ({ useComponent }), [useComponent]);
+    const contextValue = useMemo<ProviderContext<Request, Props>>(() => ({ useBuildComponent }), [useBuildComponent]);
 
     return <context.Provider value={contextValue}>{children}</context.Provider>;
   };
 
-  const useComponent = () => useContext(context).useComponent;
+  const useBuildComponent = () => useContext(context).useBuildComponent;
 
-  const Proxy: ComponentType<ProxyProps<Request, Props>> = ({ children, request, ...props }) => {
-    let enhancer: ReturnType<typeof useComponent>;
+  const Proxy: ComponentType<ProxyProps<Request, Props>> = memo(({ children, defaultComponent, request, ...props }) => {
+    let enhancer: ReturnType<typeof useBuildComponent>;
 
     try {
-      enhancer = useComponent();
+      enhancer = useBuildComponent();
     } catch {
       throw new Error('<Proxy> cannot be used outside of its corresponding <Provider>');
     }
 
-    const Component = enhancer(request as Request);
+    const Component = enhancer(request as Request, { defaultComponent });
 
     return Component ? <Component {...(props as Props)}>{children}</Component> : null;
-  };
+  });
 
   return {
     Provider,
     Proxy,
-    useComponent,
     types: {
       init: undefined as unknown as Init,
       middleware: undefined as unknown as ComponentMiddleware<Request, Props, Init>,
       props: undefined as unknown as Props,
       request: undefined as unknown as Request
-    }
+    },
+    useBuildComponent
   };
 }

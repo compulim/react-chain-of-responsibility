@@ -54,7 +54,7 @@ describe('with a link middleware', () => {
     () => () => () => ExternalLink
   ];
 
-  const { Provider, Proxy, useComponent } = createChainOfResponsibility<string, LinkProps, string[]>();
+  const { Provider, Proxy, useBuildComponent } = createChainOfResponsibility<string, LinkProps, string[]>();
 
   describe.each(['hook', 'proxy'])('when rendering with %s', type => {
     let RenderLink: ComponentType<LinkProps>;
@@ -67,7 +67,7 @@ describe('with a link middleware', () => {
       } else {
         RenderLink = wrapWith(Provider, { init: ['internal.example.com'], middleware })(
           ({ children, className, href }: LinkProps) => {
-            const LinkComponent = useComponent()(href);
+            const LinkComponent = useBuildComponent()(href);
 
             if (LinkComponent) {
               return (

@@ -20,17 +20,17 @@ afterEach(() => {
   consoleErrorMock.mockRestore();
 });
 
-test('when calling useComponent() outside of its <Provider> should throw', () => {
-  // GIVEN: useComponent() from a newly created chain of responsibility.
-  const { useComponent } = createChainOfResponsibility<undefined, Props>();
+test('when calling useBuildComponent() outside of its <Provider> should throw', () => {
+  // GIVEN: useBuildComponent() from a newly created chain of responsibility.
+  const { useBuildComponent } = createChainOfResponsibility<undefined, Props>();
 
   const App = () => {
-    useComponent();
+    useBuildComponent();
 
     return <Fragment />;
   };
 
   // WHEN: Render.
-  // THEN: It should throw an error saying useComponent() hook cannot be used outside of its corresponding <Provider>.
-  expect(() => render(<App />)).toThrow('useComponent() hook cannot be used outside of its corresponding <Provider>');
+  // THEN: It should throw an error saying useBuildComponent() hook cannot be used outside of its corresponding <Provider>.
+  expect(() => render(<App />)).toThrow('useBuildComponent() hook cannot be used outside of its corresponding <Provider>');
 });

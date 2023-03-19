@@ -12,7 +12,7 @@ type Props = { children?: never };
 const HelloWorld = () => <Fragment>Hello, World!</Fragment>;
 
 test('when calling a COR pattern with Request type of undefined and props without children', () => {
-  // GIVEN: A middleware which save the next() function and return <Fragment>Hello, World!</Fragment>.
+  // GIVEN: A middleware which return <Fragment>Hello, World!</Fragment>.
   const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
   const App = wrapWith(Provider, {
     middleware: [() => next => request => next(request), () => () => () => HelloWorld]
