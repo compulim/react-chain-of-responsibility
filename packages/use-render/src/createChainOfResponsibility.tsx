@@ -5,8 +5,15 @@ import applyMiddleware from './private/applyMiddleware';
 import type { ComponentMiddleware } from './types';
 import type { PropsWithChildren } from 'react';
 
+type UseComponentOptions<Props> = { defaultComponent?: ComponentType<Props> | false | null | undefined };
+
+type UseComponent<Request, Props> = (
+  request: Request,
+  options?: UseComponentOptions<Props>
+) => ComponentType<Props> | false | null | undefined;
+
 type ProviderContext<Request, Props> = {
-  useComponent: (request: Request) => ComponentType<Props> | false | null | undefined;
+  useComponent: UseComponent<Request, Props>;
 };
 
 type ProviderProps<Request, Props, Init> = PropsWithChildren<{
@@ -37,7 +44,7 @@ export default function createChainOfResponsibility<
 ): {
   Provider: ComponentType<ProviderProps<Request, Props, Init>>;
   Proxy: ComponentType<ProxyProps<Request, Props>>;
-  useComponent: () => (request: Request) => ComponentType<Props> | false | null | undefined;
+  useComponent: () => UseComponent<Request, Props>;
   types: {
     init: Init;
     middleware: ComponentMiddleware<Request, Props, Init>;
@@ -52,6 +59,8 @@ export default function createChainOfResponsibility<
   });
 
   const Provider: ComponentType<ProviderProps<Request, Props, Init>> = ({ children, init, middleware }) => {
+    // TODO: Test if "middleware" prop is not an array.
+
     // Probably we need to build the "enforce same request" in the compose.
     const patchedMiddleware: ComponentMiddleware<Request, Props, Init>[] = (middleware || []).map(fn => {
       return init => {
@@ -93,17 +102,16 @@ export default function createChainOfResponsibility<
         // - Without reverse, [a, b, c] will become c(b(a(fn)))
         applyMiddleware<[Request], ComponentType<Props> | false | null | undefined, [Init]>(
           ...[...(patchedMiddleware || [])].reverse()
-        )(init as Init)(() => null),
+        )(init as Init),
       [init, middleware]
     );
 
-    // TODO: Add way to verify that every middleware is returning things correctly.
-    const useComponent = useCallback<(request: Request) => ComponentType<Props> | false | null | undefined>(
-      (request: Request) => enhancer(request),
+    const useComponent = useCallback<UseComponent<Request, Props>>(
+      (request, options = {}) => enhancer(() => options.defaultComponent)(request),
       [enhancer]
     );
 
-    const contextValue = useMemo(() => ({ useComponent }), [useComponent]);
+    const contextValue = useMemo<ProviderContext<Request, Props>>(() => ({ useComponent }), [useComponent]);
 
     return <context.Provider value={contextValue}>{children}</context.Provider>;
   };

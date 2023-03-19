@@ -2,7 +2,8 @@
   "compilerOptions": {
     "declaration": true,
     "declarationDir": "../lib/types/",
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "skipLibCheck": true // "@fluentui/*" has internal conflicts on their types
   },
   "exclude": ["**/*.spec.*", "**/*.test.*"],
   "extends": "./tsconfig.json"

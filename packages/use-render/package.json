@@ -13,6 +13,10 @@
     "./createChainOfResponsibility": {
       "import": "./lib/esmodules/createChainOfResponsibility.js",
       "require": "./lib/commonjs/createChainOfResponsibility.js"
+    },
+    "./createChainOfResponsibilityForFluentUI": {
+      "import": "./lib/esmodules/createChainOfResponsibilityForFluentUI.js",
+      "require": "./lib/commonjs/createChainOfResponsibilityForFluentUI.js"
     }
   },
   "main": "./lib/commonjs/index.js",
@@ -85,6 +89,7 @@
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-react": "^7.18.6",
     "@babel/preset-typescript": "^7.21.0",
+    "@fluentui/react": "^8.106.7",
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": "^29.4.0",

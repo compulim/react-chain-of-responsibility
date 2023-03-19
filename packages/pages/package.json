@@ -17,9 +17,11 @@
   "author": "William Wong (https://github.com/compulim)",
   "license": "MIT",
   "devDependencies": {
+    "@fluentui/react": "^8.106.7",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "esbuild": "^0.17.10",
+    "react-wrap-with": "0.0.2-main.3baf65c",
     "typescript": "^4.9.5"
   },
   "dependencies": {
