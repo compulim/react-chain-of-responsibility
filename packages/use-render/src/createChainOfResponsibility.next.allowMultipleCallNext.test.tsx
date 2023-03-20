@@ -12,7 +12,7 @@ const WorldComponent = () => <Fragment>World</Fragment>;
 
 test('when calling multiple next in a middleware', () => {
   // GIVEN: A middleware which call downstreamer twice, with "hello", followed by "world".
-  const { Provider, Proxy } = createChainOfResponsibility<string>({ allowModifiedRequest: true });
+  const { Provider, Proxy } = createChainOfResponsibility<string>({ passModifiedRequest: true });
 
   const App = wrapWith(Provider, {
     middleware: [

@@ -32,7 +32,7 @@ type Options = {
    * However, middleware could modify the request object before calling its next middleware. It is recommended
    * to use Object.freeze() to prevent middleware from modifying the request object.
    */
-  allowModifiedRequest?: boolean;
+  passModifiedRequest?: boolean;
 };
 
 export default function createChainOfResponsibility<
@@ -75,7 +75,7 @@ export default function createChainOfResponsibility<
               throw new Error('next() cannot be called after the function had returned synchronously');
             }
 
-            return next(options.allowModifiedRequest ? nextRequest : originalRequest);
+            return next(options.passModifiedRequest ? nextRequest : originalRequest);
           })(originalRequest);
 
           hasReturned = true;

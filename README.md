@@ -167,13 +167,15 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
 ```tsx
 type Options = {
   /** Allows a middleware to pass another request object when calling its next middleware. Default is disabled. */
-  allowModifiedRequest?: boolean;
+  passModifiedRequest?: boolean;
 };
 ```
 
-If `allowModifiedRequest` is default or `false`, middleware will not be allowed to pass another reference of `request` object to their `next()` middleware. The `request` object passed to `next()` will always the original `request` object. Setting to `true` will enable advanced scenarios and allow a middleware to influence their downstreamers.
+If `passModifiedRequest` is default or `false`, middleware will not be allowed to pass another reference of `request` object to their `next()` middleware. Instead, the `request` object passed to `next()` will always the original `request` object. This is similar to middleware used in [ExpressJS](https://expressjs.com/).
 
-However, when the option is default or `false`, middleware could still modify the `request` object and influence their downstreamers. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
+Setting to `true` will enable advanced scenarios and allow a middleware to influence their downstreamers.
+
+When the option is default or `false`, middleware could still modify the `request` object and influence their downstreamers. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
 
 ### API of `useBuildComponentCallback`
 
@@ -255,7 +257,7 @@ However, "middleware" is a more popular word in JavaScript community. Thus, we c
 
 This is for supporting multiple providers/proxies under a single app/tree.
 
-### Why we disable `allowModifiedRequest` by default?
+### Why we disable `passModifiedRequest` by default?
 
 To reduce learning curve and likelihood of bugs, we disabled this feature until developers are more proficient with this package.
 
@@ -278,7 +280,7 @@ You can use the following decision tree to decide when to use `<Proxy>` vs. `use
 
 It is possible to call `next()` multiple times to render multiple copies of UI. Middleware should be written as a stateless function.
 
-This is best used with options `allowModifiedRequest` set to `true`. This combination allow a middleware to render the UI multiple times with some variations, such as rendering content and minimap at the same time.
+This is best used with options `passModifiedRequest` set to `true`. This combination allow a middleware to render the UI multiple times with some variations, such as rendering content and minimap at the same time.
 
 ### Calling `next()` later
 

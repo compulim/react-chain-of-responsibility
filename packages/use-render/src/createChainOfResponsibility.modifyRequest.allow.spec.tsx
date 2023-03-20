@@ -12,9 +12,7 @@ type Props = { children?: never };
 
 test('allow modifying request should render "citric fruit"', () => {
   // GIVEN: A chain of responsibility which allow modifying request.
-  const { Provider, Proxy } = createChainOfResponsibility<string, Props>({
-    allowModifiedRequest: true
-  });
+  const { Provider, Proxy } = createChainOfResponsibility<string, Props>({ passModifiedRequest: true });
 
   // WHEN: Render using a middleware that turn "orange" into "citric fruit" when passing to the next middleware.
   const App = wrapWith(Provider, {

@@ -31,7 +31,7 @@ const Demo = () => (
         .
       </p>
       <p>
-        This is a <Link className="link-decorator-demo__link">link without destination</Link>, treated as plain text.
+        This is a <Link className="link-decorator-demo__link">link without destination</Link> is treated as plain text.
       </p>
     </div>
   </Provider>

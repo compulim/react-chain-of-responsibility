@@ -12,7 +12,7 @@ type Props = { children?: never };
 
 test('disallow modifying request explicitly should render "orange"', () => {
   // GIVEN: A chain of responsibility which disallow modifying request.
-  const { Provider, Proxy } = createChainOfResponsibility<string, Props>({ allowModifiedRequest: false });
+  const { Provider, Proxy } = createChainOfResponsibility<string, Props>({ passModifiedRequest: false });
 
   // WHEN: Render using a middleware that turn "orange" into "citric fruit" when passing to the next middleware.
   const App = wrapWith(Provider, {
