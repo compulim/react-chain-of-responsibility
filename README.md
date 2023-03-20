@@ -314,7 +314,7 @@ This package is heavily inspired by [Redux](https://redux.js.org/) middleware, e
 
 Over multiple years, this pattern is proven to be very flexible and expandable in [Bot Framework Web Chat](https://github.co/microsoft/BotFramework-WebChat/). Internal parts of Web Chat is written as middleware consumed by itself. Multiple bundles with various sizes can be offered by removing some middleware and treeshaking them off.
 
-Middleware and router in [ExpressJS](https://expressjs.com/) also inspired us to learn more about this pattern.
+Middleware and router in [ExpressJS](https://expressjs.com/) also inspired us to learn more about this pattern. Its default middleware returns 404 is a very innovative approach.
 
 [Bing chat](https://bing.com/chat/) helped us understand and experiment with different naming.
 
