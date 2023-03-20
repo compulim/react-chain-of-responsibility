@@ -1,14 +1,14 @@
 # `use-render`
 
-Chain of responsibility design pattern for React component customization.
+[Chain of responsibility design pattern]9https://refactoring.guru/design-patterns/chain-of-responsibility) for React component customization.
 
 ## Background
 
-This package is designed for UI component package developers to enables component customization via composition using the [chain of responsibility design pattern](https://refactoring.guru/design-patterns/chain-of-responsibility).
+This package is designed for UI component package developers to enable component customization via composition using the [chain of responsibility design pattern](https://refactoring.guru/design-patterns/chain-of-responsibility).
 
 Additional helper hook is provided to use with [Fluent UI `IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts).
 
-By composing customizations, they can be decoupled and published separately. App developers can import these published customizations and orchestrate them to their needs. This pattern encourage [separation of concerns](https://en.wikipedia.org/wiki/Separation_of_concerns) and enables economy of customization.
+By composing customizations, they can be decoupled and published separately. App developers could import these published customizations and orchestrate them to their needs. This pattern encourage [separation of concerns](https://en.wikipedia.org/wiki/Separation_of_concerns) and enables economy of customization.
 
 ## Demo
 
@@ -34,7 +34,7 @@ const middleware = [
   () => () => () => Plain
 ];
 
-const App = () => (
+render(
   <Provider middleware={middleware}>
     <Proxy request="bold">This is bold.</Proxy>
     <Proxy request="italic">This is italic.</Proxy>
@@ -45,13 +45,14 @@ const App = () => (
 
 ### Using as Fluent UI `IRenderFunction`
 
-The chain of responsibility can be used in Fluent UI. We provided a helper hook to return callback function as `IRenderFunction`.
+The chain of responsibility can be used in Fluent UI. `useRenderFunctionCallback` hook will return render function as `IRenderFunction`.
 
 There are subtle differences between the standard version and the Fluent UI version:
 
+- Entrypoint is `createChainOfResponsibilityForFluentUI`
 - Request and props are always of same type
-- Auto fallback to `defaultRender` of `IRenderFunction`
-- Request is optional, as defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
+  - Request is optional, as defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
+- Auto-fallback to `defaultRender` of `IRenderFunction`
 
 ```tsx
 import { createChainOfResponsibilityForFluentUI } from 'use-render';
@@ -82,7 +83,7 @@ const Inner = () => {
   );
 };
 
-const App = () => (
+render(
   <Provider middleware={middleware}>
     <Inner />
   </Provider>
