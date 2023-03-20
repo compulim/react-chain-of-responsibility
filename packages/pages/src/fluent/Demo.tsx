@@ -62,18 +62,13 @@ const decorateFieldWithRating: typeof types.middleware = () => next => request =
 };
 
 const Inner = () => {
-  // Key generation logic adopted from https://github.com/microsoft/fluentui/blob/7fde5c94869ff9841b142b7ff1d0a3df0ab58f74/packages/react/src/components/DetailsList/DetailsRowFields.tsx#L61.
   const renderFunction = useRenderFunctionCallback({
+    // Key generation logic adopted from https://github.com/microsoft/fluentui/blob/7fde5c94869ff9841b142b7ff1d0a3df0ab58f74/packages/react/src/components/DetailsList/DetailsRowFields.tsx#L61.
     getKey: request =>
       `${request?.column.key}${typeof request?.cellValueKey !== undefined ? `-${request?.cellValueKey}` : ''}`
   });
 
-  // Currently, there is a bug in Fluent UI.
-  // When we pass a different function to the "onRenderField" prop, it will not re-render the <DetailsList>.
-  // We are randomize the "key" whenever the "renderFunction" change to trigger full re-render.
-  const detailsListKey = useMemo(() => Math.random(), [renderFunction]);
-
-  return <DetailsList columns={COLUMNS} items={ITEMS} key={detailsListKey} onRenderField={renderFunction} />;
+  return <DetailsList columns={COLUMNS} items={ITEMS} onRenderField={renderFunction} />;
 };
 
 const Demo = () => {
@@ -108,7 +103,11 @@ const Demo = () => {
       </div>
       <div>
         <label>
-          <input checked={shouldDecorateRatingColumn} onChange={handleShouldDecorateRatingColumnChange} type="checkbox" />{' '}
+          <input
+            checked={shouldDecorateRatingColumn}
+            onChange={handleShouldDecorateRatingColumnChange}
+            type="checkbox"
+          />{' '}
           Decorate rating column
         </label>
       </div>
