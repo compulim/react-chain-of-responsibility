@@ -198,15 +198,17 @@ We need to put some logics between build-time and render-time. This is because a
 - Timestamp grouping look at _successors_
   - If a latter message render the timestamp, it should not render it
 
-### Why the middleware should return component vs. element?
+### Why the middleware would return component vs. element?
 
 We decided to return component, despite its complexity.
 
-There are multiple advantages by returning a component:
+There are several advantages when returning component:
 
-- We know if a request would render (return a component), or not rendered at all (return `false`/`null`/`undefined`)
-- Components work with hooks
-- Build-time and render-time are separated, this is critical to support some advanced scenarios
+- We know if a request would render or not render a request
+  - Middleware returns component if it would render
+  - Middleware returns `false`/`null`/`undefined` if it would not render
+- Components works with hooks
+- Build-time and render-time are separated, critical to support some advanced scenarios
 
 ### Why we call the handler "middleware"?
 
@@ -214,9 +216,9 @@ There are multiple advantages by returning a component:
 
 However, "middleware" is a more popular word in JavaScript community. Thus, we chose "middleware".
 
-### Why we need to call `createChainOfResponsibility`?
+### Why we need to call `createChainOfResponsibility()` to create `<Provider>`?
 
-This is for supporting multiple providers/proxies in a single app/tree.
+This is for supporting multiple providers/proxies under a single app/tree.
 
 ### Why we disable `allowModifiedRequest` by default?
 
@@ -248,13 +250,13 @@ This is not supported.
 
 This is because React does not allow asynchronous render. If `next()` is called after return, an exception will be thrown.
 
-#### Good middleware is stateless
+### Good middleware is stateless
 
 When writing middleware, keep them as stateless as possible and do not relies on data outside of the `request` object. The way it is writing should be similar to React function components.
 
 If middleware must use external data, when the external data change, make sure the `middleware` prop is invalidated to trigger a re-render of the tree.
 
-#### Good middleware returns false to skip rendering
+### Good middleware returns false to skip rendering
 
 If the middleware want to skip rendering a request, return `false`/`null`/`undefined` directly. Do not return `() => false` or similar.
 
