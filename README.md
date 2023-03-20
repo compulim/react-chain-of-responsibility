@@ -49,7 +49,7 @@ This sample will render:
 
 > **This is bold.** _This is italic._ This is plain.
 
-### Using in Fluent UI as `IRenderFunction`
+### Using with Fluent UI as `IRenderFunction`
 
 The chain of responsibility design pattern can be used in Fluent UI.
 
