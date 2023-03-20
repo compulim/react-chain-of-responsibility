@@ -45,6 +45,10 @@ render(
 );
 ```
 
+This sample will render:
+
+> **This is bold.** *This is italic.* This is plain.
+
 ### Using as Fluent UI `IRenderFunction`
 
 The chain of responsibility design pattern can be used in Fluent UI.
@@ -212,6 +216,10 @@ However, "middleware" is a more popular word in JavaScript community. Thus, we c
 
 This is for supporting multiple providers/proxies in a single app/tree.
 
+### Why we disable `allowModifiedRequest` by default?
+
+To reduce learning curve and likelihood of bugs, we disabled this feature until developers are more proficient with this package.
+
 ## Behaviors
 
 ### `<Proxy>` vs. `useBuildComponentCallback`
@@ -222,9 +230,21 @@ Behind the scene, `<Proxy>` call `useBuildComponentCallback()` to build the comp
 
 Decision tree:
 
-- If you want to know what components will render, before actual render happen, use `useBuildComponentCallback()`
-  - For example, after processing all requests, you want to know how many components will actually render
+- If you want to know what component will render before actual render happen, use `useBuildComponentCallback()`
+  - For example, using `useBuildComponentCallback()` allow you to know if the middleware will skip rendering the request
 - Otherwise, use `<Proxy>`
+
+### Calling `next()` multiple times
+
+It is allowed to call `next()` multiple times to render an UI multiple times.
+
+This is best used with options `allowModifiedRequest` set to `true`. This combination allow a middleware to render the UI multiple times with some variations, such as rendering content and minimap at the same time.
+
+### Calling `next()` later
+
+This is not supported.
+
+This is because React does not allow asynchronous render. If `next()` is called after return, an exception will be thrown.
 
 ## Inspirations
 
