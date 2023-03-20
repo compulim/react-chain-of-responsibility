@@ -228,12 +228,13 @@ Decision tree:
 
 ## Inspirations
 
-This package is inspired by the following packages:
+This package is heavily inspired by the [Redux](https://redux.js.org/) middleware, especially [`applyMiddleware`](https://github.com/reduxjs/redux/blob/master/docs/api/applyMiddleware.md) and [`compose`](https://github.com/reduxjs/redux/blob/master/docs/api/compose.md). [This article](https://medium.com/@jacobp100/you-arent-using-redux-middleware-enough-94ffe991e6) explained the concept well.
 
-- [Bot Framework Web Chat](https://github.co/microsoft/BotFramework-WebChat/)
-- [ExpressJS](https://expressjs.com/) middleware and router
-- [Redux](https://redux.js.org/) middleware
-  - [`applyMiddleware`](https://github.com/reduxjs/redux/blob/master/docs/api/applyMiddleware.md) and [`compose`](https://github.com/reduxjs/redux/blob/master/docs/api/compose.md)
+Over multiple years, this pattern is proved to be very flexible and expandable in [Bot Framework Web Chat](https://github.co/microsoft/BotFramework-WebChat/). Internal parts of Web Chat is written as middleware consumed by itself. Smaller bundle size can be achieved by removing middleware and treeshaking them off.
+
+Middleware and router in [ExpressJS](https://expressjs.com/) also inspired us to read more about this pattern.
+
+[Bing chat](https://bing.com/chat/) helped us understanding and experimenting with different naming.
 
 ## Contributions
 
