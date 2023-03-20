@@ -45,14 +45,14 @@ render(
 
 ### Using as Fluent UI `IRenderFunction`
 
-The chain of responsibility can be used in Fluent UI. `useBuildRenderFunction` hook will return render function as `IRenderFunction`.
+The chain of responsibility can be used in Fluent UI. After calling `createChainOfResponsibilityForFluentUI`, the returned `useBuildRenderFunction` hook, when called, will build a function to use as [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts).
 
 There are subtle differences between the standard version and the Fluent UI version:
 
-- Entrypoint is `createChainOfResponsibilityForFluentUI`
+- Entrypoint is `createChainOfResponsibilityForFluentUI()`
 - Request and props are always of same type
-  - Request is optional, as defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
-- Auto-fallback to `defaultRender` of `IRenderFunction`
+  - It is optional, this is defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
+- Auto-fallback to `defaultRender`
 
 ```tsx
 import { createChainOfResponsibilityForFluentUI } from 'use-render';
@@ -68,7 +68,7 @@ const Orange = () => <>🍊</>;
 const middleware = [
   () => next => props => props?.iconProps?.iconName === 'Banana' ? Banana : next(props),
   () => next => props => props?.iconProps?.iconName === 'Orange' ? Orange : next(props)
-  // Fallback to `defaultRender` of `IRenderFunction` is automatically injected by the hook.
+  // Fallback to `defaultRender` of `IRenderFunction` is automatically injected.
 ];
 
 const Inner = () => {
@@ -162,6 +162,8 @@ type UseBuildRenderFunctionOptions<Props> = { getKey?: (props: Props | undefined
 
 type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Props>) => IRenderFunction<Props>;
 ```
+
+`getKey` is required for some render functions. These functions are usually used to render multiple elements, such as [`DetailsList.onRenderField`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist#implementation), which renders every field (a.k.a. cell) in the [`<DetailsList>`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist). This function will be called to compute the `key` attribute when rendering the element.
 
 ## Designs
 
