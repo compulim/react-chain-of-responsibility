@@ -86,7 +86,11 @@ export default function createChainOfResponsibility<
             returnValue !== false &&
             returnValue !== null &&
             typeof returnValue !== 'function' &&
-            typeof returnValue !== 'undefined'
+            typeof returnValue !== 'undefined' &&
+            // There are no definitive ways to check if an object is a React component or not.
+            // We are checking if the object has a render function (classic component).
+            // Note: "forwardRef()" returns plain object, not class instance.
+            !(typeof returnValue === 'object' && typeof returnValue['render'] === 'function')
           ) {
             throw new Error('middleware must return false, null, undefined, function component, or class component');
           }
@@ -112,7 +116,10 @@ export default function createChainOfResponsibility<
       [enhancer]
     );
 
-    const contextValue = useMemo<ProviderContext<Request, Props>>(() => ({ useBuildComponentCallback }), [useBuildComponentCallback]);
+    const contextValue = useMemo<ProviderContext<Request, Props>>(
+      () => ({ useBuildComponentCallback }),
+      [useBuildComponentCallback]
+    );
 
     return <context.Provider value={contextValue}>{children}</context.Provider>;
   };

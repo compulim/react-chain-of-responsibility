@@ -177,6 +177,37 @@ type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Pr
 
 `getKey` will be called to compute the `key` attribute when rendering the element. This is required for some render functions. These functions are usually used to render multiple elements, such as [`DetailsList.onRenderField`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist#implementation), which renders every field (a.k.a. cell) in the [`<DetailsList>`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist).
 
+### Decorating UI components
+
+Middleware can decorate the result of the `next()` middleware. The code snippet below shows how the wrapping can be done.
+
+The bold middleware uses traditional approach to wrap the `next()` result, while the italic middleware uses [`react-wrap-with`](https://npmjs.com/package/react-wrap-with/) to simplify the code.
+
+```ts
+const middleware = [
+  () => next => request => {
+    const Next = next(request);
+
+    if (request?.has('bold')) {
+      return props => <Bold>{Next && <Next {...props} />}</Bold>;
+    }
+
+    return Next;
+  },
+  () => next => request => wrapWith(request?.has('italic') && Italic)(next(request)),
+  () => () => () => Plain
+];
+
+const App = () => (
+  <Provider middleware={middleware}>
+    <Proxy request={new Set(['bold'])}>This is bold.</Proxy>
+    <Proxy request={new Set(['italic'])}>This is italic.</Proxy>
+    <Proxy request={new Set(['bold', 'italic'])}>This is bold and italic.</Proxy>
+    <Proxy>This is plain.</Proxy>
+  </Provider>
+);
+```
+
 ## Designs
 
 ### Why we allow request and props to be different?

@@ -21,7 +21,7 @@
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "esbuild": "^0.17.10",
-    "react-wrap-with": "0.0.2-main.3baf65c",
+    "react-wrap-with": "0.0.2-main.fa6cc79",
     "typescript": "^4.9.5"
   },
   "dependencies": {

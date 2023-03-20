@@ -1,5 +1,6 @@
 import React from 'react';
 
+import DecorationDemo from './decoration/Demo';
 import FluentButtonDemo from './fluentButton/Demo';
 import FluentDemo from './fluentDetailsList/Demo';
 import LinkDecoratorDemo from './linkDecorator/Demo';
@@ -12,6 +13,10 @@ const App = () => {
       <section>
         <h1>Simple demo</h1>
         <SimpleDemo />
+      </section>
+      <section>
+        <h1>Decoration demo</h1>
+        <DecorationDemo />
       </section>
       <section>
         <h1>Link decorator demo</h1>
