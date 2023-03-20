@@ -5,7 +5,7 @@ import applyMiddleware from './private/applyMiddleware';
 import type { ComponentMiddleware } from './types';
 import type { PropsWithChildren } from 'react';
 
-type UseBuildComponentCallbackOptions<Props> = { defaultComponent?: ComponentType<Props> | false | null | undefined };
+type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ComponentType<Props> | false | null | undefined };
 
 type UseBuildComponentCallback<Request, Props> = (
   request: Request,
@@ -22,8 +22,8 @@ type ProviderProps<Request, Props, Init> = PropsWithChildren<{
   (Init extends never | undefined ? { init?: Init } : { init: Init });
 
 type ProxyProps<Request, Props> = Request extends never | undefined
-  ? Props & { defaultComponent?: ComponentType<Props>; request?: Request }
-  : Props & { defaultComponent?: ComponentType<Props>; request: Request };
+  ? Props & { fallbackComponent?: ComponentType<Props>; request?: Request }
+  : Props & { fallbackComponent?: ComponentType<Props>; request: Request };
 
 type Options = {
   /**
@@ -112,7 +112,7 @@ export default function createChainOfResponsibility<
     );
 
     const useBuildComponentCallback = useCallback<UseBuildComponentCallback<Request, Props>>(
-      (request, options = {}) => enhancer(() => options.defaultComponent)(request),
+      (request, options = {}) => enhancer(() => options.fallbackComponent)(request),
       [enhancer]
     );
 
@@ -126,7 +126,7 @@ export default function createChainOfResponsibility<
 
   const useBuildComponentCallback = () => useContext(context).useBuildComponentCallback;
 
-  const Proxy: ComponentType<ProxyProps<Request, Props>> = memo(({ children, defaultComponent, request, ...props }) => {
+  const Proxy: ComponentType<ProxyProps<Request, Props>> = memo(({ children, fallbackComponent, request, ...props }) => {
     let enhancer: ReturnType<typeof useBuildComponentCallback>;
 
     try {
@@ -135,7 +135,7 @@ export default function createChainOfResponsibility<
       throw new Error('<Proxy> cannot be used outside of its corresponding <Provider>');
     }
 
-    const Component = enhancer(request as Request, { defaultComponent });
+    const Component = enhancer(request as Request, { fallbackComponent });
 
     return Component ? <Component {...(props as Props)}>{children}</Component> : null;
   });

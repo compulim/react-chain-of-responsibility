@@ -180,13 +180,15 @@ When the option is default or `false`, middleware could still modify the `reques
 ### API of `useBuildComponentCallback`
 
 ```ts
-type UseBuildComponentCallbackOptions<Props> = { defaultComponent?: ComponentType<Props> | false | null | undefined };
+type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ComponentType<Props> | false | null | undefined };
 
 type UseBuildComponentCallback<Request, Props> = (
   request: Request,
   options?: UseBuildComponentCallbackOptions<Props>
 ) => ComponentType<Props> | false | null | undefined;
 ```
+
+The `fallbackComponent` is a component which all unhandled requests are sunk into.
 
 ### API for Fluent UI
 

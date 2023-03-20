@@ -26,7 +26,7 @@ export default function createChainOfResponsibilityForFluentUI<Props extends {},
 
     return useCallback<IRenderFunction<Props>>(
       (props, defaultRender) => (
-        <Proxy {...(props as Props)} defaultComponent={defaultRender} key={getKey?.(props)} request={props} />
+        <Proxy {...(props as Props)} fallbackComponent={defaultRender} key={getKey?.(props)} request={props} />
       ),
       [getKey]
     );
