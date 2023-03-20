@@ -318,9 +318,9 @@ Middleware and router in [ExpressJS](https://expressjs.com/) also inspired us to
 
 ### Differences from Redux and ExpressJS approach
 
-The chain of responsibility design pattern implemented in [Redux](https://redux.js.org/) and [ExpressJS](https://expressjs.com/) is a fire-and-forget execution (a.k.a. unidirectional): the result from the last middleware will not bubble up back to the first middleware. Instead, the caller may only collect the result from the last middleware.
+The chain of responsibility design pattern implemented in [Redux](https://redux.js.org/) and [ExpressJS](https://expressjs.com/) prefers fire-and-forget execution (a.k.a. unidirectional): the result from the last middleware will not bubble up back to the first middleware. Instead, the caller may only collect the result from the last middleware. Sometimes, middleware may interrupt the execution and never return any results.
 
-However, the chain of responsibility design pattern implemented in this package is a call-and-return execution: the result from the last middleware will propagate back to the first middleware before returning to the caller. This gives every middleware a chance to manipulate the result from downstreamers before sending it back.
+However, the chain of responsibility design pattern implemented in this package prefers call-and-return execution: the result from the last middleware will propagate back to the first middleware before returning to the caller. This gives every middleware a chance to manipulate the result from downstreamers before sending it back.
 
 ## Plain English
 
