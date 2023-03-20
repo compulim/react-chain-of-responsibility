@@ -300,11 +300,11 @@ This helps the component which send the request to the chain of responsibility t
 
 To type a component which expects no props to be passed, use `ComponentType<{ children?: undefined }>`.
 
-In TypeScript, `{}` literally means any objects. If your component is of type `ComponentType<{}>`, it means [anything can be passed as props](https://www.typescriptlang.org/play?#code/C4TwDgpgBACgTgezAZygXigbwL4G4BQ+AxggHbLBRiIoBcsNqGmUyCAthMABYCWpAc3oByCABtkEYVDz4gA).
+In TypeScript, `{}` literally means any objects. Components of type `ComponentType<{}>` means [anything can be passed as props](https://www.typescriptlang.org/play?#code/C4TwDgpgBACgTgezAZygXigbwL4G4BQ+AxggHbLBRiIoBcsNqGmUyCAthMABYCWpAc3oByCABtkEYVDz4gA).
 
 Although `Record<any, never>` means empty object, it is not extensible. Thus, [`Record<any, never> & { className: string }` means `Record<any, never>`](https://www.typescriptlang.org/play?#code/C4TwDgpgBACgTgezAZygXigJQgYwXAEwB4BDAOxABooyIA3COAPgG4AoUSKAZQFcAjeElQYhKKADIoAbyg4ANiWTIAciQC2EAFxRkwOAEsyAcygBfdmzxk9UMIhQ6+ghyJlzFytZp0BydSRGvubsQA).
 
-We believe the best way to say a component which does not allow any props, is `ComponentType<{ children?: undefined }>`.
+We believe the best way to type a component which does not allow any props, is `ComponentType<{ children?: undefined }>`.
 
 ## Inspirations
 
