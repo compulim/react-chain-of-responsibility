@@ -261,6 +261,8 @@ This is for supporting multiple providers/proxies under a single app/tree.
 
 To reduce learning curve and likelihood of bugs, we disabled this feature until developers are more proficient with this package.
 
+If the `request` object passed to `next()` differs from the original `request` object, a reminder will be logged in the console.
+
 ## Behaviors
 
 ### `<Proxy>` vs. `useBuildComponentCallback`
