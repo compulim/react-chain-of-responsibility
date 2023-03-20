@@ -55,13 +55,6 @@ The chain of responsibility design pattern can be used in Fluent UI.
 
 After calling `createChainOfResponsibilityForFluentUI`, it will return `useBuildRenderFunction` hook. This hook, when called, will return a function to use as [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts) in Fluent UI components.
 
-There are subtle differences between the standard version and the Fluent UI version:
-
-- Entrypoint is `createChainOfResponsibilityForFluentUI()`
-- Request and props are always of same type
-  - They are optional too, as defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
-- Automatic fallback to `defaultRender`
-
 #### Sample code
 
 ```tsx
@@ -99,6 +92,13 @@ render(
   </Provider>
 );
 ```
+
+There are subtle differences between the standard version and the Fluent UI version:
+
+- Entrypoint is `createChainOfResponsibilityForFluentUI()`
+- Request and props are always of same type
+  - They are optional too, as defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
+- Automatic fallback to `defaultRender`
 
 ### Decorating UI components
 
@@ -155,12 +155,12 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
 
 ### Return value
 
-| Name                        | Type                                     | Description                                                                           |
-| --------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------- |
-| `Provider`                  | `React.ComponentType`                    | Entrypoint component, must wraps all usage of customizations                          |
-| `Proxy`                     | `React.ComponentType`                    | Proxy component, process the `request` from props and morph into the result component |
-| `useBuildComponentCallback` | `() => (request) => React.ComponentType` | Callback hook which return a function to build the component for rendering the result |
-| `types`                     | `{ init, middleware, props, request }`   | TypeScript: shorthand types, all objects are `undefined` intentionally                |
+| Name                        | Type                                              | Description                                                                           |
+| --------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `Provider`                  | `React.ComponentType`                             | Entrypoint component, must wraps all usage of customizations                          |
+| `Proxy`                     | `React.ComponentType`                             | Proxy component, process the `request` from props and morph into the result component |
+| `types`                     | `{ init, middleware, props, request }`            | TypeScript: shorthand types, all objects are `undefined` intentionally                |
+| `useBuildComponentCallback` | `() => (request, options) => React.ComponentType` | Callback hook which return a function to build the component for rendering the result |
 
 ### Options
 
@@ -320,7 +320,7 @@ Middleware and router in [ExpressJS](https://expressjs.com/) also inspired us to
 
 ## Plain English
 
-This package implements the *chain of responsibility* design pattern. Based on *request*, the chain of responsibility will be asked to *build a React component*. The middleware will *form a chain* and request is *passed to the first one in the chain*. If the chain decided to render it, a component will be returned, otherwise, `false`/`null`/`undefined`.
+This package implements the _chain of responsibility_ design pattern. Based on _request_, the chain of responsibility will be asked to _build a React component_. The middleware will _form a chain_ and request is _passed to the first one in the chain_. If the chain decided to render it, a component will be returned, otherwise, `false`/`null`/`undefined`.
 
 ## Contributions
 
