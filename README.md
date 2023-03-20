@@ -59,8 +59,8 @@ There are subtle differences between the standard version and the Fluent UI vers
 
 - Entrypoint is `createChainOfResponsibilityForFluentUI()`
 - Request and props are always of same type
-  - They are optional too, this is defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
-- Auto-fallback to `defaultRender`
+  - They are optional too, as defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
+- Automatic fallback to `defaultRender`
 
 #### Sample code
 
