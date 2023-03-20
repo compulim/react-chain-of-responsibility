@@ -49,18 +49,6 @@ This sample will render:
 
 > **This is bold.** *This is italic.* This is plain.
 
-#### Good middleware is stateless
-
-When writing middleware, keep them as stateless as possible and do not relies on data outside of the `request` object. The way it is writing should be similar to React function components.
-
-If middleware must use external data, when the external data change, make sure the `middleware` prop is invalidated to trigger a re-render of the tree.
-
-#### Good middleware returns false to skip rendering
-
-If the middleware want to skip rendering a request, return `false`/`null`/`undefined` directly. Do not return `() => false` or similar.
-
-This helps the code that use the middleware to know if the rendering result is being skipped or not.
-
 ### Using as Fluent UI `IRenderFunction`
 
 The chain of responsibility design pattern can be used in Fluent UI.
@@ -259,6 +247,18 @@ This is best used with options `allowModifiedRequest` set to `true`. This combin
 This is not supported.
 
 This is because React does not allow asynchronous render. If `next()` is called after return, an exception will be thrown.
+
+#### Good middleware is stateless
+
+When writing middleware, keep them as stateless as possible and do not relies on data outside of the `request` object. The way it is writing should be similar to React function components.
+
+If middleware must use external data, when the external data change, make sure the `middleware` prop is invalidated to trigger a re-render of the tree.
+
+#### Good middleware returns false to skip rendering
+
+If the middleware want to skip rendering a request, return `false`/`null`/`undefined` directly. Do not return `() => false` or similar.
+
+This helps the code that use the middleware to know if the rendering result is being skipped or not.
 
 ## Inspirations
 
