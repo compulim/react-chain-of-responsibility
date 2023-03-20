@@ -18,7 +18,7 @@ Click here for [our live demo](https://compulim.github.io/use-render/).
 
 ### Using `<Proxy>` component
 
-```tsx
+```jsx
 import { createChainOfResponsibility } from 'use-render';
 
 // Creates a <Provider> providing the chain of responsibility service.
@@ -57,7 +57,7 @@ After calling `createChainOfResponsibilityForFluentUI`, it will return `useBuild
 
 #### Sample code
 
-```tsx
+```jsx
 import { createChainOfResponsibilityForFluentUI } from 'use-render';
 
 // Creates a <Provider> providing the chain of responsibility service.
@@ -106,7 +106,7 @@ One core feature of chain of responsibility design pattern is allowing middlewar
 
 The bold middleware uses traditional approach to wrap the `next()` result, which is a component named `<Next>`. The italic middleware uses [`react-wrap-with`](https://npmjs.com/package/react-wrap-with/) to simplify the wrapping code.
 
-```ts
+```jsx
 const middleware = [
   () => next => request => {
     const Next = next(request);
@@ -137,7 +137,7 @@ This sample will render:
 
 ## API
 
-```tsx
+```ts
 function createChainOfResponsibility<Request = undefined, Props = { children?: never }, Init = undefined>(
   options?: Options
 ): {
@@ -164,7 +164,7 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
 
 ### Options
 
-```tsx
+```ts
 type Options = {
   /** Allows a middleware to pass another request object to its next middleware. Default is false. */
   passModifiedRequest?: boolean;
@@ -179,7 +179,7 @@ When the option is default or `false`, middleware could still modify the `reques
 
 ### API of `useBuildComponentCallback`
 
-```tsx
+```ts
 type UseBuildComponentCallbackOptions<Props> = { defaultComponent?: ComponentType<Props> | false | null | undefined };
 
 type UseBuildComponentCallback<Request, Props> = (
@@ -190,7 +190,7 @@ type UseBuildComponentCallback<Request, Props> = (
 
 ### API for Fluent UI
 
-```tsx
+```ts
 export default function createChainOfResponsibilityForFluentUI<Props extends {}, Init = undefined>(
   options?: Options
 ): ReturnType<typeof createChainOfResponsibility<Props | undefined, Props, Init>> & {
@@ -228,7 +228,7 @@ The message bubble is responsible to render its timestamp. However, if timestamp
 
 At component build-time (with the request object), it is not known if a message bubble should render its timestamp or not. This is because we do not know their neighbors yet. At render-time (with props), because all components are prepared, we can start telling each message bubble if they should render their timestamp.
 
-We need to put some logics between build-time and render-time to support grouping. This needs to be a "two-pass" operation because avatar grouping and timestamp grouping is looking up neighbors in a different direction:
+We need to put some logics between build-time and render-time to support grouping. This needs to be a "two-pass" operation because avatar grouping and timestamp grouping look up neighbors in a different direction:
 
 - Avatar grouping look at _predecessors_
   - If an earlier message already rendered the avatar, it should not render again
@@ -315,6 +315,12 @@ Over multiple years, this pattern is proven to be very flexible and extensible i
 Middleware and router in [ExpressJS](https://expressjs.com/) also inspired us to learn more about this pattern. Its default middleware returns 404 is a very innovative approach.
 
 [Bing chat](https://bing.com/chat/) helped us understand and experiment with different naming.
+
+### Differences from Redux and ExpressJS approach
+
+The chain of responsibility design pattern implemented in [Redux](https://redux.js.org/) and [ExpressJS](https://expressjs.com/) is a fire-and-forget execution (a.k.a. unidirectional): the result from the last middleware will not bubble up back to the first middleware. Instead, the caller may only collect the result from the last middleware.
+
+However, the chain of responsibility design pattern implemented in this package is a call-and-return execution: the result from the last middleware will propagate back to the first middleware before returning to the caller. This gives every middleware a chance to manipulate the result from downstreamers before sending it back.
 
 ## Plain English
 
