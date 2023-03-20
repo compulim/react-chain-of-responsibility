@@ -126,7 +126,9 @@ type Options = {
 };
 ```
 
-If `allowModifiedRequest` is unset or `false`, middleware will not be allowed to pass another reference of `request` object to the `next()` middleware. However, middleware can still modify the `request` object to influence the next middleware. It is recommended to follow immutable pattern when handling request object, or use deep `Object.freeze` to guarantee immutability.
+If `allowModifiedRequest` is default or `false`, middleware will not be allowed to pass another reference of `request` object to their `next()` middleware. Setting to `true` will enable advanced scenarios and allow a middleware to influence downstreamers.
+
+However, when keep at default or `false`, middleware can still modify the `request` object to influence the next middleware. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
 
 ### API of `useBuildComponent`
 
@@ -163,7 +165,7 @@ type UseBuildRenderFunctionOptions<Props> = { getKey?: (props: Props | undefined
 type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Props>) => IRenderFunction<Props>;
 ```
 
-`getKey` is required for some render functions. These functions are usually used to render multiple elements, such as [`DetailsList.onRenderField`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist#implementation), which renders every field (a.k.a. cell) in the [`<DetailsList>`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist). This function will be called to compute the `key` attribute when rendering the element.
+`getKey` will be called to compute the `key` attribute when rendering the element. This is required for some render functions. These functions are usually used to render multiple elements, such as [`DetailsList.onRenderField`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist#implementation), which renders every field (a.k.a. cell) in the [`<DetailsList>`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist).
 
 ## Designs
 
