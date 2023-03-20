@@ -16,6 +16,8 @@ Click here for [our live demo](https://compulim.github.io/use-render/).
 
 ## How to use
 
+### Using `<Proxy>` component
+
 ```tsx
 import { createChainOfResponsibility } from 'use-render';
 
@@ -45,14 +47,18 @@ render(
 
 ### Using as Fluent UI `IRenderFunction`
 
-The chain of responsibility can be used in Fluent UI. After calling `createChainOfResponsibilityForFluentUI`, the returned `useBuildRenderFunction` hook, when called, will build a function to use as [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts).
+The chain of responsibility design pattern can be used in Fluent UI.
+
+After calling `createChainOfResponsibilityForFluentUI`, it will return `useBuildRenderFunction` hook. This hook, when called, will return a function to use as [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts) in Fluent UI components.
 
 There are subtle differences between the standard version and the Fluent UI version:
 
 - Entrypoint is `createChainOfResponsibilityForFluentUI()`
 - Request and props are always of same type
-  - It is optional, this is defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
+  - They are optional too, this is defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
 - Auto-fallback to `defaultRender`
+
+#### Sample code
 
 ```tsx
 import { createChainOfResponsibilityForFluentUI } from 'use-render';
