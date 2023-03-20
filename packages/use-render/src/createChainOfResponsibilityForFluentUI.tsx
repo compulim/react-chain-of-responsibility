@@ -5,9 +5,9 @@ import createChainOfResponsibility from './createChainOfResponsibility';
 import type { IRenderFunction } from '@fluentui/react';
 import type { Key } from 'react';
 
-type UseRenderFunctionCallbackOptions<Props> = { getKey?: (props: Props | undefined) => Key };
+type UseBuildRenderFunctionOptions<Props> = { getKey?: (props: Props | undefined) => Key };
 
-type UseRenderFunctionCallback<Props> = (options?: UseRenderFunctionCallbackOptions<Props>) => IRenderFunction<Props>;
+type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Props>) => IRenderFunction<Props>;
 
 // We are using the props as both "Request" and "Props".
 // This should eases migration from `onRender` to chain of responsibility.
@@ -15,13 +15,13 @@ type UseRenderFunctionCallback<Props> = (options?: UseRenderFunctionCallbackOpti
 export default function createChainOfResponsibilityForFluentUI<Props extends {}, Init = undefined>(
   options?: Parameters<typeof createChainOfResponsibility>[0]
 ): ReturnType<typeof createChainOfResponsibility<Props | undefined, Props, Init>> & {
-  useRenderFunctionCallback: UseRenderFunctionCallback<Props>;
+  useBuildRenderFunction: UseBuildRenderFunction<Props>;
 } {
   const returnValue = createChainOfResponsibility<Props | undefined, Props, Init>(options);
 
   const { Proxy } = returnValue;
 
-  const useRenderFunctionCallback: UseRenderFunctionCallback<Props> = (options = {}) => {
+  const useBuildRenderFunction: UseBuildRenderFunction<Props> = (options = {}) => {
     const { getKey } = options;
 
     return useCallback<IRenderFunction<Props>>(
@@ -32,5 +32,5 @@ export default function createChainOfResponsibilityForFluentUI<Props extends {},
     );
   };
 
-  return { ...returnValue, useRenderFunctionCallback };
+  return { ...returnValue, useBuildRenderFunction };
 }

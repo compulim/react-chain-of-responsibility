@@ -11,10 +11,9 @@ type Props = { thing: string };
 
 test('pass modified props for next component should reflect the changes', () => {
   // GIVEN: A middleware which change "orange" into "citric fruit".
-  const { Provider, useRenderFunctionCallback } = createChainOfResponsibilityForFluentUI<Props>();
+  const { Provider, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI<Props>();
 
-  const Inner = ({ thing }: Props) =>
-    useRenderFunctionCallback()({ thing }, props => <Fragment>{props?.thing}</Fragment>);
+  const Inner = ({ thing }: Props) => useBuildRenderFunction()({ thing }, props => <Fragment>{props?.thing}</Fragment>);
 
   const App = wrapWith(Provider, {
     middleware: [

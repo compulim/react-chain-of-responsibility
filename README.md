@@ -45,7 +45,7 @@ render(
 
 ### Using as Fluent UI `IRenderFunction`
 
-The chain of responsibility can be used in Fluent UI. `useRenderFunctionCallback` hook will return render function as `IRenderFunction`.
+The chain of responsibility can be used in Fluent UI. `useBuildRenderFunction` hook will return render function as `IRenderFunction`.
 
 There are subtle differences between the standard version and the Fluent UI version:
 
@@ -72,7 +72,7 @@ const middleware = [
 ];
 
 const Inner = () => {
-  const renderIconFunction = useRenderFunctionCallback();
+  const renderIconFunction = useBuildRenderFunction();
 
   return (
     <Fragment>
@@ -145,22 +145,22 @@ type UseBuildComponent<Request, Props> = (
 export default function createChainOfResponsibilityForFluentUI<Props extends {}, Init = undefined>(
   options?: Options
 ): ReturnType<typeof createChainOfResponsibility<Props | undefined, Props, Init>> & {
-  useRenderFunctionCallback: UseRenderFunctionCallback<Props>;
+  useBuildRenderFunction: useBuildRenderFunction<Props>;
 };
 ```
 
 #### Return value
 
-| Name                        | Type                                     | Description                                                      |
-| --------------------------- | ---------------------------------------- | ---------------------------------------------------------------- |
-| `useRenderFunctionCallback` | `({ getKey }) => IRenderFunction<Props>` | Callback hook to build the `IRenderFunction` to use in Fluent UI |
+| Name                     | Type                                     | Description                                                      |
+| ------------------------ | ---------------------------------------- | ---------------------------------------------------------------- |
+| `useBuildRenderFunction` | `({ getKey }) => IRenderFunction<Props>` | Callback hook to build the `IRenderFunction` to use in Fluent UI |
 
-#### API of `useRenderFunctionCallback`
+#### API of `useBuildRenderFunction`
 
 ```ts
-type UseRenderFunctionCallbackOptions<Props> = { getKey?: (props: Props | undefined) => Key };
+type UseBuildRenderFunctionOptions<Props> = { getKey?: (props: Props | undefined) => Key };
 
-type UseRenderFunctionCallback<Props> = (options?: UseRenderFunctionCallbackOptions<Props>) => IRenderFunction<Props>;
+type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Props>) => IRenderFunction<Props>;
 ```
 
 ## Designs

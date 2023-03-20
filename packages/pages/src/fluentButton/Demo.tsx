@@ -5,7 +5,7 @@ import React, { Fragment } from 'react';
 import type { IButtonProps } from '@fluentui/react';
 
 // Creates a <Provider> to contain all elements.
-const { Provider, types, useRenderFunctionCallback } = createChainOfResponsibilityForFluentUI<IButtonProps>();
+const { Provider, types, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI<IButtonProps>();
 
 // List of subcomponents.
 const Banana = () => <Fragment>🍌</Fragment>;
@@ -19,7 +19,7 @@ const middleware: (typeof types.middleware)[] = [
 ];
 
 const Inner = () => {
-  const renderIconFunction = useRenderFunctionCallback();
+  const renderIconFunction = useBuildRenderFunction();
 
   return (
     <Fragment>

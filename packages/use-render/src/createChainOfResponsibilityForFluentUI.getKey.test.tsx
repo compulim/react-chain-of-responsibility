@@ -8,15 +8,15 @@ import createChainOfResponsibilityForFluentUI from './createChainOfResponsibilit
 
 type Props = { value?: number };
 
-test('useRenderFunctionCallback should call getKey() for computing "key" attribute', () => {
+test('useBuildRenderFunction should call getKey() for computing "key" attribute', () => {
   // GIVEN: A middleware.
-  const { Provider, types, useRenderFunctionCallback } = createChainOfResponsibilityForFluentUI<Props>();
+  const { Provider, types, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI<Props>();
 
   const keys: (null | number | string | undefined)[] = [];
   const getKey = jest.fn(() => 'a');
 
   const Inner = () => {
-    const renderFunction = useRenderFunctionCallback({ getKey });
+    const renderFunction = useBuildRenderFunction({ getKey });
 
     const element = renderFunction({ value: 1 });
 

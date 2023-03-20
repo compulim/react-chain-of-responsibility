@@ -11,11 +11,11 @@ type Props = { text?: string };
 
 const HelloWorld = ({ text }: Props) => <Fragment>{text}</Fragment>;
 
-test('useRenderFunctionCallback should return IRenderFunction of Fluent UI', () => {
+test('useBuildRenderFunction should return IRenderFunction of Fluent UI', () => {
   // GIVEN: A middleware.
-  const { Provider, useRenderFunctionCallback } = createChainOfResponsibilityForFluentUI<Props>();
+  const { Provider, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI<Props>();
 
-  const Inner = ({ text }: Props) => useRenderFunctionCallback()({ text }, () => <Fragment>Hello, World!</Fragment>);
+  const Inner = ({ text }: Props) => useBuildRenderFunction()({ text }, () => <Fragment>Hello, World!</Fragment>);
 
   const App = wrapWith(Provider, {
     middleware: [() => next => request => request?.text ? HelloWorld : next(request)]

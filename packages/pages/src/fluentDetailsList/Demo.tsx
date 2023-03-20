@@ -13,7 +13,7 @@ initializeIcons();
 
 const cellClassName = mergeStyles({ paddingBottom: 4, paddingLeft: 12, paddingTop: 4 });
 
-const { Provider, types, useRenderFunctionCallback } =
+const { Provider, types, useBuildRenderFunction } =
   createChainOfResponsibilityForFluentUI<IDetailsColumnFieldProps>();
 
 const COLUMNS: IColumn[] = [
@@ -62,7 +62,7 @@ const decorateFieldWithRating: typeof types.middleware = () => next => request =
 };
 
 const Inner = () => {
-  const renderFunction = useRenderFunctionCallback({
+  const renderFunction = useBuildRenderFunction({
     // Key generation logic adopted from https://github.com/microsoft/fluentui/blob/7fde5c94869ff9841b142b7ff1d0a3df0ab58f74/packages/react/src/components/DetailsList/DetailsRowFields.tsx#L61.
     getKey: request =>
       `${request?.column.key}${typeof request?.cellValueKey !== undefined ? `-${request?.cellValueKey}` : ''}`
