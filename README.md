@@ -49,6 +49,18 @@ This sample will render:
 
 > **This is bold.** *This is italic.* This is plain.
 
+#### Good middleware is stateless
+
+When writing middleware, keep them as stateless as possible and do not relies on data outside of the `request` object. The way it is writing should be similar to React function components.
+
+If middleware must use external data, when the external data change, make sure the `middleware` prop is invalidated to trigger a re-render of the tree.
+
+#### Good middleware returns false to skip rendering
+
+If the middleware want to skip rendering a request, return `false`/`null`/`undefined` directly. Do not return `() => false` or similar.
+
+This helps the code that use the middleware to know if the rendering result is being skipped or not.
+
 ### Using as Fluent UI `IRenderFunction`
 
 The chain of responsibility design pattern can be used in Fluent UI.
@@ -202,9 +214,11 @@ We need to put some logics between build-time and render-time. This is because a
 
 We decided to return component, despite its complexity.
 
-By returning a component, we can know if a request will turn into a rendered element, or not rendered at all.
+There are multiple advantages by returning a component:
 
-Also, we can separate the build-time and render-time. This is critical to support some advanced scenarios.
+- We know if a request would render (return a component), or not rendered at all (return `false`/`null`/`undefined`)
+- Components work with hooks
+- Build-time and render-time are separated, this is critical to support some advanced scenarios
 
 ### Why we call the handler "middleware"?
 
@@ -236,7 +250,7 @@ Decision tree:
 
 ### Calling `next()` multiple times
 
-It is allowed to call `next()` multiple times to render an UI multiple times.
+It is possible to call `next()` multiple times to render an UI multiple times. Middleware should be stateless.
 
 This is best used with options `allowModifiedRequest` set to `true`. This combination allow a middleware to render the UI multiple times with some variations, such as rendering content and minimap at the same time.
 
