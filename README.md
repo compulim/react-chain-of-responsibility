@@ -108,6 +108,15 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
 };
 ```
 
+### Return value
+
+| Name                | Type                                     | Description                                                                |
+| ------------------- | ---------------------------------------- | -------------------------------------------------------------------------- |
+| `Provider`          | `React.ComponentType`                    | A React component to wrap all usage of customizations                      |
+| `Proxy`             | `React.ComponentType`                    | A React component to render the result                                     |
+| `useBuildComponent` | `() => (request) => React.ComponentType` | A hook to build the component for rendering the result                     |
+| `types`             | `{ init, middleware, props, request }`   | TypeScript: shorthand for types, all objects are `undefined` intentionally |
+
 ### Options
 
 ```tsx
@@ -116,6 +125,8 @@ type Options = {
   allowModifiedRequest?: boolean;
 };
 ```
+
+If `allowModifiedRequest` is unset or `false`, middleware will not be allowed to pass another reference of `request` object to the `next()` middleware. However, middleware can still modify the `request` object to influence the next middleware. It is recommended to follow immutable pattern when handling request object, or use deep `Object.freeze` to guarantee immutability.
 
 ### API of `useBuildComponent`
 
@@ -149,6 +160,14 @@ type UseRenderFunctionCallback<Props> = (options?: UseRenderFunctionCallbackOpti
 ## Designs
 
 ## Behaviors
+
+## Inspirations
+
+This package is inspired by the following packages:
+
+- [Bot Framework Web Chat](https://github.co/microsoft/BotFramework-WebChat/)
+- [ExpressJS](https://expressjs.com/)
+- [Redux](https://redux.js.org/)
 
 ## Contributions
 
