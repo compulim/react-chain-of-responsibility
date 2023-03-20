@@ -4,7 +4,7 @@
 
 ## Background
 
-This package is designed for UI component package developers to enable component customization via composition using the [chain of responsibility design pattern](https://refactoring.guru/design-patterns/chain-of-responsibility).
+This package is designed for React UI component developers to enable component customization via composition using the [chain of responsibility design pattern](https://refactoring.guru/design-patterns/chain-of-responsibility).
 
 Additional helper hook is provided to use with [Fluent UI `IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts).
 
@@ -100,6 +100,41 @@ render(
 );
 ```
 
+### Decorating UI components
+
+One core feature of chain of responsibility design pattern is allowing middleware to control the execution flow. In other words, middleware can decorate the result of their `next()` middleware. The code snippet below shows how the wrapping could be done.
+
+The bold middleware uses traditional approach to wrap the `next()` result, which is a component named `<Next>`. The italic middleware uses [`react-wrap-with`](https://npmjs.com/package/react-wrap-with/) to simplify the wrapping code.
+
+```ts
+const middleware = [
+  () => next => request => {
+    const Next = next(request);
+
+    if (request?.has('bold')) {
+      return props => <Bold>{Next && <Next {...props} />}</Bold>;
+    }
+
+    return Next;
+  },
+  () => next => request => wrapWith(request?.has('italic') && Italic)(next(request)),
+  () => () => () => Plain
+];
+
+const App = () => (
+  <Provider middleware={middleware}>
+    <Proxy request={new Set(['bold'])}>This is bold.</Proxy>
+    <Proxy request={new Set(['italic'])}>This is italic.</Proxy>
+    <Proxy request={new Set(['bold', 'italic'])}>This is bold and italic.</Proxy>
+    <Proxy>This is plain.</Proxy>
+  </Provider>
+);
+```
+
+This sample will render:
+
+> **This is bold.** _This is italic._ **_This is bold and italic._** This is plain.
+
 ## API
 
 ```tsx
@@ -136,9 +171,9 @@ type Options = {
 };
 ```
 
-If `allowModifiedRequest` is default or `false`, middleware will not be allowed to pass another reference of `request` object to their `next()` middleware. Setting to `true` will enable advanced scenarios and allow a middleware to influence downstreamers.
+If `allowModifiedRequest` is default or `false`, middleware will not be allowed to pass another reference of `request` object to their `next()` middleware. Setting to `true` will enable advanced scenarios and allow a middleware to influence their downstreamers.
 
-However, when keep at default or `false`, middleware can still modify the `request` object to influence the next middleware. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
+However, when keep at default or `false`, middleware could still modify the `request` object. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
 
 ### API of `useBuildComponentCallback`
 
@@ -151,7 +186,7 @@ type UseBuildComponentCallback<Request, Props> = (
 ) => ComponentType<Props> | false | null | undefined;
 ```
 
-### Using as Fluent UI `IRenderFunction`
+### API for Fluent UI
 
 ```tsx
 export default function createChainOfResponsibilityForFluentUI<Props extends {}, Init = undefined>(
@@ -177,46 +212,11 @@ type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Pr
 
 `getKey` will be called to compute the `key` attribute when rendering the element. This is required for some render functions. These functions are usually used to render multiple elements, such as [`DetailsList.onRenderField`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist#implementation), which renders every field (a.k.a. cell) in the [`<DetailsList>`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist).
 
-### Decorating UI components
-
-Middleware can decorate the result of the `next()` middleware. The code snippet below shows how the wrapping can be done.
-
-The bold middleware uses traditional approach to wrap the `next()` result, while the italic middleware uses [`react-wrap-with`](https://npmjs.com/package/react-wrap-with/) to simplify the code.
-
-```ts
-const middleware = [
-  () => next => request => {
-    const Next = next(request);
-
-    if (request?.has('bold')) {
-      return props => <Bold>{Next && <Next {...props} />}</Bold>;
-    }
-
-    return Next;
-  },
-  () => next => request => wrapWith(request?.has('italic') && Italic)(next(request)),
-  () => () => () => Plain
-];
-
-const App = () => (
-  <Provider middleware={middleware}>
-    <Proxy request={new Set(['bold'])}>This is bold.</Proxy>
-    <Proxy request={new Set(['italic'])}>This is italic.</Proxy>
-    <Proxy request={new Set(['bold', 'italic'])}>This is bold and italic.</Proxy>
-    <Proxy>This is plain.</Proxy>
-  </Provider>
-);
-```
-
-This sample will render:
-
-> **This is bold.** _This is italic._ **_This is bold and italic._** This is plain.
-
 ## Designs
 
-### Why we allow request and props to be different?
+### Why the type of request and props can be different?
 
-It may seem overkill at first.
+This approach may seem overkill at first.
 
 To support advanced scenarios where props are not obtainainable until all rendering components are decided.
 
@@ -233,7 +233,7 @@ We need to put some logics between build-time and render-time. This is because a
 - Timestamp grouping look at _successors_
   - If a latter message render the timestamp, it should not render it
 
-### Why the middleware would return component vs. element?
+### Why the middleware return component instead of element?
 
 We decided to return component, despite its complexity.
 
@@ -267,15 +267,16 @@ Most of the time, use `<Proxy>`.
 
 Behind the scene, `<Proxy>` call `useBuildComponentCallback()` to build the component it would morph into.
 
-Decision tree:
+You can use the following decision tree to decide when to use `<Proxy>` vs. `useBuildComponentCallback`
 
 - If you want to know what component will render before actual render happen, use `useBuildComponentCallback()`
   - For example, using `useBuildComponentCallback()` allow you to know if the middleware will skip rendering the request
+- If your component use `request` prop which is conflict with `<Proxy>`, use `useBuildComponentCallback()`
 - Otherwise, use `<Proxy>`
 
 ### Calling `next()` multiple times
 
-It is possible to call `next()` multiple times to render an UI multiple times. Middleware should be stateless.
+It is possible to call `next()` multiple times to render multiple copies of UI. Middleware should be written as a stateless function.
 
 This is best used with options `allowModifiedRequest` set to `true`. This combination allow a middleware to render the UI multiple times with some variations, such as rendering content and minimap at the same time.
 
@@ -283,19 +284,17 @@ This is best used with options `allowModifiedRequest` set to `true`. This combin
 
 This is not supported.
 
-This is because React does not allow asynchronous render. If `next()` is called after return, an exception will be thrown.
+This is because React does not allow asynchronous render. An exception will be thrown if the `next()` is called after return.
 
 ### Good middleware is stateless
 
 When writing middleware, keep them as stateless as possible and do not relies on data outside of the `request` object. The way it is writing should be similar to React function components.
 
-If middleware must use external data, when the external data change, make sure the `middleware` prop is invalidated to trigger a re-render of the tree.
-
 ### Good middleware returns false to skip rendering
 
-If the middleware want to skip rendering a request, return `false`/`null`/`undefined` directly. Do not return `() => false` or similar.
+If the middleware wants to skip rendering a request, return `false`/`null`/`undefined` directly. Do not return `() => false`, `<Fragment />`, or any other invisible components.
 
-This helps the code that use the middleware to know if the rendering result is being skipped or not.
+This helps the code that use the middleware know if the rendering result is being skipped or not.
 
 ### Typing a component which expect no props to be passed
 
@@ -315,7 +314,7 @@ Over multiple years, this pattern is proved to be very flexible and expandable i
 
 Middleware and router in [ExpressJS](https://expressjs.com/) also inspired us to read more about this pattern.
 
-[Bing chat](https://bing.com/chat/) helped us understanding and experimenting with different naming.
+[Bing chat](https://bing.com/chat/) helped us understand and experiment with different naming.
 
 ## Contributions
 
