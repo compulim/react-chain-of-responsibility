@@ -189,9 +189,9 @@ At component build-time (with the request object), it is unknown if a message bu
 
 We need to put some logics between build-time and render-time. This is because avatar grouping and timestamp grouping is looking up neighbors at different direction:
 
-- Avatar grouping look at *predecessors*
+- Avatar grouping look at _predecessors_
   - If an earlier message already rendered the avatar, it should not rendered again
-- Timestamp grouping look at *successors*
+- Timestamp grouping look at _successors_
   - If a latter message render the timestamp, it should not render it
 
 ### Why the middleware should return component vs. element?
@@ -231,8 +231,9 @@ Decision tree:
 This package is inspired by the following packages:
 
 - [Bot Framework Web Chat](https://github.co/microsoft/BotFramework-WebChat/)
-- [ExpressJS](https://expressjs.com/) middleware
+- [ExpressJS](https://expressjs.com/) middleware and router
 - [Redux](https://redux.js.org/) middleware
+  - [`applyMiddleware`](https://github.com/reduxjs/redux/blob/master/docs/api/applyMiddleware.md) and [`compose`](https://github.com/reduxjs/redux/blob/master/docs/api/compose.md)
 
 ## Contributions
 
