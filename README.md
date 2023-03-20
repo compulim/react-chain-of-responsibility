@@ -218,11 +218,11 @@ This is for supporting multiple providers/proxies in a single app/tree.
 
 Most of the time, use `<Proxy>`.
 
-Behind the scene, `<Proxy>` call `useBuildComponentCallback` to build the component it would morph into.
+Behind the scene, `<Proxy>` call `useBuildComponentCallback()` to build the component it would morph into.
 
 Decision tree:
 
-- If you want to know what components will render, before actual render happen, use `useBuildComponentCallback`
+- If you want to know what components will render, before actual render happen, use `useBuildComponentCallback()`
   - For example, after processing all requests, you want to know how many components will actually render
 - Otherwise, use `<Proxy>`
 
