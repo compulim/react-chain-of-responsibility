@@ -208,6 +208,10 @@ Also, we can separate the build-time and render-time. This is critical to suppor
 
 However, "middleware" is a more popular word in JavaScript community. Thus, we chose "middleware".
 
+### Why we need to call `createChainOfResponsibility`?
+
+This is for supporting multiple providers/proxies in a single app/tree.
+
 ## Behaviors
 
 ### `<Proxy>` vs. `useBuildComponentCallback`
