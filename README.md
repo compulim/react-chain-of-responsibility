@@ -270,7 +270,7 @@ In TypeScript, `{}` literally means any objects. If your component is of type `C
 
 Although `Record<any, never>` means empty object, it is not extensible. Thus, [`Record<any, never> & { className: string }` means `Record<any, never>`](https://www.typescriptlang.org/play?#code/C4TwDgpgBACgTgezAZygXigJQgYwXAEwB4BDAOxABooyIA3COAPgG4AoUSKAZQFcAjeElQYhKKADIoAbyg4ANiWTIAciQC2EAFxRkwOAEsyAcygBfdmzxk9UMIhQ6+ghyJlzFytZp0BydSRGvubsQA).
 
-We believe the best way to say a component do not allow any props, is `{ children?: undefined }`.
+We believe the best way to say a component which does not allow any props, is `ComponentType<{ children?: undefined }>`.
 
 ## Inspirations
 
