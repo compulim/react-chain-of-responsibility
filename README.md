@@ -208,6 +208,10 @@ const App = () => (
 );
 ```
 
+This sample will render:
+
+> **This is bold.** _This is italic._ **_This is bold and italic._** This is plain.
+
 ## Designs
 
 ### Why we allow request and props to be different?
