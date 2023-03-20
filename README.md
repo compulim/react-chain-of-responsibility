@@ -235,7 +235,7 @@ We need to put some logics between build-time and render-time to support groupin
 - Timestamp grouping look at _successors_
   - If a latter message is going to render the timestamp, it should not render it now
 
-### Why the middleware return component instead of element?
+### Why the middleware should return component instead of element?
 
 We decided to return component, despite its complexity.
 
@@ -244,8 +244,8 @@ There are several advantages when returning component:
 - We know if a request would render or not render a request
   - If it would render, middleware will return a component
   - If it would not render, middleware will return `false`/`null`/`undefined`
-- Components works with hooks more naturally
-- Build-time and render-time are separated, critical to support some advanced scenarios
+- Components works with hooks in a more natural way
+- Build-time and render-time are separated to support advanced scenarios
 
 ### Why we call the handler "middleware"?
 
@@ -317,6 +317,10 @@ Over multiple years, this pattern is proved to be very flexible and expandable i
 Middleware and router in [ExpressJS](https://expressjs.com/) also inspired us to read more about this pattern.
 
 [Bing chat](https://bing.com/chat/) helped us understand and experiment with different naming.
+
+## Plain English
+
+This package implements the *chain of responsibility* design pattern. Based on *request*, the chain of responsibility will be asked to *build a component*. The middleware will *form a chain* and request is *passed to the first one in the chain*. A component will be returned if the chain decided to render it, or `false`/`null`/`undefined` if decided not to render it.
 
 ## Contributions
 
