@@ -264,7 +264,7 @@ This helps the code that use the middleware to know if the rendering result is b
 
 ## Inspirations
 
-This package is heavily inspired by the [Redux](https://redux.js.org/) middleware, especially [`applyMiddleware`](https://github.com/reduxjs/redux/blob/master/docs/api/applyMiddleware.md) and [`compose`](https://github.com/reduxjs/redux/blob/master/docs/api/compose.md). [This article](https://medium.com/@jacobp100/you-arent-using-redux-middleware-enough-94ffe991e6) explained the concept well.
+This package is heavily inspired by the [Redux](https://redux.js.org/) middleware, especially [`applyMiddleware`](https://github.com/reduxjs/redux/blob/master/docs/api/applyMiddleware.md) and [`compose`](https://github.com/reduxjs/redux/blob/master/docs/api/compose.md). We read [this article](https://medium.com/@jacobp100/you-arent-using-redux-middleware-enough-94ffe991e6) to understand the concept, followed by some more readings on functional programming.
 
 Over multiple years, this pattern is proved to be very flexible and expandable in [Bot Framework Web Chat](https://github.co/microsoft/BotFramework-WebChat/). Internal parts of Web Chat is written as middleware consumed by itself. Smaller bundle size can be achieved by removing middleware and treeshaking them off.
 
