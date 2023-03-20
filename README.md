@@ -316,7 +316,7 @@ Middleware and router in [ExpressJS](https://expressjs.com/) also inspired us to
 
 [Bing chat](https://bing.com/chat/) helped us understand and experiment with different naming.
 
-### Differences from Redux and ExpressJS approach
+### Differences from Redux and ExpressJS
 
 The chain of responsibility design pattern implemented in [Redux](https://redux.js.org/) and [ExpressJS](https://expressjs.com/) prefers fire-and-forget execution (a.k.a. unidirectional): the result from the last middleware will not bubble up back to the first middleware. Instead, the caller may only collect the result from the last middleware. Sometimes, middleware may interrupt the execution and never return any results.
 
