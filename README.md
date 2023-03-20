@@ -320,7 +320,7 @@ Middleware and router in [ExpressJS](https://expressjs.com/) also inspired us to
 
 ## Plain English
 
-This package implements the *chain of responsibility* design pattern. Based on *request*, the chain of responsibility will be asked to *build a component*. The middleware will *form a chain* and request is *passed to the first one in the chain*. A component will be returned if the chain decided to render it, or `false`/`null`/`undefined` if decided not to render it.
+This package implements the *chain of responsibility* design pattern. Based on *request*, the chain of responsibility will be asked to *build a React component*. The middleware will *form a chain* and request is *passed to the first one in the chain*. If the chain decided to render it, a component will be returned, otherwise, `false`/`null`/`undefined`.
 
 ## Contributions
 
