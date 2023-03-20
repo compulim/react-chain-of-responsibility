@@ -10,6 +10,18 @@ import createChainOfResponsibility from './createChainOfResponsibility';
 type AppProps = { thing: string };
 type Props = { children?: never };
 
+let consoleWarnMock: jest.SpyInstance<void, any[], any>;
+
+beforeEach(() => {
+  // Currently, there is no way to hide the caught exception thrown by render().
+  // We are mocking `console.log` to hide the exception.
+  consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation(() => jest.fn());
+});
+
+afterEach(() => {
+  consoleWarnMock.mockRestore();
+});
+
 test('disallow modifying request explicitly should render "orange"', () => {
   // GIVEN: A chain of responsibility which disallow modifying request.
   const { Provider, Proxy } = createChainOfResponsibility<string, Props>({ passModifiedRequest: false });
@@ -25,4 +37,7 @@ test('disallow modifying request explicitly should render "orange"', () => {
 
   // THEN: It should render "orange".
   expect(render(<App thing="orange" />)).toHaveProperty('container.textContent', 'orange');
+
+  // THEN: A warning should be logged to remind the developer to enable "options.passModifiedRequest".
+  expect(consoleWarnMock).toBeCalledWith('use-render: "options.passModifiedRequest" must be set to true to pass a different request object to next().');
 });
