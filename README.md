@@ -242,8 +242,8 @@ We decided to return component, despite its complexity.
 There are several advantages when returning component:
 
 - We know if a request would render or not render a request
-  - Middleware returns component if it would render
-  - Middleware returns `false`/`null`/`undefined` if it would not render
+  - If it would render, middleware will return a component
+  - If it would not render, middleware will return `false`/`null`/`undefined`
 - Components works with hooks more naturally
 - Build-time and render-time are separated, critical to support some advanced scenarios
 
