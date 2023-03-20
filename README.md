@@ -312,7 +312,7 @@ We believe the best way to type a component which does not allow any props, is `
 
 This package is heavily inspired by [Redux](https://redux.js.org/) middleware, especially [`applyMiddleware()`](https://github.com/reduxjs/redux/blob/master/docs/api/applyMiddleware.md) and [`compose()`](https://github.com/reduxjs/redux/blob/master/docs/api/compose.md). We read [this article](https://medium.com/@jacobp100/you-arent-using-redux-middleware-enough-94ffe991e6) to understand the concept, followed by some more readings on functional programming topics.
 
-Over multiple years, this pattern is proven to be very flexible and extensible in [Bot Framework Web Chat](https://github.co/microsoft/BotFramework-WebChat/). Internal parts of Web Chat is written as middleware consumed by itself. Multiple bundles with various sizes can be offered by removing some middleware and treeshaking them off.
+Over multiple years, the chain of responsibility design pattern is proven to be very flexible and extensible in [Bot Framework Web Chat](https://github.co/microsoft/BotFramework-WebChat/). Internal parts of Web Chat is written as middleware consumed by itself. Multiple bundles with various sizes can be offered by removing some middleware and treeshaking them off.
 
 Middleware and router in [ExpressJS](https://expressjs.com/) also inspired us to learn more about this pattern. Their fallback middleware always returns 404 is an innovative approach.
 
