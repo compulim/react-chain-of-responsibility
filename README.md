@@ -21,7 +21,7 @@ Click here for [our live demo](https://compulim.github.io/use-render/).
 ```tsx
 import { createChainOfResponsibility } from 'use-render';
 
-// Creates a <Provider> to contain all elements.
+// Creates a <Provider> providing the chain of responsibility service.
 const { Provider, Proxy } = createChainOfResponsibility();
 
 // List of subcomponents.
@@ -67,7 +67,7 @@ There are subtle differences between the standard version and the Fluent UI vers
 ```tsx
 import { createChainOfResponsibilityForFluentUI } from 'use-render';
 
-// Creates a <Provider> to contain all elements.
+// Creates a <Provider> providing the chain of responsibility service.
 const { Provider, Proxy } = createChainOfResponsibilityForFluentUI();
 
 // List of subcomponents.
@@ -171,9 +171,9 @@ type Options = {
 };
 ```
 
-If `allowModifiedRequest` is default or `false`, middleware will not be allowed to pass another reference of `request` object to their `next()` middleware. Setting to `true` will enable advanced scenarios and allow a middleware to influence their downstreamers.
+If `allowModifiedRequest` is default or `false`, middleware will not be allowed to pass another reference of `request` object to their `next()` middleware. The `request` object passed to `next()` will always the original `request` object. Setting to `true` will enable advanced scenarios and allow a middleware to influence their downstreamers.
 
-However, when keep at default or `false`, middleware could still modify the `request` object. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
+However, when the option is default or `false`, middleware could still modify the `request` object and influence their downstreamers. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
 
 ### API of `useBuildComponentCallback`
 
@@ -210,7 +210,7 @@ type UseBuildRenderFunctionOptions<Props> = { getKey?: (props: Props | undefined
 type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Props>) => IRenderFunction<Props>;
 ```
 
-`getKey` will be called to compute the `key` attribute when rendering the element. This is required for some render functions. These functions are usually used to render multiple elements, such as [`DetailsList.onRenderField`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist#implementation), which renders every field (a.k.a. cell) in the [`<DetailsList>`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist).
+When rendering the element, `getKey` is called to compute the `key` attribute. This is required for some `onRenderXXX` props. These props are usually used to render more than one elements, such as [`DetailsList.onRenderField`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist#implementation), which renders every field (a.k.a. cell) in the [`<DetailsList>`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist).
 
 ## Designs
 
@@ -218,20 +218,20 @@ type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Pr
 
 This approach may seem overkill at first.
 
-To support advanced scenarios where props are not obtainainable until all rendering components are decided.
+This is to support advanced scenarios where props are not ready until all rendering components are decided.
 
-For example, in a chat UI, the middleware is used to influence how the message bubble is rendered, say, a text message vs. an image vs. hidden message.
+For example, in a chat UI, the middleware is used to influence how the message bubble is rendered, say, a text message vs. an image vs. a hidden message.
 
-The message bubble will be responsible to render its timestamp. However, if timestamp grouping is enabled, timestamps in some bubbles will not be rendered because it is rendered by their neighboring bubbles. This is also true for avatar grouping.
+The message bubble is responsible to render its timestamp. However, if timestamp grouping is enabled, timestamps in some bubbles will not be rendered because it is rendered by their neighboring bubbles. This is also true for avatar grouping.
 
-At component build-time (with the request object), it is unknown if a message bubble should render its timestamp or not. This is because we do not know their neighbors yet. At render-time (with props), because all components are decided, we can start telling each message bubble if they should render their timestamp.
+At component build-time (with the request object), it is not known if a message bubble should render its timestamp or not. This is because we do not know their neighbors yet. At render-time (with props), because all components are prepared, we can start telling each message bubble if they should render their timestamp.
 
-We need to put some logics between build-time and render-time. This is because avatar grouping and timestamp grouping is looking up neighbors at different direction:
+We need to put some logics between build-time and render-time to support grouping. This needs to be a "two-pass" operation because avatar grouping and timestamp grouping is looking up neighbors in a different direction:
 
 - Avatar grouping look at _predecessors_
-  - If an earlier message already rendered the avatar, it should not rendered again
+  - If an earlier message already rendered the avatar, it should not render again
 - Timestamp grouping look at _successors_
-  - If a latter message render the timestamp, it should not render it
+  - If a latter message is going to render the timestamp, it should not render it now
 
 ### Why the middleware return component instead of element?
 
@@ -242,7 +242,7 @@ There are several advantages when returning component:
 - We know if a request would render or not render a request
   - Middleware returns component if it would render
   - Middleware returns `false`/`null`/`undefined` if it would not render
-- Components works with hooks
+- Components works with hooks more naturally
 - Build-time and render-time are separated, critical to support some advanced scenarios
 
 ### Why we call the handler "middleware"?
