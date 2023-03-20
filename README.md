@@ -175,7 +175,7 @@ If `passModifiedRequest` is default or `false`, middleware will not be allowed t
 
 Setting to `true` will enable advanced scenarios and allow a middleware to influence their downstreamers.
 
-When the option is default or `false`, middleware could still modify the `request` object and influence their downstreamers. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
+When the option is default or `false`, middleware could still modify the `request` object and influence their downstreamers. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
 
 ### API of `useBuildComponentCallback`
 
