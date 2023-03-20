@@ -220,7 +220,7 @@ When rendering the element, `getKey` is called to compute the `key` attribute. T
 
 This approach may seem overkill at first.
 
-This is to support advanced scenarios where props are not ready until all rendering components are decided.
+This is to support advanced scenarios where props are not ready until all rendering components are built.
 
 For example, in a chat UI, the middleware is used to influence how the message bubble is rendered, say, a text message vs. an image vs. a hidden message.
 
@@ -237,9 +237,7 @@ We need to put some logics between build-time and render-time to support groupin
 
 ### Why the middleware should return component instead of element?
 
-We decided to return component, despite its complexity.
-
-There are several advantages when returning component:
+Despite its complexity, there are several advantages when returning component:
 
 - We know if a request would render or not render a request
   - If it would render, middleware will return a component
@@ -269,7 +267,7 @@ Most of the time, use `<Proxy>`.
 
 Behind the scene, `<Proxy>` call `useBuildComponentCallback()` to build the component it would morph into.
 
-You can use the following decision tree to decide when to use `<Proxy>` vs. `useBuildComponentCallback`
+You can use the following decision tree to know when to use `<Proxy>` vs. `useBuildComponentCallback`
 
 - If you want to know what component will render before actual render happen, use `useBuildComponentCallback()`
   - For example, using `useBuildComponentCallback()` allow you to know if the middleware will skip rendering the request
