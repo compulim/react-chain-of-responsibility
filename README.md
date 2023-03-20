@@ -1,6 +1,6 @@
 # `use-render`
 
-[Chain of responsibility design pattern]9https://refactoring.guru/design-patterns/chain-of-responsibility) for React component customization.
+[Chain of responsibility design pattern](https://refactoring.guru/design-patterns/chain-of-responsibility) for React component customization.
 
 ## Background
 
@@ -200,7 +200,7 @@ Also, we can separate the build-time and render-time. This is critical to suppor
 
 "Handler" is often seen in articles explaining the chain of responsibility design pattern. They are typically written in a language-agnostic format, such as pseudo code.
 
-However, "middleware" is a more popular word in JavaScript community.
+However, "middleware" is a more popular word in JavaScript community. Thus, we chose "middleware".
 
 ## Behaviors
 
