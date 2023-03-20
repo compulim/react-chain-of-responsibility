@@ -179,16 +179,18 @@ For example, in a chat UI, the middleware is used to influence how the message b
 
 The message bubble will be responsible to render its timestamp. However, if timestamp grouping is enabled, timestamps in some bubbles will not be rendered because it is rendered by their neighboring bubbles. This is also true for avatar grouping.
 
-At component build-time (request), it is unknown if a message bubble should render its timestamp or not. This is because we do not know their neighbors yet. At render-time (props), because all components are decided, we can start telling each message bubble if their timestamp should be rendered.
+At component build-time (with the request object), it is unknown if a message bubble should render its timestamp or not. This is because we do not know their neighbors yet. At render-time (with props), because all components are decided, we can start telling each message bubble if they should render their timestamp.
 
-We need to put some logics between build-time and render-time. This is because avatar grouping and timestamp grouping is looking up at different direction:
+We need to put some logics between build-time and render-time. This is because avatar grouping and timestamp grouping is looking up neighbors at different direction:
 
 - Avatar grouping look at *predecessors*
   - If an earlier message already rendered the avatar, it should not rendered again
 - Timestamp grouping look at *successors*
   - If a latter message render the timestamp, it should not render it
 
-### Why returning a component but not element?
+### Why the middleware should return component vs. element?
+
+We decided to return component, despite its complexity.
 
 By returning a component, we can know if a request will turn into a rendered element, or not rendered at all.
 
