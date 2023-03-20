@@ -104,18 +104,18 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
     props: Props;
     request: Request;
   };
-  useBuildComponent: () => UseBuildComponent<Request, Props>;
+  useBuildComponentCallback: () => UseBuildComponent<Request, Props>;
 };
 ```
 
 ### Return value
 
-| Name                | Type                                     | Description                                                                           |
-| ------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------- |
-| `Provider`          | `React.ComponentType`                    | Entrypoint component, must wraps all usage of customizations                          |
-| `Proxy`             | `React.ComponentType`                    | Proxy component, process the `request` from props and morph into the result component |
-| `useBuildComponent` | `() => (request) => React.ComponentType` | Callback hook to build the component for rendering the result                         |
-| `types`             | `{ init, middleware, props, request }`   | TypeScript: shorthand types, all objects are `undefined` intentionally                |
+| Name                        | Type                                     | Description                                                                           |
+| --------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------- |
+| `Provider`                  | `React.ComponentType`                    | Entrypoint component, must wraps all usage of customizations                          |
+| `Proxy`                     | `React.ComponentType`                    | Proxy component, process the `request` from props and morph into the result component |
+| `useBuildComponentCallback` | `() => (request) => React.ComponentType` | Callback hook which return a function to build the component for rendering the result |
+| `types`                     | `{ init, middleware, props, request }`   | TypeScript: shorthand types, all objects are `undefined` intentionally                |
 
 ### Options
 
@@ -130,14 +130,14 @@ If `allowModifiedRequest` is default or `false`, middleware will not be allowed 
 
 However, when keep at default or `false`, middleware can still modify the `request` object to influence the next middleware. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
 
-### API of `useBuildComponent`
+### API of `useBuildComponentCallback`
 
 ```tsx
-type UseBuildComponentOptions<Props> = { defaultComponent?: ComponentType<Props> | false | null | undefined };
+type UseBuildComponentCallbackOptions<Props> = { defaultComponent?: ComponentType<Props> | false | null | undefined };
 
-type UseBuildComponent<Request, Props> = (
+type UseBuildComponentCallback<Request, Props> = (
   request: Request,
-  options?: UseBuildComponentOptions<Props>
+  options?: UseBuildComponentCallbackOptions<Props>
 ) => ComponentType<Props> | false | null | undefined;
 ```
 
@@ -169,15 +169,58 @@ type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Pr
 
 ## Designs
 
+### Why we allow request and props to be different?
+
+It may seem overkill at first.
+
+To support advanced scenarios where props are not obtainainable until all rendering components are decided.
+
+For example, in a chat UI, the middleware is used to influence how the message bubble is rendered, say, a text message vs. an image vs. hidden message.
+
+The message bubble will be responsible to render its timestamp. However, if timestamp grouping is enabled, timestamps in some bubbles will not be rendered because it is rendered by their neighboring bubbles. This is also true for avatar grouping.
+
+At component build-time (request), it is unknown if a message bubble should render its timestamp or not. This is because we do not know their neighbors yet. At render-time (props), because all components are decided, we can start telling each message bubble if their timestamp should be rendered.
+
+We need to put some logics between build-time and render-time. This is because avatar grouping and timestamp grouping is looking up at different direction:
+
+- Avatar grouping look at *predecessors*
+  - If an earlier message already rendered the avatar, it should not rendered again
+- Timestamp grouping look at *successors*
+  - If a latter message render the timestamp, it should not render it
+
+### Why returning a component but not element?
+
+By returning a component, we can know if a request will turn into a rendered element, or not rendered at all.
+
+Also, we can separate the build-time and render-time. This is critical to support some advanced scenarios.
+
+### Why we call the handler "middleware"?
+
+"Handler" is often seen in articles explaining the chain of responsibility design pattern. They are typically written in a language-agnostic format, such as pseudo code.
+
+However, "middleware" is a more popular word in JavaScript community.
+
 ## Behaviors
+
+### `<Proxy>` vs. `useBuildComponentCallback`
+
+Most of the time, use `<Proxy>`.
+
+Behind the scene, `<Proxy>` call `useBuildComponentCallback` to build the component it would morph into.
+
+Decision tree:
+
+- If you want to know what components will render, before actual render happen, use `useBuildComponentCallback`
+  - For example, after processing all requests, you want to know how many components will actually render
+- Otherwise, use `<Proxy>`
 
 ## Inspirations
 
 This package is inspired by the following packages:
 
 - [Bot Framework Web Chat](https://github.co/microsoft/BotFramework-WebChat/)
-- [ExpressJS](https://expressjs.com/)
-- [Redux](https://redux.js.org/)
+- [ExpressJS](https://expressjs.com/) middleware
+- [Redux](https://redux.js.org/) middleware
 
 ## Contributions
 

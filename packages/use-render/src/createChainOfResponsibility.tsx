@@ -5,15 +5,15 @@ import applyMiddleware from './private/applyMiddleware';
 import type { ComponentMiddleware } from './types';
 import type { PropsWithChildren } from 'react';
 
-type UseBuildComponentOptions<Props> = { defaultComponent?: ComponentType<Props> | false | null | undefined };
+type UseBuildComponentCallbackOptions<Props> = { defaultComponent?: ComponentType<Props> | false | null | undefined };
 
-type UseBuildComponent<Request, Props> = (
+type UseBuildComponentCallback<Request, Props> = (
   request: Request,
-  options?: UseBuildComponentOptions<Props>
+  options?: UseBuildComponentCallbackOptions<Props>
 ) => ComponentType<Props> | false | null | undefined;
 
 type ProviderContext<Request, Props> = {
-  useBuildComponent: UseBuildComponent<Request, Props>;
+  useBuildComponentCallback: UseBuildComponentCallback<Request, Props>;
 };
 
 type ProviderProps<Request, Props, Init> = PropsWithChildren<{
@@ -50,11 +50,11 @@ export default function createChainOfResponsibility<
     props: Props;
     request: Request;
   };
-  useBuildComponent: () => UseBuildComponent<Request, Props>;
+  useBuildComponentCallback: () => UseBuildComponentCallback<Request, Props>;
 } {
   const context = createContext<ProviderContext<Request, Props>>({
-    get useBuildComponent(): ProviderContext<Request, Props>['useBuildComponent'] {
-      throw new Error('useBuildComponent() hook cannot be used outside of its corresponding <Provider>');
+    get useBuildComponentCallback(): ProviderContext<Request, Props>['useBuildComponentCallback'] {
+      throw new Error('useBuildComponentCallback() hook cannot be used outside of its corresponding <Provider>');
     }
   });
 
@@ -107,23 +107,23 @@ export default function createChainOfResponsibility<
       [init, middleware]
     );
 
-    const useBuildComponent = useCallback<UseBuildComponent<Request, Props>>(
+    const useBuildComponentCallback = useCallback<UseBuildComponentCallback<Request, Props>>(
       (request, options = {}) => enhancer(() => options.defaultComponent)(request),
       [enhancer]
     );
 
-    const contextValue = useMemo<ProviderContext<Request, Props>>(() => ({ useBuildComponent }), [useBuildComponent]);
+    const contextValue = useMemo<ProviderContext<Request, Props>>(() => ({ useBuildComponentCallback }), [useBuildComponentCallback]);
 
     return <context.Provider value={contextValue}>{children}</context.Provider>;
   };
 
-  const useBuildComponent = () => useContext(context).useBuildComponent;
+  const useBuildComponentCallback = () => useContext(context).useBuildComponentCallback;
 
   const Proxy: ComponentType<ProxyProps<Request, Props>> = memo(({ children, defaultComponent, request, ...props }) => {
-    let enhancer: ReturnType<typeof useBuildComponent>;
+    let enhancer: ReturnType<typeof useBuildComponentCallback>;
 
     try {
-      enhancer = useBuildComponent();
+      enhancer = useBuildComponentCallback();
     } catch {
       throw new Error('<Proxy> cannot be used outside of its corresponding <Provider>');
     }
@@ -142,6 +142,6 @@ export default function createChainOfResponsibility<
       props: undefined as unknown as Props,
       request: undefined as unknown as Request
     },
-    useBuildComponent
+    useBuildComponentCallback
   };
 }

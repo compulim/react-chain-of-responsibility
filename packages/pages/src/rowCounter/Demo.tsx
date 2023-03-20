@@ -3,12 +3,12 @@ import React, { Fragment, useCallback, useMemo, useState } from 'react';
 
 import type { FormEventHandler } from 'react';
 
-const { Provider, types, useBuildComponent } = createChainOfResponsibility<number>();
+const { Provider, types, useBuildComponentCallback } = createChainOfResponsibility<number>();
 
 type Props = { items: number[] };
 
 const Inner = ({ items }: Props) => {
-  const buildComponent = useBuildComponent();
+  const buildComponent = useBuildComponentCallback();
 
   const components = useMemo(() => items.map(value => buildComponent(value)), [buildComponent, items]);
 

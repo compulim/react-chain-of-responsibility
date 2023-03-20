@@ -14,12 +14,12 @@ const HelloWorld = () => <Fragment>Hello, World!</Fragment>;
 
 test('when changing middleware on-the-fly should re-render and invalidate useBuildComponent', () => {
   // GIVEN: A middleware.
-  const { Provider, Proxy, useBuildComponent } = createChainOfResponsibility<undefined, Props>();
+  const { Provider, Proxy, useBuildComponentCallback } = createChainOfResponsibility<undefined, Props>();
 
-  const useBuildComponentReturnValues: ReturnType<typeof useBuildComponent>[] = [];
+  const useBuildComponentCallbackReturnValues: ReturnType<typeof useBuildComponentCallback>[] = [];
 
   const Inner = () => {
-    useBuildComponentReturnValues.push(useBuildComponent());
+    useBuildComponentCallbackReturnValues.push(useBuildComponentCallback());
 
     return <Proxy />;
   };
@@ -39,8 +39,8 @@ test('when changing middleware on-the-fly should re-render and invalidate useBui
   expect(result.container).toHaveProperty('textContent', 'Aloha!');
 
   // THEN: It should have rendered twice.
-  expect(useBuildComponentReturnValues).toHaveLength(2);
+  expect(useBuildComponentCallbackReturnValues).toHaveLength(2);
 
-  // THEN: The first and second callback of useBuildComponent() should be different.
-  expect(useBuildComponentReturnValues[0]).not.toBe(useBuildComponentReturnValues[1]);
+  // THEN: The first and second callback of useBuildComponentCallback() should be different.
+  expect(useBuildComponentCallbackReturnValues[0]).not.toBe(useBuildComponentCallbackReturnValues[1]);
 });
