@@ -4,8 +4,9 @@ import { initializeIcons } from '@fluentui/react/lib/Icons';
 import { Link } from '@fluentui/react/lib/Link';
 import { mergeStyles } from '@fluentui/react/lib/Styling';
 import { Rating } from '@fluentui/react/lib/Rating';
-import React, { useMemo } from 'react';
+import React, { Fragment, useCallback, useMemo, useState } from 'react';
 
+import type { FormEventHandler } from 'react';
 import type { IColumn, IDetailsColumnFieldProps } from '@fluentui/react';
 
 initializeIcons();
@@ -69,16 +70,52 @@ const Inner = () => {
 
   // Currently, there is a bug in Fluent UI.
   // When we pass a different function to the "onRenderField" prop, it will not re-render the <DetailsList>.
-  return <DetailsList columns={COLUMNS} items={ITEMS} onRenderField={renderFunction} />;
+  // We are randomize the "key" whenever the "renderFunction" change to trigger full re-render.
+  const detailsListKey = useMemo(() => Math.random(), [renderFunction]);
+
+  return <DetailsList columns={COLUMNS} items={ITEMS} key={detailsListKey} onRenderField={renderFunction} />;
 };
 
 const Demo = () => {
-  const middleware = useMemo(() => [decorateFieldWithRating, decorateFieldWithLink], []);
+  const [shouldDecorateNameColumn, setShouldDecorateNameColumn] = useState(true);
+  const [shouldDecorateRatingColumn, setShouldDecorateRatingColumn] = useState(true);
+  const middleware = useMemo<(typeof types.middleware)[]>(() => {
+    const middleware = [];
+
+    shouldDecorateNameColumn && middleware.push(decorateFieldWithLink);
+    shouldDecorateRatingColumn && middleware.push(decorateFieldWithRating);
+
+    return middleware;
+  }, [shouldDecorateNameColumn, shouldDecorateRatingColumn]);
+
+  const handleShouldDecorateNameColumnChange = useCallback<FormEventHandler<HTMLInputElement>>(
+    ({ currentTarget: { checked } }) => setShouldDecorateNameColumn(checked),
+    [setShouldDecorateNameColumn]
+  );
+
+  const handleShouldDecorateRatingColumnChange = useCallback<FormEventHandler<HTMLInputElement>>(
+    ({ currentTarget: { checked } }) => setShouldDecorateRatingColumn(checked),
+    [setShouldDecorateRatingColumn]
+  );
 
   return (
-    <Provider middleware={middleware}>
-      <Inner />
-    </Provider>
+    <Fragment>
+      <div>
+        <label>
+          <input checked={shouldDecorateNameColumn} onChange={handleShouldDecorateNameColumnChange} type="checkbox" />{' '}
+          Decorate name column
+        </label>
+      </div>
+      <div>
+        <label>
+          <input checked={shouldDecorateRatingColumn} onChange={handleShouldDecorateRatingColumnChange} type="checkbox" />{' '}
+          Decorate rating column
+        </label>
+      </div>
+      <Provider middleware={middleware}>
+        <Inner />
+      </Provider>
+    </Fragment>
   );
 };
 

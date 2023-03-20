@@ -60,8 +60,7 @@ const Demo = () => {
     <Fragment>
       <div>
         <label>
-          <input checked={evenOnly} onChange={handleEvenOnlyChange} type="checkbox" />
-          &nbsp;Even number only
+          <input checked={evenOnly} onChange={handleEvenOnlyChange} type="checkbox" /> Show even number only
         </label>
       </div>
       <Provider middleware={middleware}>
