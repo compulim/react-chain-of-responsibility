@@ -226,7 +226,7 @@ This is to support advanced scenarios where props are not ready until all render
 
 For example, in a chat UI, the middleware is used to influence how the message bubble is rendered, say, a text message vs. an image vs. a hidden message.
 
-The message bubble is responsible to render its timestamp. However, if timestamp grouping is enabled, timestamps in some bubbles will not be rendered because it is rendered by their neighboring bubbles. This is also true for avatar grouping.
+The message bubble is responsible to render its timestamp. However, if timestamp grouping is enabled, timestamps in some bubbles will not be rendered if its neighboring bubble render the timestamp. This is also true for avatar grouping.
 
 At component build-time (with the request object), it is not known if a message bubble should render its timestamp or not. This is because we do not know their neighbors yet. At render-time (with props), because all components are prepared, we can start telling each message bubble if they should render their timestamp.
 
