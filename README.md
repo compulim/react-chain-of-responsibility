@@ -110,12 +110,12 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
 
 ### Return value
 
-| Name                | Type                                     | Description                                                                |
-| ------------------- | ---------------------------------------- | -------------------------------------------------------------------------- |
-| `Provider`          | `React.ComponentType`                    | A React component to wrap all usage of customizations                      |
-| `Proxy`             | `React.ComponentType`                    | A React component to render the result                                     |
-| `useBuildComponent` | `() => (request) => React.ComponentType` | A hook to build the component for rendering the result                     |
-| `types`             | `{ init, middleware, props, request }`   | TypeScript: shorthand for types, all objects are `undefined` intentionally |
+| Name                | Type                                     | Description                                                                           |
+| ------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------- |
+| `Provider`          | `React.ComponentType`                    | Entrypoint component, must wraps all usage of customizations                          |
+| `Proxy`             | `React.ComponentType`                    | Proxy component, process the `request` from props and morph into the result component |
+| `useBuildComponent` | `() => (request) => React.ComponentType` | Callback hook to build the component for rendering the result                         |
+| `types`             | `{ init, middleware, props, request }`   | TypeScript: shorthand types, all objects are `undefined` intentionally                |
 
 ### Options
 
@@ -148,6 +148,12 @@ export default function createChainOfResponsibilityForFluentUI<Props extends {},
   useRenderFunctionCallback: UseRenderFunctionCallback<Props>;
 };
 ```
+
+#### Return value
+
+| Name                        | Type                                     | Description                                                      |
+| --------------------------- | ---------------------------------------- | ---------------------------------------------------------------- |
+| `useRenderFunctionCallback` | `({ getKey }) => IRenderFunction<Props>` | Callback hook to build the `IRenderFunction` to use in Fluent UI |
 
 #### API of `useRenderFunctionCallback`
 
