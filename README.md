@@ -296,7 +296,7 @@ When writing middleware, keep them as stateless as possible and do not relies on
 
 If the middleware wants to skip rendering a request, return `false`/`null`/`undefined` directly. Do not return `() => false`, `<Fragment />`, or any other invisible components.
 
-This helps the code that use the middleware know if the rendering result is being skipped or not.
+This helps the component which send the request to the chain of responsibility to determine whether the request could be rendered or not.
 
 ### Typing a component which expect no props to be passed
 
