@@ -166,12 +166,12 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
 
 ```tsx
 type Options = {
-  /** Allows a middleware to pass another request object when calling its next middleware. Default is disabled. */
+  /** Allows a middleware to pass another request object to its next middleware. Default is false. */
   passModifiedRequest?: boolean;
 };
 ```
 
-If `passModifiedRequest` is default or `false`, middleware will not be allowed to pass another reference of `request` object to their `next()` middleware. Instead, the `request` object passed to `next()` will always the original `request` object. This is similar to middleware used in [ExpressJS](https://expressjs.com/).
+If `passModifiedRequest` is default or `false`, middleware will not be allowed to pass another reference of `request` object to their `next()` middleware. Instead, the `request` object passed to `next()` will be ignored and the next middleware always receive the original `request` object. This behavior is similar to [ExpressJS](https://expressjs.com/) middleware.
 
 Setting to `true` will enable advanced scenarios and allow a middleware to influence their downstreamers.
 

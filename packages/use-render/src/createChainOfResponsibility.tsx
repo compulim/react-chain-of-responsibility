@@ -27,7 +27,7 @@ type ProxyProps<Request, Props> = Request extends never | undefined
 
 type Options = {
   /**
-   * Allows a middleware to pass another request object when calling its next middleware. Default is disabled.
+   * Allows a middleware to pass another request object when calling its next middleware. Default is false.
    *
    * However, middleware could modify the request object before calling its next middleware. It is recommended
    * to use Object.freeze() to prevent middleware from modifying the request object.
