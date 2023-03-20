@@ -47,7 +47,7 @@ render(
 
 This sample will render:
 
-> **This is bold.** *This is italic.* This is plain.
+> **This is bold.** _This is italic._ This is plain.
 
 ### Using in Fluent UI as `IRenderFunction`
 
@@ -261,6 +261,16 @@ If middleware must use external data, when the external data change, make sure t
 If the middleware want to skip rendering a request, return `false`/`null`/`undefined` directly. Do not return `() => false` or similar.
 
 This helps the code that use the middleware to know if the rendering result is being skipped or not.
+
+### Typing a component which expect no props to be passed
+
+To type a component which expects no props to be passed, use `ComponentType<{ children?: undefined }>`.
+
+In TypeScript, `{}` literally means any objects. If your component is of type `ComponentType<{}>`, it means [anything can be passed as props](https://www.typescriptlang.org/play?#code/C4TwDgpgBACgTgezAZygXigbwL4G4BQ+AxggHbLBRiIoBcsNqGmUyCAthMABYCWpAc3oByCABtkEYVDz4gA).
+
+Although `Record<any, never>` means empty object, it is not extensible. Thus, [`Record<any, never> & { className: string }` means `Record<any, never>`](https://www.typescriptlang.org/play?#code/C4TwDgpgBACgTgezAZygXigJQgYwXAEwB4BDAOxABooyIA3COAPgG4AoUSKAZQFcAjeElQYhKKADIoAbyg4ANiWTIAciQC2EAFxRkwOAEsyAcygBfdmzxk9UMIhQ6+ghyJlzFytZp0BydSRGvubsQA).
+
+We believe the best way to say a component do not allow any props, is `{ children?: undefined }`.
 
 ## Inspirations
 
