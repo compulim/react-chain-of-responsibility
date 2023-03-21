@@ -162,7 +162,7 @@ jobs:
       - name: Summarize job
         run: |
           if [ "${{ steps.create-pull-request.outputs.url }}" = "" ]; then
-            echo "Branch created at [bump-${{ steps.bump-version.outputs.version }}](https://github.com/${{ github.repository }}/compare/main...${{ bump }})" >> $GITHUB_STEP_SUMMARY
+            echo "Branch created at [bump-${{ steps.bump-version.outputs.version }}](https://github.com/${{ github.repository }}/compare/main...${{ steps.create-branch.outputs.branch-name }})" >> $GITHUB_STEP_SUMMARY
           else
             echo Pull request created at ${{ steps.create-pull-request.outputs.url }}. >> $GITHUB_STEP_SUMMARY
           fi
