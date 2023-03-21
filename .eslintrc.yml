@@ -8,6 +8,7 @@ extends:
 overrides:
   - extends: .eslintrc.jest.yml
     files:
+    - '__tests__/**'
     - '*.spec.js'
     - '*.spec.jsx'
     - '*.spec.ts'
