@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths-ignore:
       - '.devcontainer/**'
-      - '.github/**'
+      # - '.github/**'
 
 jobs:
   build:
@@ -77,9 +77,9 @@ jobs:
         run: |
           echo ::error::Cannot publish production version ${{ steps.read-package-json.outputs.version }}
           exit 1
-      - run: npm publish --tag ${{ github.ref_name }} `ls *.tgz`
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # - run: npm publish --tag ${{ github.ref_name }} `ls *.tgz`
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Summarize job
         run: echo NPM package published to https://npmjs.com/package/${{ steps.read-package-json.outputs.package-name }}/v/${{ steps.read-package-json.outputs.version }}. >> $GITHUB_STEP_SUMMARY
 
