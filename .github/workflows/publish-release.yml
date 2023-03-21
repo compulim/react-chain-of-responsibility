@@ -117,6 +117,7 @@ jobs:
         run: echo GitHub release created at https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}. >> $GITHUB_STEP_SUMMARY
 
   create-bump-pull-request:
+    continue-on-error: true
     needs:
       - publish-package
     permissions:
