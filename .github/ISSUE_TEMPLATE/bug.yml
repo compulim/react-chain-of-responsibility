@@ -15,7 +15,7 @@ body:
       description: |
         Please verify the issue on latest versions. Support on non-latest version is minimal and on a per case basis.
 
-        If you are using latest production, please verify against our latest development version as the issue could have been resolved recently. To install latest development version, run `npm install use-render@main`.
+        If you are using latest production, please verify against our latest development version as the issue could have been resolved recently. To install latest development version, run `npm install react-chain-of-responsibility@main`.
 
       multiple: true
       options:
@@ -30,10 +30,10 @@ body:
       description: Please describe how you import our package.
       multiple: true
       options:
-        - 'ESM: import { useRender } from "use-render"'
-        - 'ESM: import useRender from "use-render/useRender"'
-        - 'CommonJS: require("use-render")'
-        - 'CommonJS: require("use-render/useRender")'
+        - 'ESM: import { createChainOfResponsibility } from "react-chain-of-responsibility"'
+        - 'ESM: import createChainOfResponsibility from "react-chain-of-responsibility/createChainOfResponsibility"'
+        - 'CommonJS: require("react-chain-of-responsibility")'
+        - 'CommonJS: require("react-chain-of-responsibility/createChainOfResponsibility")'
         - Others or unrelated
     validations:
       required: true
@@ -79,22 +79,31 @@ body:
         *Support will be slow or denied if a test case is not provided.*
       render: js
       value: |
-        import { renderHook } from '@testing-library/react-hooks';
-        import { useRender } from 'use-render';
+        /** @jest-environment jsdom */
+        /// <reference types="@types/jest" />
 
-        test('simple scenario', () => {
-          // WHEN: Calling useRender() with 123.
-          const { result } = renderHook(
-            ({ input }) => {
-              const ref = useRender(input);
+        import { render } from '@testing-library/react';
+        import React, { Fragment } from 'react';
 
-              return ref.current;
-            },
-            { initialProps: { input: 123 } }
+        import createChainOfResponsibility from './createChainOfResponsibility';
+
+        type Props = { children?: never };
+
+        test('middleware should render', () => {
+          // GIVEN: A middleware return a component that would render "Hello, World!".
+          const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
+
+          // WHEN: Render <Proxy>.
+          const App = () => (
+            <Provider middleware={[() => () => () => () => <Fragment>Hello, World!</Fragment>]}>
+              <Proxy />
+            </Provider>
           );
 
-          // THEN: It should return 123.
-          expect(result.current).toBe(123);
+          const result = render(<App />);
+
+          // THEN: It should render "Hello, World!".
+          expect(result.container).toHaveProperty('textContent', 'Hello, World!');
         });
   - type: input
     attributes:

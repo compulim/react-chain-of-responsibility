@@ -1,4 +1,4 @@
-import { createChainOfResponsibilityForFluentUI } from 'use-render';
+import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility';
 import { DefaultButton } from '@fluentui/react/lib/Button';
 import React, { Fragment } from 'react';
 

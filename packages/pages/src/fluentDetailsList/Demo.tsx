@@ -1,4 +1,4 @@
-import { createChainOfResponsibilityForFluentUI } from 'use-render';
+import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility';
 import { DetailsList } from '@fluentui/react/lib/DetailsList';
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 import { Link } from '@fluentui/react/lib/Link';

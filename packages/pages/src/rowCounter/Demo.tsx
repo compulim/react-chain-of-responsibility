@@ -1,4 +1,4 @@
-import { createChainOfResponsibility } from 'use-render';
+import { createChainOfResponsibility } from 'react-chain-of-responsibility';
 import React, { Fragment, useCallback, useMemo, useState } from 'react';
 
 import type { FormEventHandler } from 'react';

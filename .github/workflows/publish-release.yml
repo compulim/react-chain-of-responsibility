@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        package-name: [use-render]
+        package-name: [react-chain-of-responsibility]
 
     steps:
       - uses: actions/checkout@v3

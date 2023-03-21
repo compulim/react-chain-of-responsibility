@@ -22,8 +22,8 @@ afterEach(() => {
   consoleWarnMock.mockRestore();
 });
 
-test('disallow modifying request explicitly should render "orange"', () => {
-  // GIVEN: A chain of responsibility which disallow modifying request.
+test('disallow modifying request by default should render "orange"', () => {
+  // GIVEN: A chain of responsibility without allowing or disallowing modifying request.
   const { Provider, Proxy } = createChainOfResponsibility<string, Props>({ passModifiedRequest: false });
 
   // WHEN: Render using a middleware that turn "orange" into "citric fruit" when passing to the next middleware.
@@ -39,5 +39,5 @@ test('disallow modifying request explicitly should render "orange"', () => {
   expect(render(<App thing="orange" />)).toHaveProperty('container.textContent', 'orange');
 
   // THEN: A warning should be logged to remind the developer to enable "options.passModifiedRequest".
-  expect(consoleWarnMock).toBeCalledWith('use-render: "options.passModifiedRequest" must be set to true to pass a different request object to next().');
+  expect(consoleWarnMock).toBeCalledWith('react-chain-of-responsibility: "options.passModifiedRequest" must be set to true to pass a different request object to next().');
 });

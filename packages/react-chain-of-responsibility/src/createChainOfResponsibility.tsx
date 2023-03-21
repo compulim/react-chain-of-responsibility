@@ -78,7 +78,7 @@ export default function createChainOfResponsibility<
             !options.passModifiedRequest &&
               nextRequest !== originalRequest &&
               console.warn(
-                'use-render: "options.passModifiedRequest" must be set to true to pass a different request object to next().'
+                'react-chain-of-responsibility: "options.passModifiedRequest" must be set to true to pass a different request object to next().'
               );
 
             return next(options.passModifiedRequest ? nextRequest : originalRequest);

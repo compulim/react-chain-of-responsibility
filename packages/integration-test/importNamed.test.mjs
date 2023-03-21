@@ -1,8 +1,10 @@
 /** @jest-environment jsdom */
 
-import createComponentStrategy from 'use-render/createComponentStrategy';
+import createChainOfResponsibility from 'react-chain-of-responsibility/createChainOfResponsibility';
+import createChainOfResponsibilityForFluentUI from 'react-chain-of-responsibility/createChainOfResponsibilityForFluentUI';
 
 test('simple scenario', () => {
   // TODO: Non-inclusive.
-  expect(typeof createComponentStrategy).toBe('function');
+  expect(typeof createChainOfResponsibility).toBe('function');
+  expect(typeof createChainOfResponsibilityForFluentUI).toBe('function');
 });

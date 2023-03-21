@@ -1,4 +1,4 @@
-# `use-render`
+# `react-chain-of-responsibility`
 
 [Chain of responsibility design pattern](https://refactoring.guru/design-patterns/chain-of-responsibility) for React component customization.
 
@@ -12,14 +12,14 @@ By composing customizations, they can be decoupled and published separately. App
 
 ## Demo
 
-Click here for [our live demo](https://compulim.github.io/use-render/).
+Click here for [our live demo](https://compulim.github.io/react-chain-of-responsibility/).
 
 ## How to use
 
 ### Using `<Proxy>` component
 
 ```jsx
-import { createChainOfResponsibility } from 'use-render';
+import { createChainOfResponsibility } from 'react-chain-of-responsibility';
 
 // Creates a <Provider> providing the chain of responsibility service.
 const { Provider, Proxy } = createChainOfResponsibility();
@@ -58,7 +58,7 @@ After calling `createChainOfResponsibilityForFluentUI`, it will return `useBuild
 #### Sample code
 
 ```jsx
-import { createChainOfResponsibilityForFluentUI } from 'use-render';
+import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility';
 
 // Creates a <Provider> providing the chain of responsibility service.
 const { Provider, Proxy } = createChainOfResponsibilityForFluentUI();
@@ -332,8 +332,8 @@ This package implements the _chain of responsibility_ design pattern. Based on _
 
 ## Contributions
 
-Like us? [Star](https://github.com/compulim/use-render/stargazers) us.
+Like us? [Star](https://github.com/compulim/react-chain-of-responsibility/stargazers) us.
 
-Want to make it better? [File](https://github.com/compulim/use-render/issues) us an issue.
+Want to make it better? [File](https://github.com/compulim/react-chain-of-responsibility/issues) us an issue.
 
-Don't like something you see? [Submit](https://github.com/compulim/use-render/pulls) a pull request.
+Don't like something you see? [Submit](https://github.com/compulim/react-chain-of-responsibility/pulls) a pull request.

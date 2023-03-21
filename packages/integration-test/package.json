@@ -1,5 +1,5 @@
 {
-  "name": "use-render-integration-test",
+  "name": "react-chain-of-responsibility-integration-test",
   "version": "0.0.0-0",
   "description": "",
   "private": true,
@@ -11,7 +11,7 @@
     "postbump": "cat package.json | jq '. + (.dependencies = (((.dependencies // {}) + (.localPeerDependencies // {})) | to_entries | sort_by(.key) | from_entries)) | (.devDependencies = (((.devDependencies // {}) + (.localPeerDevDependencies // {})) | to_entries | sort_by(.key) | from_entries))' > package-temp.json && mv package-temp.json package.json",
     "prebump": "cat package.json | jq '(((.localPeerDependencies // {}) | keys | map([\"dependencies\", .])) + ((.localPeerDevDependencies // {}) | keys | map([\"devDependencies\", .]))) as $localPeerPaths | delpaths($localPeerPaths)' > package-temp.json && mv package-temp.json package.json",
     "precommit": "eslint ./",
-    "prepare": "npm install ../use-render/use-render-0.0.0-0.tgz",
+    "prepare": "npm install ../react-chain-of-responsibility/react-chain-of-responsibility-0.0.0-0.tgz",
     "test": "jest"
   },
   "author": "William Wong (https://github.com/compulim)",
@@ -42,9 +42,9 @@
     "typescript": "^4.9.5"
   },
   "localPeerDependencies": {
-    "use-render": "file:../use-render/use-render-0.0.0-0.tgz"
+    "react-chain-of-responsibility": "file:../react-chain-of-responsibility/react-chain-of-responsibility-0.0.0-0.tgz"
   },
   "dependencies": {
-    "use-render": "file:../use-render/use-render-0.0.0-0.tgz"
+    "react-chain-of-responsibility": "file:../react-chain-of-responsibility/react-chain-of-responsibility-0.0.0-0.tgz"
   }
 }

@@ -1,7 +1,7 @@
 {
-  "name": "use-render",
+  "name": "react-chain-of-responsibility",
   "version": "0.0.0-0",
-  "description": "Design pattern for React component customization.",
+  "description": "Using chain of responsibility design pattern for React component customization.",
   "files": [
     "./lib/*"
   ],
@@ -50,7 +50,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/compulim/use-render.git"
+    "url": "git+https://github.com/compulim/react-chain-of-responsibility.git"
   },
   "keywords": [
     "react",
@@ -60,9 +60,9 @@
   "author": "William Wong (https://github.com/compulim)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/compulim/use-render/issues"
+    "url": "https://github.com/compulim/react-chain-of-responsibility/issues"
   },
-  "homepage": "https://github.com/compulim/use-render#readme",
+  "homepage": "https://github.com/compulim/react-chain-of-responsibility#readme",
   "pinDependencies": {
     "@testing-library/react": [
       "12",

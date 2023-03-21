@@ -1,26 +1,26 @@
 {
-  "name": "use-render-root",
+  "name": "react-chain-of-responsibility-root",
   "version": "0.0.1-0",
   "description": "",
   "private": true,
   "author": "William Wong (https://github.com/compulim)",
   "license": "MIT",
   "scripts": {
-    "build": "cd packages/use-render && npm run build",
+    "build": "cd packages/react-chain-of-responsibility && npm run build",
     "bump": "npm run bump:prod && npm run bump:dev && npm run bump:auditfix && npm run bump:packages",
     "bump:auditfix": "npm audit fix || exit 0",
     "bump:dev": "if [ `cat package.json | jq -r '(.devDependencies // {}) | length'` -ne 0 ]; then npm install $(cat package.json | jq -r '(.pinDependencies // {}) as $p | ((.devDependencies // {}) | keys) | map(. + \"@\" + ($p[.] // [\"latest\"])[0]) | .[]'); fi",
     "bump:packages": "npm run bump:packages:main && npm run bump:packages:pages",
-    "bump:packages:main": "cd packages/use-render && npm run bump",
+    "bump:packages:main": "cd packages/react-chain-of-responsibility && npm run bump",
     "bump:packages:pages": "cd packages/pages && npm run bump",
     "bump:prod": "if [ `cat package.json | jq -r '(.dependencies // {}) | length'` -ne 0 ]; then npm install --save-exact $(cat package.json | jq -r '(.pinDependencies // {}) as $p | ((.dependencies // {}) | keys) | map(. + \"@\" + ($p[.] // [\"latest\"])[0]) | .[]'); fi",
     "precommit": "npm run precommit:main && npm run precommit:integration",
-    "precommit:integration": "cd packages/use-render && npm run precommit",
-    "precommit:main": "cd packages/use-render && npm run precommit",
-    "prepare": "cd packages/use-render && npm clean-install",
+    "precommit:integration": "cd packages/react-chain-of-responsibility && npm run precommit",
+    "precommit:main": "cd packages/react-chain-of-responsibility && npm run precommit",
+    "prepare": "cd packages/react-chain-of-responsibility && npm clean-install",
     "test": "npm run test:unit && npm run test:integration",
     "test:integration": "cd packages/integration-test && npm install && npm test",
-    "test:unit": "cd packages/use-render && npm test"
+    "test:unit": "cd packages/react-chain-of-responsibility && npm test"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.53.0",

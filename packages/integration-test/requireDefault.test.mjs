@@ -1,8 +1,9 @@
 /** @jest-environment jsdom */
 
-const { createComponentStrategy } = require('use-render');
+const { createChainOfResponsibility, createChainOfResponsibilityForFluentUI } = require('react-chain-of-responsibility');
 
 test('simple scenario', () => {
   // TODO: Non-inclusive.
-  expect(typeof createComponentStrategy).toBe('function');
+  expect(typeof createChainOfResponsibility).toBe('function');
+  expect(typeof createChainOfResponsibilityForFluentUI).toBe('function');
 });

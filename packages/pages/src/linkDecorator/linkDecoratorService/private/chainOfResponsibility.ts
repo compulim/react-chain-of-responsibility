@@ -1,4 +1,4 @@
-import { createChainOfResponsibility } from 'use-render';
+import { createChainOfResponsibility } from 'react-chain-of-responsibility';
 
 import type { Init, Props } from './types';
 

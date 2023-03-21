@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x]
-        package-name: [use-render]
+        package-name: [react-chain-of-responsibility]
 
     steps:
       - uses: actions/checkout@v3
@@ -45,7 +45,7 @@ jobs:
 
     strategy:
       matrix:
-        package-name: [use-render]
+        package-name: [react-chain-of-responsibility]
 
     steps:
       - name: Download tarball artifact
@@ -78,7 +78,7 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x]
-        package-name: [use-render]
+        package-name: [react-chain-of-responsibility]
 
     steps:
       - uses: actions/checkout@v3
