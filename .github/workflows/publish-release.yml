@@ -41,6 +41,15 @@ jobs:
         with:
           name: tarball
           path: packages/${{ matrix.package-name }}/*.tgz
+      - name: Build pages
+        run: |
+          cd packages/pages
+          npm install
+          npm run build
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact
+        with:
+          path: packages/pages/public
 
   draft-release:
     needs:
@@ -86,9 +95,9 @@ jobs:
         run: |
           echo ::error::Cannot publish prerelease version ${{ steps.read-package-json.outputs.version }}
           exit 1
-      # - run: npm publish `ls ./*.tgz`
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm publish `ls ./*.tgz`
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Summarize job
         run: echo NPM package published to https://npmjs.com/package/${{ steps.read-package-json.outputs.package-name }}/v/${{ steps.read-package-json.outputs.version }}. >> $GITHUB_STEP_SUMMARY
 
@@ -147,3 +156,18 @@ jobs:
           else
             echo Pull request created at ${{ steps.create-pull-request.outputs.url }}. >> $GITHUB_STEP_SUMMARY
           fi
+
+  publish-pages:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: deployment
+        name: Deploy to GitHub Pages
+        uses: action/deploy-pages@v2

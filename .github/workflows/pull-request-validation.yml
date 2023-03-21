@@ -34,6 +34,15 @@ jobs:
         with:
           name: tarball
           path: packages/${{ matrix.package-name }}/*.tgz
+      - name: Build pages
+        run: |
+          cd packages/pages
+          npm install
+          npm run build
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact
+        with:
+          path: packages/pages/public
       - name: Run unit tests
         run: |
           cd packages/${{ matrix.package-name }}
