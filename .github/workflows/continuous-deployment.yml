@@ -49,7 +49,7 @@ jobs:
           npm install
           npm run build
       - name: Upload pages artifact
-        uses: actions/upload-pages-artifact
+        uses: actions/upload-pages-artifact@v1
         with:
           path: packages/pages/public
 
