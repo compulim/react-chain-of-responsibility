@@ -70,6 +70,8 @@ jobs:
         run: "! compgen -G lib/**/*.spec.*"
       - name: "Sanity check: no **/*.test.*"
         run: "! compgen -G lib/**/*.test.*"
+      - name: "Sanity check: no dependencies are pre-release"
+        run: cat package.json | jq '.dependencies | to_entries | map(.value | select(contains("-"))) | if length > 0 then halt_error(1) else empty end'
 
   integration-test:
     needs: build
