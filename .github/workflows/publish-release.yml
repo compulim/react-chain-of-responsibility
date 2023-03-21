@@ -118,6 +118,7 @@ jobs:
 
   create-bump-pull-request:
     continue-on-error: true
+    environment: production
     needs:
       - publish-package
     permissions:
@@ -146,7 +147,7 @@ jobs:
           git commit --message "Bump to ${{ steps.bump-version.outputs.version }}"
           git push --set-upstream origin bump-${{ steps.bump-version.outputs.version }}
       - env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN_CREATE_PULL_REQUEST }}
         id: create-pull-request
         name: Create pull request
         run: echo url=`gh pr create --assignee ${{ github.actor }} --base main --body "" --title "Bump to ${{ steps.bump-version.outputs.version }}" || true` >> $GITHUB_OUTPUT
