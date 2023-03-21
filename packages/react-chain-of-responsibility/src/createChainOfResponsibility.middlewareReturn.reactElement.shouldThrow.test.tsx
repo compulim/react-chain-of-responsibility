@@ -11,7 +11,7 @@ import type { ComponentType } from 'react';
 
 type Props = { children?: never; className?: string };
 
-let consoleErrorMock: jest.SpyInstance<void, any[], any>;
+let consoleErrorMock: jest.SpyInstance;
 
 beforeEach(() => {
   // Currently, there is no way to hide the caught exception thrown by render().

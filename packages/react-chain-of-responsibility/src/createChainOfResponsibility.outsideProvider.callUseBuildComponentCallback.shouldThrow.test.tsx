@@ -8,7 +8,7 @@ import createChainOfResponsibility from './createChainOfResponsibility';
 
 type Props = { children?: never };
 
-let consoleErrorMock: jest.SpyInstance<void, any[], any>;
+let consoleErrorMock: jest.SpyInstance;
 
 beforeEach(() => {
   // Currently, there is no way to hide the caught exception thrown by render().
@@ -32,5 +32,7 @@ test('when calling useBuildComponentCallback() outside of its <Provider> should 
 
   // WHEN: Render.
   // THEN: It should throw an error saying useBuildComponentCallback() hook cannot be used outside of its corresponding <Provider>.
-  expect(() => render(<App />)).toThrow('useBuildComponentCallback() hook cannot be used outside of its corresponding <Provider>');
+  expect(() => render(<App />)).toThrow(
+    'useBuildComponentCallback() hook cannot be used outside of its corresponding <Provider>'
+  );
 });

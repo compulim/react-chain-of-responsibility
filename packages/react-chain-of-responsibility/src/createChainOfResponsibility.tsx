@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { ComponentType, createContext, isValidElement, memo, useCallback, useContext, useMemo } from 'react';
 
 import applyMiddleware from './private/applyMiddleware';
@@ -68,6 +69,8 @@ export default function createChainOfResponsibility<
         const enhancer = fn(init);
 
         return next => originalRequest => {
+          // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
+          // eslint-disable-next-line prefer-const
           let hasReturned: boolean;
 
           const returnValue = enhancer(nextRequest => {
@@ -130,9 +133,19 @@ export default function createChainOfResponsibility<
     return <context.Provider value={contextValue}>{children}</context.Provider>;
   };
 
+  Provider.defaultProps = {};
+  Provider.displayName = 'ChainOfResponsibilityProvider';
+  Provider.propTypes = {
+    children: PropTypes.any,
+    init: PropTypes.any,
+    middleware: PropTypes.any
+  };
+
   const useBuildComponentCallback = () => useContext(context).useBuildComponentCallback;
 
   const Proxy: ComponentType<ProxyProps<Request, Props>> = memo(
+    // False positive: "children" is not a prop.
+    // eslint-disable-next-line react/prop-types
     ({ children, fallbackComponent, request, ...props }) => {
       let enhancer: ReturnType<typeof useBuildComponentCallback>;
 
@@ -147,6 +160,13 @@ export default function createChainOfResponsibility<
       return Component ? <Component {...(props as Props)}>{children}</Component> : null;
     }
   );
+
+  Proxy.defaultProps = {};
+  Proxy.displayName = 'Proxy';
+  Proxy.propTypes = {
+    fallbackComponent: PropTypes.any,
+    request: PropTypes.any
+  };
 
   return {
     Provider,

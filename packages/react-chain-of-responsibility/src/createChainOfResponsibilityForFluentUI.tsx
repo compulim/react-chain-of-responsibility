@@ -12,7 +12,7 @@ type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Pr
 // We are using the props as both "Request" and "Props".
 // This should eases migration from `onRender` to chain of responsibility.
 // Downside is, web developers could accidentally pass request as props and not honoring props modified by upstreamers.
-export default function createChainOfResponsibilityForFluentUI<Props extends {}, Init = undefined>(
+export default function createChainOfResponsibilityForFluentUI<Props extends object, Init = undefined>(
   options?: Parameters<typeof createChainOfResponsibility>[0]
 ): ReturnType<typeof createChainOfResponsibility<Props | undefined, Props, Init>> & {
   useBuildRenderFunction: UseBuildRenderFunction<Props>;

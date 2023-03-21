@@ -7,7 +7,7 @@ import React from 'react';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
-let consoleErrorMock: jest.SpyInstance<void, any[], any>;
+let consoleErrorMock: jest.SpyInstance;
 
 beforeEach(() => {
   // Currently, there is no way to hide the caught exception thrown by render().
