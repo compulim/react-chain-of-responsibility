@@ -44,7 +44,7 @@ jobs:
       - name: Build pages
         run: |
           cd packages/pages
-          npm install
+          npm install ../${{ matrix.package-name }}/*.tgz
           npm run build
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v1
