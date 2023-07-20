@@ -1,74 +1,11 @@
 name: Bump dependencies
 
 on:
-  workflow_call:
-    inputs:
-      package-name:
-        required: true
-        type: string
-    outputs:
-      pull-request-url:
-        value: ${{ jobs.create-bump-pull-request.outputs.url }}
-    secrets:
-      GH_TOKEN: {}
-      NPM_TOKEN: {}
-  workflow_dispatch:
-    inputs:
-      package-name:
-        default: react-chain-of-responsibility
-        required: true
-        type: string
+  workflow_dispatch: {}
 
 jobs:
-  create-bump-pull-request:
-    continue-on-error: true
-    environment:
-      name: pull-request
-      url: ${{ steps.summary.outputs.url }}
-    outputs:
-      url: ${{ steps.summary.outputs.url }}
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Configure user profile
-        run: |
-          git config user.email "${{ format('@{0}', github.actor) }}"
-          git config user.name "${{ format('@{0}', github.actor) }}"
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'npm'
-      - run: npm clean-install
-      - run: npm run bump
-      - name: Create branch
-        id: create-branch
-        run: |
-          BRANCH_NAME=bump-${{ github.run_id }}
-          echo branch-name=$BRANCH_NAME >> $GITHUB_OUTPUT
-
-          git checkout -b $BRANCH_NAME
-          git add --all
-          git commit --message "Bump dependencies"
-          git push --set-upstream origin $BRANCH_NAME
-      - continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        id: create-pull-request
-        name: Create pull request
-        run: |
-          PULL_REQUEST_NUMBER=`gh api repos/${{ github.repository }}/pulls --field base=main --field head=${{ steps.create-branch.outputs.branch-name }} --field title="Bump dependencies" | jq -r '.number'`
-          gh api repos/${{ github.repository }}/issues/$PULL_REQUEST_NUMBER/assignees --field assignees[]=${{ github.actor }}
-          echo url=https://github.com/${{ github.repository }}/pull/$PULL_REQUEST_NUMBER >> $GITHUB_OUTPUT
-      - id: summary
-        name: Summary
-        run: |
-          if [ "${{ steps.create-pull-request.outputs.url }}" = "" ]; then
-            echo url=https://github.com/${{ github.repository }}/compare/main...${{ steps.create-branch.outputs.branch-name }} >> $GITHUB_OUTPUT
-            echo "Branch created at [${{ steps.create-branch.outputs.branch-name }}](https://github.com/${{ github.repository }}/compare/main...${{ steps.create-branch.outputs.branch-name }})" >> $GITHUB_STEP_SUMMARY
-          else
-            echo url=${{ steps.create-pull-request.outputs.url }} >> $GITHUB_OUTPUT
-            echo Pull request created at ${{ steps.create-pull-request.outputs.url }}. >> $GITHUB_STEP_SUMMARY
-          fi
+  call-workflow:
+    secrets: inherit
+    uses: compulim/workflows/.github/workflows/bump-dependencies.yml@main
+    with:
+      package-name: react-chain-of-responsibility
