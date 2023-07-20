@@ -28,8 +28,8 @@ test('when calling multiple next in a middleware', () => {
           );
         }
       },
-      () => next => (request: string) => request === 'hello' ? HelloComponent : next(request),
-      () => next => (request: string) => request === 'world' ? WorldComponent : next(request)
+      () => next => (request: string) => (request === 'hello' ? HelloComponent : next(request)),
+      () => next => (request: string) => (request === 'world' ? WorldComponent : next(request))
     ]
   })(Proxy);
 
