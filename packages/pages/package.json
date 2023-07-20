@@ -17,17 +17,17 @@
   "author": "William Wong (https://github.com/compulim)",
   "license": "MIT",
   "devDependencies": {
-    "@fluentui/react": "^8.106.7",
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
-    "esbuild": "^0.17.10",
-    "react-wrap-with": "0.0.2-main.fa6cc79",
-    "typescript": "^4.9.5"
+    "@fluentui/react": "^8.110.10",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "esbuild": "^0.18.14",
+    "react-wrap-with": "^0.0.2",
+    "typescript": "^5.1.6"
   },
   "dependencies": {
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-chain-of-responsibility": "file:../react-chain-of-responsibility/react-chain-of-responsibility-0.0.0-0.tgz"
+    "react-chain-of-responsibility": "file:../react-chain-of-responsibility/react-chain-of-responsibility-0.0.0-0.tgz",
+    "react-dom": "18.2.0"
   },
   "localPeerDependencies": {
     "react-chain-of-responsibility": "file:../react-chain-of-responsibility/react-chain-of-responsibility-0.0.0-0.tgz"
