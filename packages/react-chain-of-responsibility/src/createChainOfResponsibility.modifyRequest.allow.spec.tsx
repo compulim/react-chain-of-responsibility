@@ -18,7 +18,7 @@ test('allow modifying request should render "citric fruit"', () => {
   const App = wrapWith(Provider, {
     middleware: [
       // Turns "orange" into "citric fruit".
-      () => next => thing => thing === 'orange' ? next('citric fruit') : next(thing),
+      () => next => thing => (thing === 'orange' ? next('citric fruit') : next(thing)),
       () => () => thing => () => <Fragment>{thing}</Fragment>
     ]
   })(({ thing }: AppProps) => <Proxy request={thing} />);

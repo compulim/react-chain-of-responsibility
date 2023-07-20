@@ -50,7 +50,7 @@ function isInternalLink(href: string, internalHosts: string[]) {
 
 describe('with a link middleware', () => {
   const middleware: ComponentMiddleware<string, LinkProps, string[]>[] = [
-    (internalHosts: string[]) => next => href => isInternalLink(href, internalHosts) ? InternalLink : next(href),
+    (internalHosts: string[]) => next => href => (isInternalLink(href, internalHosts) ? InternalLink : next(href)),
     () => () => () => ExternalLink
   ];
 

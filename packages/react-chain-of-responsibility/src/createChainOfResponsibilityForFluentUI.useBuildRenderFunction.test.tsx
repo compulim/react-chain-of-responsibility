@@ -18,7 +18,7 @@ test('useBuildRenderFunction should return IRenderFunction of Fluent UI', () => 
   const Inner = ({ text }: Props) => useBuildRenderFunction()({ text }, () => <Fragment>Hello, World!</Fragment>);
 
   const App = wrapWith(Provider, {
-    middleware: [() => next => request => request?.text ? HelloWorld : next(request)]
+    middleware: [() => next => request => (request?.text ? HelloWorld : next(request))]
   })(Inner);
 
   // WHEN: Render with "Aloha!" as "text" prop.

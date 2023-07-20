@@ -31,8 +31,7 @@ test('useBuildRenderFunction should call getKey() for computing "key" attribute'
         () =>
           () =>
           () =>
-          ({ value }) =>
-            <Fragment>{value}</Fragment>
+          ({ value }) => <Fragment>{value}</Fragment>
       ],
       []
     );
