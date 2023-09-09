@@ -10,10 +10,10 @@ import type { PropsWithChildren } from 'react';
 
 const middleware: (typeof types.middleware)[] = [
   // If it does not have "href", treat it as plain text.
-  () => next => href => !href ? PlainText : next(href),
+  () => next => href => (!href ? PlainText : next(href)),
 
   // If it is an internal link, whitelisted domain, or empty string, then treat it as internal link.
-  internalHosts => next => href => !href || isInternalLink(href, internalHosts) ? InternalLink : next(href),
+  internalHosts => next => href => (!href || isInternalLink(href, internalHosts) ? InternalLink : next(href)),
 
   // Otherwise, treat it as external link:
   // - Add rel="noopener noreferrer"

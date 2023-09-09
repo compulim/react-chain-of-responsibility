@@ -7,11 +7,10 @@
     "bump": "npm run bump:prod && npm run bump:dev && npm run bump:auditfix",
     "bump:auditfix": "npm audit fix || exit 0",
     "bump:dev": "if [ `cat package.json | jq -r '(.devDependencies // {}) | length'` -ne 0 ]; then npm install $(cat package.json | jq -r '(.pinDependencies // {}) as $p | ((.devDependencies // {}) | keys) | map(. + \"@\" + ($p[.] // [\"latest\"])[0]) | .[]'); fi",
-    "bump:prod": "if [ `cat package.json | jq -r '(.dependencies // {}) | length'` -ne 0 ]; then npm install --save-exact $(cat package.json | jq -r '(.pinDependencies // {}) as $p | ((.dependencies // {}) | keys) | map(. + \"@\" + ($p[.] // [\"latest\"])[0]) | .[]'); fi",
+    "bump:prod": "if [ `cat package.json | jq -r '(.dependencies // {}) | length'` -ne 0 ]; then npm install $(cat package.json | jq -r '(.pinDependencies // {}) as $p | ((.dependencies // {}) | keys) | map(. + \"@\" + ($p[.] // [\"latest\"])[0]) | .[]'); fi",
     "postbump": "cat package.json | jq '. + (.dependencies = (((.dependencies // {}) + (.localPeerDependencies // {})) | to_entries | sort_by(.key) | from_entries)) | (.devDependencies = (((.devDependencies // {}) + (.localPeerDevDependencies // {})) | to_entries | sort_by(.key) | from_entries))' > package-temp.json && mv package-temp.json package.json",
     "prebump": "cat package.json | jq '(((.localPeerDependencies // {}) | keys | map([\"dependencies\", .])) + ((.localPeerDevDependencies // {}) | keys | map([\"devDependencies\", .]))) as $localPeerPaths | delpaths($localPeerPaths)' > package-temp.json && mv package-temp.json package.json",
     "precommit": "eslint --ext .js,.cjs,.mjs ./",
-    "prepare": "npm install ../react-chain-of-responsibility/react-chain-of-responsibility-0.0.0-0.tgz",
     "test": "jest"
   },
   "author": "William Wong (https://github.com/compulim)",
@@ -41,10 +40,7 @@
     "react-test-renderer": "^17.0.2",
     "typescript": "^5.2.2"
   },
-  "localPeerDependencies": {
-    "react-chain-of-responsibility": "file:../react-chain-of-responsibility/react-chain-of-responsibility-0.0.0-0.tgz"
-  },
   "dependencies": {
-    "react-chain-of-responsibility": "file:../react-chain-of-responsibility/react-chain-of-responsibility-0.0.0-0.tgz"
+    "react-chain-of-responsibility": "^0.0.0-0"
   }
 }
