@@ -13,8 +13,7 @@ initializeIcons();
 
 const cellClassName = mergeStyles({ paddingBottom: 4, paddingLeft: 12, paddingTop: 4 });
 
-const { Provider, types, useBuildRenderFunction } =
-  createChainOfResponsibilityForFluentUI<IDetailsColumnFieldProps>();
+const { Provider, types, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI<IDetailsColumnFieldProps>();
 
 const COLUMNS: IColumn[] = [
   { fieldName: 'name', key: 'name', minWidth: 0, name: 'Fruit' },
@@ -37,15 +36,20 @@ const decorateFieldWithLink: typeof types.middleware = () => next => request => 
   const NextComponent = next(request);
 
   if (request?.column.fieldName === 'name' && request?.item.canClick) {
-    return props => <Link>{NextComponent && <NextComponent {...props} />}</Link>;
+    const FieldWithLink = (props: IDetailsColumnFieldProps) => (
+      <Link>{NextComponent && <NextComponent {...props} />}</Link>
+    );
+
+    FieldWithLink.displayName = 'FieldWithLink';
+
+    return FieldWithLink;
   }
 
   return NextComponent;
 };
 
-const ItemRating = ({ item }: { item: Item }) => (
-  <Rating className={cellClassName} rating={item.rating} readOnly={true} />
-);
+const ItemRating = ({ item }: { item: Item }) =>
+  item.rating ? <Rating className={cellClassName} rating={item.rating} readOnly={true} /> : null;
 
 const decorateFieldWithRating: typeof types.middleware = () => next => request => {
   if (request?.column.fieldName === 'rating') {
@@ -65,7 +69,7 @@ const Inner = () => {
   const renderFunction = useBuildRenderFunction({
     // Key generation logic adopted from https://github.com/microsoft/fluentui/blob/7fde5c94869ff9841b142b7ff1d0a3df0ab58f74/packages/react/src/components/DetailsList/DetailsRowFields.tsx#L61.
     getKey: request =>
-      `${request?.column.key}${typeof request?.cellValueKey !== undefined ? `-${request?.cellValueKey}` : ''}`
+      `${request?.column.key}${typeof request?.cellValueKey !== 'undefined' ? `-${request?.cellValueKey}` : ''}`
   });
 
   return <DetailsList columns={COLUMNS} items={ITEMS} onRenderField={renderFunction} />;
