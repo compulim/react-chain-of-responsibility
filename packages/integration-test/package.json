@@ -26,6 +26,6 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "react-chain-of-responsibility": "^0.0.1"
+    "react-chain-of-responsibility": "^0.0.0-0"
   }
 }
