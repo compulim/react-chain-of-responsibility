@@ -38,7 +38,7 @@
     }
   },
   "main": "./lib/commonjs/index.js",
-  "typings": "./lib/types/index.d.ts",
+  "typings": "./lib/commonjs-types/index.d.ts",
   "scripts": {
     "build": "npm run build:babel:commonjs && npm run build:babel:esmodules && npm run build:typescript:commonjs && npm run build:typescript:esmodules",
     "build:babel:commonjs": "babel src --config-file ./babel.commonjs.config.json --extensions .ts,.tsx --out-dir ./lib/commonjs/",
