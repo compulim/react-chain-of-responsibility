@@ -1,0 +1,11 @@
+name: Bump scaffold
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  call-workflow:
+    secrets: inherit
+    uses: compulim/workflows/.github/workflows/bump-scaffold.yml@main
+    with:
+      package-name: react-chain-of-responsibility
