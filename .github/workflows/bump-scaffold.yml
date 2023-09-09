@@ -9,3 +9,4 @@ jobs:
     uses: compulim/workflows/.github/workflows/bump-scaffold.yml@main
     with:
       package-name: react-chain-of-responsibility
+      use-react: true
