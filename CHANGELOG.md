@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added type-checking for test, by [@compulim](https://github.com/compulim), in PR [#20](https://github.com/compulim/react-chain-of-responsibility/pull/20)
 - Updates `tsconfig.json` to extend from [`@tsconfig/strictest`](https://npmjs.com/package/@tsconfig/strictest), by [@compulim](https://github.com/compulim), in PR [#20](https://github.com/compulim/react-chain-of-responsibility/pull/20)
+- Bump dependencies, by [@compulim](https://github.com/compulim), in PR [#24](https://github.com/compulim/react-chain-of-responsibility/pull/24)
+   - Development dependencies
+      - [`@testing-library/react@14.0.0`](https://npmjs.com/package/@testing-library/react)
+      - [`@types/react@18.2.21`](https://npmjs.com/package/@types/react)
+      - [`react-dom@18.2.0`](https://npmjs.com/package/react-dom)
+      - [`react-test-renderer@18.2.0`](https://npmjs.com/package/react-test-renderer)
+      - [`react@18.2.0`](https://npmjs.com/package/react)
 
 ### Fixed
 
