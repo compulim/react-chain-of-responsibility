@@ -13,4 +13,4 @@ jobs:
     secrets: inherit
     uses: compulim/workflows/.github/workflows/publish-release.yml@main
     with:
-      package-name: react-chain-of-responsibility
+      package-name: $package-name

@@ -11,4 +11,4 @@ jobs:
     secrets: inherit
     uses: compulim/workflows/.github/workflows/bump-dependencies.yml@main
     with:
-      package-name: react-chain-of-responsibility
+      package-name: $package-name

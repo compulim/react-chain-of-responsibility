@@ -8,4 +8,5 @@ jobs:
     secrets: inherit
     uses: compulim/workflows/.github/workflows/bump-scaffold.yml@main
     with:
-      package-name: react-chain-of-responsibility
+      package-name: $package-name
+      use-react: true

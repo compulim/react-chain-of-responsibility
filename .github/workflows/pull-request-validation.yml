@@ -9,4 +9,4 @@ jobs:
   call-workflow:
     uses: compulim/workflows/.github/workflows/pull-request-validation.yml@main
     with:
-      package-name: react-chain-of-responsibility
+      package-name: $package-name
