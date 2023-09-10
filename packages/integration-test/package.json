@@ -13,6 +13,9 @@
   },
   "author": "William Wong (https://github.com/compulim)",
   "license": "MIT",
+  "localPeerDependencies": {
+    "react-chain-of-responsibility": "^0.0.0-0"
+  },
   "devDependencies": {
     "@babel/core": "^7.22.17",
     "@babel/preset-env": "^7.22.15",
