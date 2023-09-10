@@ -1,7 +1,18 @@
 name: Bump scaffold
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      package-name:
+        default: react-chain-of-responsibility
+        description: Name of the package
+        required: true
+        type: string
+      use-react:
+        default: true
+        description: Use React
+        required: true
+        type: boolean
 
 jobs:
   call-workflow:
@@ -9,3 +20,4 @@ jobs:
     uses: compulim/workflows/.github/workflows/bump-scaffold.yml@main
     with:
       package-name: react-chain-of-responsibility
+      use-react: true
