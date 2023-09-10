@@ -3,50 +3,65 @@
   "version": "0.0.0-0",
   "description": "Using chain of responsibility design pattern for React component customization.",
   "files": [
-    "./lib/*"
+    "./lib/"
   ],
   "exports": {
     ".": {
-      "import": "./lib/esmodules/index.js",
-      "require": "./lib/commonjs/index.js",
-      "types": "./lib/types/index.d.ts"
+      "import": {
+        "types": "./lib/esmodules-types/index.d.ts",
+        "default": "./lib/esmodules/index.js"
+      },
+      "require": {
+        "types": "./lib/commonjs-types/index.d.ts",
+        "default": "./lib/commonjs/index.js"
+      }
     },
     "./createChainOfResponsibility": {
-      "import": "./lib/esmodules/createChainOfResponsibility.js",
-      "require": "./lib/commonjs/createChainOfResponsibility.js",
-      "types": "./lib/types/createChainOfResponsibility.d.ts"
+      "import": {
+        "types": "./lib/esmodules-types/createChainOfResponsibility.d.ts",
+        "default": "./lib/esmodules/createChainOfResponsibility.js"
+      },
+      "require": {
+        "types": "./lib/commonjs-types/createChainOfResponsibility.d.ts",
+        "default": "./lib/commonjs/createChainOfResponsibility.js"
+      }
     },
     "./createChainOfResponsibilityForFluentUI": {
-      "import": "./lib/esmodules/createChainOfResponsibilityForFluentUI.js",
-      "require": "./lib/commonjs/createChainOfResponsibilityForFluentUI.js",
-      "types": "./lib/types/createChainOfResponsibilityForFluentUI.d.ts"
+      "import": {
+        "types": "./lib/esmodules-types/createChainOfResponsibilityForFluentUI.d.ts",
+        "default": "./lib/esmodules/createChainOfResponsibilityForFluentUI.js"
+      },
+      "require": {
+        "types": "./lib/commonjs-types/createChainOfResponsibilityForFluentUI.d.ts",
+        "default": "./lib/commonjs/createChainOfResponsibilityForFluentUI.js"
+      }
     }
   },
   "main": "./lib/commonjs/index.js",
-  "typings": "./lib/types/index.d.ts",
+  "typings": "./lib/commonjs-types/index.d.ts",
   "scripts": {
-    "build": "npm run build:babel && npm run build:typescript",
-    "build:babel": "npm run build:babel:commonjs && npm run build:babel:esmodules",
+    "build": "npm run build:babel:commonjs && npm run build:babel:esmodules && npm run build:typescript:commonjs && npm run build:typescript:esmodules",
     "build:babel:commonjs": "babel src --config-file ./babel.commonjs.config.json --extensions .ts,.tsx --out-dir ./lib/commonjs/",
     "build:babel:esmodules": "babel src --config-file ./babel.esmodules.config.json --extensions .ts,.tsx --out-dir ./lib/esmodules/",
-    "build:typescript": "tsc --project ./src/tsconfig.declaration.json",
+    "build:typescript:commonjs": "tsc --project ./src/tsconfig.declaration.commonjs.json",
+    "build:typescript:esmodules": "tsc --project ./src/tsconfig.declaration.esmodules.json",
     "bump": "npm run bump:prod && npm run bump:dev && npm run bump:auditfix && npm run bump:babel",
     "bump:auditfix": "npm audit fix || exit 0",
     "bump:babel": "npm run bump:babel:commonjs && npm run bump:babel:esmodules",
     "bump:babel:commonjs": "cat babel.commonjs.config.json | jq --arg CORE_JS_VERSION `cat node_modules/@babel/runtime-corejs3/package.json | jq -r .version` '(.plugins[] | select(.[0] == \"@babel/plugin-transform-runtime\"))[1].version = $CORE_JS_VERSION' | prettier --parser json > babel.commonjs.config.json.tmp && mv babel.commonjs.config.json.tmp babel.commonjs.config.json",
     "bump:babel:esmodules": "cat babel.esmodules.config.json | jq --arg CORE_JS_VERSION `cat node_modules/@babel/runtime-corejs3/package.json | jq -r .version` '(.plugins[] | select(.[0] == \"@babel/plugin-transform-runtime\"))[1].version = $CORE_JS_VERSION' | prettier --parser json > babel.esmodules.config.json.tmp && mv babel.esmodules.config.json.tmp babel.esmodules.config.json",
-    "bump:babel:jest": "cat babel.jest.config.json | jq --arg CORE_JS_VERSION `cat node_modules/@babel/runtime-corejs3/package.json | jq -r .version` '(.plugins[] | select(.[0] == \"@babel/plugin-transform-runtime\"))[1].version = $CORE_JS_VERSION' | prettier --parser json > babel.jest.config.json.tmp && mv babel.jest.config.json.tmp babel.jest.config.json",
     "bump:dev": "if [ `cat package.json | jq -r '(.devDependencies // {}) | length'` -ne 0 ]; then npm install $(cat package.json | jq -r '(.pinDependencies // {}) as $p | ((.devDependencies // {}) | keys) | map(. + \"@\" + ($p[.] // [\"latest\"])[0]) | .[]'); fi",
     "bump:prod": "if [ `cat package.json | jq -r '(.dependencies // {}) | length'` -ne 0 ]; then npm install --save-exact $(cat package.json | jq -r '(.pinDependencies // {}) as $p | ((.dependencies // {}) | keys) | map(. + \"@\" + ($p[.] // [\"latest\"])[0]) | .[]'); fi",
     "postbump": "cat package.json | jq '. + (.dependencies = (((.dependencies // {}) + (.localPeerDependencies // {})) | to_entries | sort_by(.key) | from_entries)) | (.devDependencies = (((.devDependencies // {}) + (.localPeerDevDependencies // {})) | to_entries | sort_by(.key) | from_entries))' > package-temp.json && mv package-temp.json package.json",
+    "postscaffold": "npm run bump:babel",
     "prebump": "cat package.json | jq '(((.localPeerDependencies // {}) | keys | map([\"dependencies\", .])) + ((.localPeerDevDependencies // {}) | keys | map([\"devDependencies\", .]))) as $localPeerPaths | delpaths($localPeerPaths)' > package-temp.json && mv package-temp.json package.json",
-    "precommit": "eslint ./src/",
+    "precommit": "npm run precommit:eslint && npm run precommit:typescript:production && npm run precommit:typescript:test",
+    "precommit:eslint": "eslint ./src/",
+    "precommit:typescript:production": "tsc --noEmit --project ./src/tsconfig.precommit.production.json",
+    "precommit:typescript:test": "tsc --noEmit --project ./src/tsconfig.precommit.test.json",
     "prepack": "cp ../../CHANGELOG.md . && cp ../../LICENSE . && cp ../../README.md .",
     "start": "esbuild --bundle --outfile=./public/main.js --servedir=./public --sourcemap ./scenarios/index.jsx",
-    "jest": "jest",
-    "test": "npm run test:jest && npm run test:typescript",
-    "test:jest": "npm run jest",
-    "test:typescript": "tsc --project ./src/tsconfig.test.json"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -95,6 +110,8 @@
     "@fluentui/react": "^8.110.10",
     "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
+    "@tsconfig/recommended": "^1.0.2",
+    "@tsconfig/strictest": "^2.0.2",
     "@types/jest": "^29.5.3",
     "@types/node": "^20.4.2",
     "@types/react": "^17.0.62",
