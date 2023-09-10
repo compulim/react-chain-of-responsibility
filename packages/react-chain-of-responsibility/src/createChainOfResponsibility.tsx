@@ -22,9 +22,11 @@ type ProviderProps<Request, Props, Init> = PropsWithChildren<{
 }> &
   (Init extends never | undefined ? { init?: Init } : { init: Init });
 
-type ProxyProps<Request, Props> = Request extends never | undefined
-  ? Props & { fallbackComponent?: ComponentType<Props>; request?: Request }
-  : Props & { fallbackComponent?: ComponentType<Props>; request: Request };
+type ProxyProps<Request, Props> = PropsWithChildren<
+  Request extends never | undefined
+    ? Props & { fallbackComponent?: ComponentType<Props>; request?: Request }
+    : Props & { fallbackComponent?: ComponentType<Props>; request: Request }
+>;
 
 type Options = {
   /**

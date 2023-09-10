@@ -17,7 +17,11 @@ const middleware: (typeof types.middleware)[] = [
     const Next = next(request);
 
     if (request?.has('bold')) {
-      return props => <Bold>{Next && <Next {...props} />}</Bold>;
+      const Bolded = (props: Props) => <Bold>{Next && <Next {...props} />}</Bold>;
+
+      Bolded.displayName = 'Bolded';
+
+      return Bolded;
     }
 
     return Next;

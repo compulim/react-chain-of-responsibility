@@ -14,8 +14,8 @@ const Orange = () => <Fragment>🍊</Fragment>;
 // Constructs an array of middleware to handle the request and return corresponding subcomponents.
 // Fallback to `defaultRender` of `IRenderFunction` is handled by the hook.
 const middleware: (typeof types.middleware)[] = [
-  () => next => props => props?.iconProps?.iconName === 'Banana' ? Banana : next(props),
-  () => next => props => props?.iconProps?.iconName === 'Orange' ? Orange : next(props)
+  () => next => props => (props?.iconProps?.iconName === 'Banana' ? Banana : next(props)),
+  () => next => props => (props?.iconProps?.iconName === 'Orange' ? Orange : next(props))
 ];
 
 const Inner = () => {
