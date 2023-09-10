@@ -18,13 +18,13 @@
   "author": "William Wong (https://github.com/compulim)",
   "license": "MIT",
   "devDependencies": {
-    "@fluentui/react": "^8.110.10",
+    "@fluentui/react": "^8.111.2",
     "@tsconfig/strictest": "^2.0.2",
-    "@types/react": "^18.2.15",
+    "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
-    "esbuild": "^0.18.14",
+    "esbuild": "^0.19.2",
     "react-wrap-with": "^0.0.2",
-    "typescript": "^5.1.6"
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "react": "18.2.0",
