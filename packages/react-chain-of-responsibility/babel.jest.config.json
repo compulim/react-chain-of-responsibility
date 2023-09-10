@@ -1,13 +1,4 @@
 {
-  "plugins": [
-    [
-      "@babel/plugin-transform-runtime",
-      {
-        "corejs": 3,
-        "version": "7.21.0"
-      }
-    ]
-  ],
   "presets": [
     "@babel/preset-react",
     "@babel/preset-typescript",
@@ -15,9 +6,7 @@
       "@babel/preset-env",
       {
         "modules": "commonjs",
-        "targets": {
-          "ie": "11"
-        }
+        "targets": { "node": "16" }
       }
     ]
   ],
