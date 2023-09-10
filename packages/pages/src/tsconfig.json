@@ -2,11 +2,11 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "jsx": "react",
-    "moduleResolution": "nodenext",
+    "lib": ["DOM", "ESNext"],
+    "moduleResolution": "Bundler",
     "noEmit": true,
-    "skipLibCheck": true, // "@fluentui/*" has internal conflicts on their types
     "strict": true,
     "target": "ESNext"
   },
-  "exclude": ["**/*.spec.*", "**/*.test.*"]
+  "extends": "@tsconfig/strictest/tsconfig.json"
 }
