@@ -15,7 +15,7 @@ test('middleware should render', () => {
   const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
 
   // WHEN: Render <Proxy>.
-  const App = ({ text }) => (
+  const App = ({ text }: Props) => (
     <Provider middleware={[() => () => () => HelloWorldComponent]}>
       <Proxy text={text} />
     </Provider>
