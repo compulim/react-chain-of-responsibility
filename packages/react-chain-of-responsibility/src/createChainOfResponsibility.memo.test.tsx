@@ -2,13 +2,13 @@
 /// <reference types="@types/jest" />
 
 import { render } from '@testing-library/react';
-import React, { Fragment } from 'react';
+import React, { Fragment, memo } from 'react';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
 type Props = { children?: never; text: string };
 
-const HelloWorldComponent = ({ text }: Props) => <Fragment>{text}</Fragment>;
+const HelloWorldComponent = memo(({ text }: Props) => <Fragment>{text}</Fragment>);
 
 test('middleware should render', () => {
   // GIVEN: A middleware return a component that would render "Hello, World!".

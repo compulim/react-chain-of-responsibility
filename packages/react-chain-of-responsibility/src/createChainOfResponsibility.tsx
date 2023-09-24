@@ -1,10 +1,18 @@
 import PropTypes from 'prop-types';
-import React, { ComponentType, createContext, isValidElement, memo, useCallback, useContext, useMemo } from 'react';
+import React, {
+  type ComponentType,
+  createContext,
+  isValidElement,
+  memo,
+  type PropsWithChildren,
+  useCallback,
+  useContext,
+  useMemo
+} from 'react';
 
+import { type ComponentMiddleware } from './types';
 import applyMiddleware from './private/applyMiddleware';
-
-import type { ComponentMiddleware } from './types';
-import type { PropsWithChildren } from 'react';
+import isReactComponent from './isReactComponent';
 
 type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ComponentType<Props> | false | null | undefined };
 
@@ -100,12 +108,8 @@ export default function createChainOfResponsibility<
               } else if (
                 returnValue !== false &&
                 returnValue !== null &&
-                typeof returnValue !== 'function' &&
                 typeof returnValue !== 'undefined' &&
-                // There are no definitive ways to check if an object is a React component or not.
-                // We are checking if the object has a render function (classic component).
-                // Note: "forwardRef()" returns plain object, not class instance.
-                !(typeof returnValue === 'object' && typeof returnValue['render'] === 'function')
+                !isReactComponent(returnValue)
               ) {
                 throw new Error(
                   'middleware must return false, null, undefined, function component, or class component'
