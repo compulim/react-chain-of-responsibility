@@ -18,7 +18,7 @@ type ProviderContext<Request, Props> = {
 };
 
 type ProviderProps<Request, Props, Init> = PropsWithChildren<{
-  middleware: ComponentMiddleware<Request, Props, Init>[];
+  middleware: readonly ComponentMiddleware<Request, Props, Init>[];
 }> &
   (Init extends never | undefined ? { init?: Init } : { init: Init });
 
@@ -62,54 +62,61 @@ export default function createChainOfResponsibility<
   });
 
   const Provider: ComponentType<ProviderProps<Request, Props, Init>> = ({ children, init, middleware }) => {
-    if (!Array.isArray(middleware) || middleware.some(middleware => typeof middleware !== 'function')) {
+    // TODO: Related to https://github.com/microsoft/TypeScript/issues/17002.
+    //       typescript@5.2.2 has a bug, Array.isArray() is a type predicate but only works with mutable array, not readonly array.
+    //       After removing "as unknown", `middleware` on the next line become `any[]`.
+    if (!Array.isArray(middleware as unknown) || middleware.some(middleware => typeof middleware !== 'function')) {
       throw new Error('middleware prop must be an array of functions');
     }
 
-    const patchedMiddleware: ComponentMiddleware<Request, Props, Init>[] = (middleware || []).map(fn => {
-      return init => {
-        const enhancer = fn(init);
+    const patchedMiddleware: readonly ComponentMiddleware<Request, Props, Init>[] = Object.freeze(
+      middleware
+        ? middleware.map(fn => (init: Init) => {
+            const enhancer = fn(init);
 
-        return next => originalRequest => {
-          // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
-          // eslint-disable-next-line prefer-const
-          let hasReturned: boolean;
+            return (next: UseBuildComponentCallback<Request, Props>) => (originalRequest: Request) => {
+              // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
+              // eslint-disable-next-line prefer-const
+              let hasReturned: boolean;
 
-          const returnValue = enhancer(nextRequest => {
-            if (hasReturned) {
-              throw new Error('next() cannot be called after the function had returned synchronously');
-            }
+              const returnValue = enhancer(nextRequest => {
+                if (hasReturned) {
+                  throw new Error('next() cannot be called after the function had returned synchronously');
+                }
 
-            !options.passModifiedRequest &&
-              nextRequest !== originalRequest &&
-              console.warn(
-                'react-chain-of-responsibility: "options.passModifiedRequest" must be set to true to pass a different request object to next().'
-              );
+                !options.passModifiedRequest &&
+                  nextRequest !== originalRequest &&
+                  console.warn(
+                    'react-chain-of-responsibility: "options.passModifiedRequest" must be set to true to pass a different request object to next().'
+                  );
 
-            return next(options.passModifiedRequest ? nextRequest : originalRequest);
-          })(originalRequest);
+                return next(options.passModifiedRequest ? nextRequest : originalRequest);
+              })(originalRequest);
 
-          hasReturned = true;
+              hasReturned = true;
 
-          if (isValidElement(returnValue)) {
-            throw new Error('middleware must not return React element directly');
-          } else if (
-            returnValue !== false &&
-            returnValue !== null &&
-            typeof returnValue !== 'function' &&
-            typeof returnValue !== 'undefined' &&
-            // There are no definitive ways to check if an object is a React component or not.
-            // We are checking if the object has a render function (classic component).
-            // Note: "forwardRef()" returns plain object, not class instance.
-            !(typeof returnValue === 'object' && typeof returnValue['render'] === 'function')
-          ) {
-            throw new Error('middleware must return false, null, undefined, function component, or class component');
-          }
+              if (isValidElement(returnValue)) {
+                throw new Error('middleware must not return React element directly');
+              } else if (
+                returnValue !== false &&
+                returnValue !== null &&
+                typeof returnValue !== 'function' &&
+                typeof returnValue !== 'undefined' &&
+                // There are no definitive ways to check if an object is a React component or not.
+                // We are checking if the object has a render function (classic component).
+                // Note: "forwardRef()" returns plain object, not class instance.
+                !(typeof returnValue === 'object' && typeof returnValue['render'] === 'function')
+              ) {
+                throw new Error(
+                  'middleware must return false, null, undefined, function component, or class component'
+                );
+              }
 
-          return returnValue;
-        };
-      };
-    });
+              return returnValue;
+            };
+          })
+        : []
+    );
 
     const enhancer = useMemo(
       () =>
@@ -117,7 +124,7 @@ export default function createChainOfResponsibility<
         // - With reverse, [a, b, c] will become a(b(c(fn)))
         // - Without reverse, [a, b, c] will become c(b(a(fn)))
         applyMiddleware<[Request], ComponentType<Props> | false | null | undefined, [Init]>(
-          ...[...(patchedMiddleware || [])].reverse()
+          ...[...patchedMiddleware].reverse()
         )(init as Init),
       [init, middleware]
     );
