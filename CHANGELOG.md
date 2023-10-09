@@ -5,13 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-### Fixed
-
-- Updated `exports` field to workaround [TypeScript resolution bug](https://github.com/microsoft/TypeScript/issues/50762), by [@compulim](https://github.com/compulim), in PR [#20](https://github.com/compulim/react-chain-of-responsibility/pull/20)
-- Fixed [#32](https://github.com/compulim/react-chain-of-responsibility/issues/32), readonly middleware array should not return type error, by [@compulim](https://github.com/compulim), in PR [#33](https://github.com/compulim/react-chain-of-responsibility/pull/33)
-- Fixed [#29](https://github.com/compulim/react-chain-of-responsibility/issues/29), support `memo()` and other built-in components, by [@compulim](https://github.com/compulim), in PR [#34](https://github.com/compulim/react-chain-of-responsibility/pull/34)
+## [0.0.2] - 2023-10-09
 
 ### Changed
 
@@ -42,7 +36,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - [`react-wrap-with@0.0.4`](https://npmjs.com/package/react-wrap-with)
       - [`react@18.2.0`](https://npmjs.com/package/react)
 
+### Fixed
+
+- Updated `exports` field to workaround [TypeScript resolution bug](https://github.com/microsoft/TypeScript/issues/50762), by [@compulim](https://github.com/compulim), in PR [#20](https://github.com/compulim/react-chain-of-responsibility/pull/20)
+- Fixed [#32](https://github.com/compulim/react-chain-of-responsibility/issues/32), readonly middleware array should not return type error, by [@compulim](https://github.com/compulim), in PR [#33](https://github.com/compulim/react-chain-of-responsibility/pull/33)
+- Fixed [#29](https://github.com/compulim/react-chain-of-responsibility/issues/29), support `memo()` and other built-in components, by [@compulim](https://github.com/compulim), in PR [#34](https://github.com/compulim/react-chain-of-responsibility/pull/34)
+
 ## [0.0.1] - 2023-03-21
+
+### Added
+
+- First public release
 
 ### Changed
 
@@ -66,6 +70,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       -  [`prettier@2.8.4`](https://npmjs.com/package/prettier)
       -  [`typescript@4.9.5`](https://npmjs.com/package/typescript)
 
-### Added
-
-- First public release
+[0.0.2]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/compulim/react-chain-of-responsibility/releases/tag/v0.0.1
