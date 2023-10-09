@@ -3,7 +3,7 @@
 
 import { Fragment } from 'react';
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -15,12 +15,16 @@ test('two providers of chain of responsibility nested should render', () => {
   const { Provider: WorldProvider, Proxy: WorldProxy } = createChainOfResponsibility<undefined, Props>();
 
   // WHEN: Render <HelloProxy> and "WorldProxy".
-  const App = wrapWith(HelloProvider, {
-    middleware: [() => () => () => () => <Fragment>Hello</Fragment>]
-  })(
-    wrapWith(WorldProvider, {
-      middleware: [() => () => () => () => <Fragment>World</Fragment>]
-    })(() => (
+  const App = wrapWith(
+    withProps(HelloProvider, {
+      middleware: [() => () => () => () => <Fragment>Hello</Fragment>]
+    })
+  )(
+    wrapWith(
+      withProps(WorldProvider, {
+        middleware: [() => () => () => () => <Fragment>World</Fragment>]
+      })
+    )(() => (
       <Fragment>
         <HelloProxy /> <WorldProxy />
       </Fragment>

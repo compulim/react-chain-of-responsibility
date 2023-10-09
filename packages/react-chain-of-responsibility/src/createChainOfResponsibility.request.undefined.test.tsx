@@ -3,7 +3,7 @@
 
 import { Fragment } from 'react';
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -14,9 +14,11 @@ const HelloWorld = () => <Fragment>Hello, World!</Fragment>;
 test('when calling a COR pattern with Request type of undefined and props without children', () => {
   // GIVEN: A middleware which return <Fragment>Hello, World!</Fragment>.
   const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
-  const App = wrapWith(Provider, {
-    middleware: [() => next => request => next(request), () => () => () => HelloWorld]
-  })(Proxy);
+  const App = wrapWith(
+    withProps(Provider, {
+      middleware: [() => next => request => next(request), () => () => () => HelloWorld]
+    })
+  )(Proxy);
 
   // WHEN: Render.
   const result = render(<App />);

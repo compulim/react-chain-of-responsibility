@@ -2,7 +2,7 @@
 /// <reference types="@types/jest" />
 
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -26,9 +26,9 @@ test('middleware return non-component should throw on render', () => {
   // GIVEN: A middleware which return a string.
   const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
 
-  const App = wrapWith(Provider, { middleware: [() => () => () => 'Hello, World!' as unknown as ComponentType] })(
-    Proxy
-  );
+  const App = wrapWith(
+    withProps(Provider, { middleware: [() => () => () => 'Hello, World!' as unknown as ComponentType] })
+  )(Proxy);
 
   // WHEN: Render.
   // THEN: It should throw an error saying middleware must return false, null, undefined, function component, or class component.

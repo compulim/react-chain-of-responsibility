@@ -3,7 +3,7 @@
 
 import { Fragment } from 'react';
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibilityForFluentUI from './createChainOfResponsibilityForFluentUI';
 
@@ -17,9 +17,11 @@ test('useBuildRenderFunction should return IRenderFunction of Fluent UI', () => 
 
   const Inner = ({ text }: Props) => useBuildRenderFunction()({ text }, () => <Fragment>Hello, World!</Fragment>);
 
-  const App = wrapWith(Provider, {
-    middleware: [() => next => request => (request?.text ? HelloWorld : next(request))]
-  })(Inner);
+  const App = wrapWith(
+    withProps(Provider, {
+      middleware: [() => next => request => (request?.text ? HelloWorld : next(request))]
+    })
+  )(Inner);
 
   // WHEN: Render with "Aloha!" as "text" prop.
   const result = render(<App text="Aloha!" />);

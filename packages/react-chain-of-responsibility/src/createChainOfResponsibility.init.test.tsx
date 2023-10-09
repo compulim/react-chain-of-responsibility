@@ -3,7 +3,7 @@
 
 import { Fragment } from 'react';
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -14,10 +14,12 @@ test('middleware return a component with content of init should render', () => {
   const { Provider, Proxy } = createChainOfResponsibility<undefined, Props, string>();
 
   // WHEN: Render <Provider> with the init of "Hello, World!".
-  const App = wrapWith(Provider, {
-    init: 'Hello, World!',
-    middleware: [init => () => () => () => <Fragment>{init}</Fragment>]
-  })(Proxy);
+  const App = wrapWith(
+    withProps(Provider, {
+      init: 'Hello, World!',
+      middleware: [init => () => () => () => <Fragment>{init}</Fragment>]
+    })
+  )(Proxy);
 
   const result = render(<App />);
 

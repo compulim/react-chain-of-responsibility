@@ -3,7 +3,7 @@
 
 import { Component, Fragment } from 'react';
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -19,7 +19,7 @@ test('middleware return a class component should render', () => {
   // GIVEN: A middleware returning a class component.
   const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
 
-  const App = wrapWith(Provider, { middleware: [() => () => () => HelloWorld] })(Proxy);
+  const App = wrapWith(withProps(Provider, { middleware: [() => () => () => HelloWorld] }))(Proxy);
 
   // WHEN: Render.
   const result = render(<App />);

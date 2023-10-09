@@ -3,7 +3,7 @@
 
 import { Fragment } from 'react';
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -27,9 +27,11 @@ test('middleware return a React element should throw on render', () => {
   // GIVEN: A middleware which return a React element.
   const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
 
-  const App = wrapWith(Provider, {
-    middleware: [() => () => () => (<Fragment>Hello, World!</Fragment>) as unknown as ComponentType]
-  })(Proxy);
+  const App = wrapWith(
+    withProps(Provider, {
+      middleware: [() => () => () => (<Fragment>Hello, World!</Fragment>) as unknown as ComponentType]
+    })
+  )(Proxy);
 
   // WHEN: Render.
   // THEN: It should throw an error saying middleware must not return React element directly.
