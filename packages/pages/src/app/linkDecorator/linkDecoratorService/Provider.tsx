@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Provider as RawProvider, types } from './private/chainOfResponsibility';
 import ExternalLink from './private/ExternalLink';
 import InternalLink from './private/InternalLink';

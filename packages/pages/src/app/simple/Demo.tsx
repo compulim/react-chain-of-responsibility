@@ -1,5 +1,4 @@
 import { createChainOfResponsibility } from 'react-chain-of-responsibility';
-import React from 'react';
 
 import type { ReactNode } from 'react';
 
@@ -12,15 +11,14 @@ const Italic = ({ children }: Props) => <i>{children}</i>;
 const Plain = ({ children }: Props) => <>{children}</>;
 
 const middleware: (typeof types.middleware)[] = [
-  () => next => request => request === 'bold' ? Bold : next(request),
-  () => next => request => request === 'italic' ? Italic : next(request),
+  () => next => request => (request === 'bold' ? Bold : next(request)),
+  () => next => request => (request === 'italic' ? Italic : next(request)),
   () => () => () => Plain
 ];
 
 const App = () => (
   <Provider middleware={middleware}>
-    <Proxy request="bold">This is bold.</Proxy>{' '}
-    <Proxy request="italic">This is italic.</Proxy>{' '}
+    <Proxy request="bold">This is bold.</Proxy> <Proxy request="italic">This is italic.</Proxy>{' '}
     <Proxy>This is plain.</Proxy>
   </Provider>
 );

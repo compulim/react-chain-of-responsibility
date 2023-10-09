@@ -1,5 +1,3 @@
-import React from 'react';
-
 import './Demo.css';
 import Link from './linkDecoratorService/Link';
 import Provider from './linkDecoratorService/Provider';
