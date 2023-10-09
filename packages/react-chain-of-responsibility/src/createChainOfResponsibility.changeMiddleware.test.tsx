@@ -3,7 +3,7 @@
 
 import { Fragment } from 'react';
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { Extract, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -24,7 +24,7 @@ test('when changing middleware on-the-fly should re-render and invalidate useBui
     return <Proxy />;
   };
 
-  const App = wrapWith(Provider, undefined, ['middleware'])(Inner);
+  const App = wrapWith(Provider, { init: Extract, middleware: Extract })(Inner);
 
   // WHEN: Render.
   const result = render(<App middleware={[() => next => request => next(request), () => () => () => HelloWorld]} />);

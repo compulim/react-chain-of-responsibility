@@ -2,7 +2,7 @@
 /// <reference types="@types/jest" />
 
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -12,7 +12,7 @@ test('middleware return undefined should render', () => {
   // GIVEN: A middleware returning undefined.
   const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
 
-  const App = wrapWith(Provider, { middleware: [() => () => () => undefined] })(Proxy);
+  const App = wrapWith(withProps(Provider, { middleware: [() => () => () => undefined] }))(Proxy);
 
   // WHEN: Render.
   const result = render(<App />);

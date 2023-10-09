@@ -3,7 +3,7 @@
 
 import { Fragment } from 'react';
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -21,7 +21,7 @@ test('when calling next after returned synchronously should throw', () => {
     [(request: undefined) => ComponentType<Props> | false | null | undefined]
   >(() => () => HelloWorldComponent);
 
-  const App = wrapWith(Provider, { middleware: [() => enhancer] })(Proxy);
+  const App = wrapWith(withProps(Provider, { middleware: [() => enhancer] }))(Proxy);
 
   // WHEN: Render.
   const result = render(<App />);

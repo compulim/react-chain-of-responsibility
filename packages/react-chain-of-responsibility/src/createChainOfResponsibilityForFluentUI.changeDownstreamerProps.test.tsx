@@ -3,7 +3,7 @@
 
 import { Fragment } from 'react';
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibilityForFluentUI from './createChainOfResponsibilityForFluentUI';
 
@@ -15,20 +15,22 @@ test('pass modified props for next component should reflect the changes', () => 
 
   const Inner = ({ thing }: Props) => useBuildRenderFunction()({ thing }, props => <Fragment>{props?.thing}</Fragment>);
 
-  const App = wrapWith(Provider, {
-    middleware: [
-      // Turns "orange" into "citric fruit".
-      () => next => props => {
-        const NextComponent = next(props);
+  const App = wrapWith(
+    withProps(Provider, {
+      middleware: [
+        // Turns "orange" into "citric fruit".
+        () => next => props => {
+          const NextComponent = next(props);
 
-        if (NextComponent && props?.thing === 'orange') {
-          return () => <NextComponent thing="citric fruit" />;
+          if (NextComponent && props?.thing === 'orange') {
+            return () => <NextComponent thing="citric fruit" />;
+          }
+
+          return NextComponent;
         }
-
-        return NextComponent;
-      }
-    ]
-  })(Inner);
+      ]
+    })
+  )(Inner);
 
   // WHEN: Render "orange".
   const result = render(<App thing="orange" />);

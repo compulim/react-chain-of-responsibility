@@ -2,7 +2,7 @@
 /// <reference types="@types/jest" />
 
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -17,7 +17,7 @@ test('constructing middleware using all typings from "types" should render', () 
         : next(request)
   ];
 
-  const App = wrapWith(Provider, { init: 'Hello, World!', middleware })(Proxy);
+  const App = wrapWith(withProps(Provider, { init: 'Hello, World!', middleware }))(Proxy);
 
   // WHEN: Render.
   const result = render(<App className="app" request="hello" />);

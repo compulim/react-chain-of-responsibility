@@ -2,7 +2,7 @@
 /// <reference types="@types/jest" />
 
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { Extract, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -23,7 +23,7 @@ test('initiating a provider with a non-array middleware should throw', () => {
   const { Provider, Proxy } = createChainOfResponsibility();
 
   // WHEN: Render <Provider>.
-  const App = wrapWith(Provider, undefined, ['middleware'])(Proxy);
+  const App = wrapWith(Provider, { init: Extract, middleware: Extract })(Proxy);
 
   // THEN: It should not throw on empty array.
   expect(() => render(<App middleware={[]} />)).not.toThrow();

@@ -4,7 +4,7 @@
 // TODO: Remove this test when we end-to-end test our samples.
 
 import { render } from '@testing-library/react';
-import { wrapWith } from 'react-wrap-with';
+import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -60,11 +60,11 @@ describe('with a link middleware', () => {
 
     beforeAll(() => {
       if (type === 'proxy') {
-        RenderLink = wrapWith(Provider, { init: ['internal.example.com'], middleware })((props: LinkProps) => (
-          <Proxy {...props} request={props.href} />
-        ));
+        RenderLink = wrapWith(withProps(Provider, { init: ['internal.example.com'], middleware }))(
+          (props: LinkProps) => <Proxy {...props} request={props.href} />
+        );
       } else {
-        RenderLink = wrapWith(Provider, { init: ['internal.example.com'], middleware })(
+        RenderLink = wrapWith(withProps(Provider, { init: ['internal.example.com'], middleware }))(
           ({ children, className, href }: LinkProps) => {
             const LinkComponent = useBuildComponentCallback()(href);
 
