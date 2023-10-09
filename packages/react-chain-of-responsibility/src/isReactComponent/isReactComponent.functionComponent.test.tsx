@@ -1,5 +1,3 @@
-import React from 'react';
-
 import isReactComponent from '../isReactComponent';
 
 test('function component should return true', () => {

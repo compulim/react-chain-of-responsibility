@@ -1,10 +1,10 @@
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 
 import isReactComponent from '../isReactComponent';
 
 test('component class should return true', () => {
   class ComponentClass extends PureComponent {
-    render() {
+    override render() {
       return <div>Hello, World!</div>;
     }
   }

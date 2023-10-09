@@ -1,16 +1,16 @@
 /** @jest-environment jsdom */
 /// <reference types="@types/jest" />
 
+import { Component, Fragment } from 'react';
 import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
-import React, { Component, Fragment } from 'react';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
 type Props = { children?: never };
 
 class HelloWorld extends Component<Props> {
-  render() {
+  override render() {
     return <Fragment>Hello, World!</Fragment>;
   }
 }

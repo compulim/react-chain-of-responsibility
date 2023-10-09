@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import isReactComponent from '../isReactComponent';
 
 test('component class should return true', () => {
   class ComponentClass extends Component {
-    render() {
+    override render() {
       return <div>Hello, World!</div>;
     }
   }

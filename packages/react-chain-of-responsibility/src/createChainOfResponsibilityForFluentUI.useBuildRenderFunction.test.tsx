@@ -1,13 +1,13 @@
 /** @jest-environment jsdom */
 /// <reference types="@types/jest" />
 
+import { Fragment } from 'react';
 import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
-import React, { Fragment } from 'react';
 
 import createChainOfResponsibilityForFluentUI from './createChainOfResponsibilityForFluentUI';
 
-type Props = { text?: string };
+type Props = { text?: string | undefined };
 
 const HelloWorld = ({ text }: Props) => <Fragment>{text}</Fragment>;
 

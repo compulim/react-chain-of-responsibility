@@ -1,9 +1,9 @@
 /** @jest-environment jsdom */
 /// <reference types="@types/jest" />
 
+import { Fragment } from 'react';
 import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
-import React, { Fragment } from 'react';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -34,7 +34,7 @@ test('when calling next after returned synchronously should throw', () => {
 
   // WHEN: The spied next() function is called.
   // THEN: It should throw an error saying the next() cannot be called after the function had returned synchronously.
-  expect(() => enhancer.mock.calls[0][0](undefined)).toThrow(
+  expect(() => enhancer.mock.calls[0]?.[0](undefined)).toThrow(
     'next() cannot be called after the function had returned synchronously'
   );
 });
