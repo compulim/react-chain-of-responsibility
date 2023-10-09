@@ -1,9 +1,9 @@
 /** @jest-environment jsdom */
 /// <reference types="@types/jest" />
 
+import { Fragment } from 'react';
 import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
-import React, { Fragment } from 'react';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 

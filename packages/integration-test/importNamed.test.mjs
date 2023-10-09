@@ -4,7 +4,7 @@ import createChainOfResponsibility from 'react-chain-of-responsibility/createCha
 import createChainOfResponsibilityForFluentUI from 'react-chain-of-responsibility/createChainOfResponsibilityForFluentUI';
 
 import { create } from 'react-test-renderer';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 const HelloWorld = () => <Fragment>Hello, World!</Fragment>;
 

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import DecorationDemo from './decoration/Demo';
 import FluentButtonDemo from './fluentButton/Demo';
 import FluentDemo from './fluentDetailsList/Demo';

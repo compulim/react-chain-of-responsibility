@@ -1,10 +1,10 @@
 import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility';
 import { DetailsList } from '@fluentui/react/lib/DetailsList';
+import { Fragment, useCallback, useMemo, useState } from 'react';
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 import { Link } from '@fluentui/react/lib/Link';
 import { mergeStyles } from '@fluentui/react/lib/Styling';
 import { Rating } from '@fluentui/react/lib/Rating';
-import React, { Fragment, useCallback, useMemo, useState } from 'react';
 
 import type { FormEventHandler } from 'react';
 import type { IColumn, IDetailsColumnFieldProps } from '@fluentui/react';

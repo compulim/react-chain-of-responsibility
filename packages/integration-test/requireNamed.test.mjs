@@ -6,9 +6,7 @@ const {
 } = require('react-chain-of-responsibility/createChainOfResponsibilityForFluentUI');
 
 const { create } = require('react-test-renderer');
-const React = require('react');
-
-const { Fragment } = React;
+const { Fragment } = require('react');
 
 const HelloWorld = () => <Fragment>Hello, World!</Fragment>;
 

@@ -1,5 +1,5 @@
 import { createChainOfResponsibility } from 'react-chain-of-responsibility';
-import React, { Fragment, useCallback, useMemo, useState } from 'react';
+import { Fragment, useCallback, useMemo, useState } from 'react';
 
 import type { FormEventHandler } from 'react';
 
@@ -51,7 +51,13 @@ const Demo = () => {
         return next(value);
       });
 
-    middleware.push(() => () => value => () => <Fragment>{value}</Fragment>);
+    middleware.push(() => () => value => {
+      const Component = () => <Fragment>{value}</Fragment>;
+
+      Component.displayName = 'Component';
+
+      return Component;
+    });
 
     return middleware;
   }, [evenOnly]);

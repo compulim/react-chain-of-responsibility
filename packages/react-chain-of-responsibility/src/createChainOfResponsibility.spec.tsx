@@ -5,7 +5,6 @@
 
 import { render } from '@testing-library/react';
 import { wrapWith } from 'react-wrap-with';
-import React from 'react';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
