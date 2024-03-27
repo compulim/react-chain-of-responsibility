@@ -100,7 +100,7 @@
     "typescript": "^5.4.3"
   },
   "peerDependencies": {
-    "react": ">=16.9.0"
+    "react": ">=16.8.0"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.24.1",
