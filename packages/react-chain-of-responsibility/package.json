@@ -58,7 +58,7 @@
     "precommit:typescript:production": "tsc --noEmit --project ./src/tsconfig.precommit.production.json",
     "precommit:typescript:test": "tsc --noEmit --project ./src/tsconfig.precommit.test.json",
     "prepack": "cp ../../CHANGELOG.md . && cp ../../LICENSE . && cp ../../README.md .",
-    "switch:react": "npm install @testing-library/react@$TESTING_LIBRARY_VERSION @types/react@$REACT_VERSION @types/react-dom@$REACT_VERSION react@$REACT_VERSION react-dom@$REACT_VERSION react-test-renderer@$REACT_VERSION",
+    "switch:react": "npm install @testing-library/react@$TESTING_LIBRARY_VERSION @types/react@$REACT_VERSION react@$REACT_VERSION react-test-renderer@$REACT_VERSION",
     "switch:react:16": "REACT_VERSION=16.8.0 TESTING_LIBRARY_VERSION=12 npm run switch:react",
     "switch:react:17": "REACT_VERSION=17.0.0 TESTING_LIBRARY_VERSION=13 npm run switch:react",
     "switch:react:18": "REACT_VERSION=18.0.0 TESTING_LIBRARY_VERSION=14 npm run switch:react",
@@ -99,7 +99,6 @@
     "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.2.5",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "react-test-renderer": "^18.2.0",
     "react-wrap-with": "^0.0.4",
     "typescript": "^5.4.3"
