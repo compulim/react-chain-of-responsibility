@@ -24,8 +24,8 @@
   "switch:react:16": {
     "devDependencies": {
       "@types/react": "^16",
-      "react": "16.0.0",
-      "react-test-renderer": "16.0.0"
+      "react": "16.9.0",
+      "react-test-renderer": "16.9.0"
     }
   },
   "switch:react:17": {
