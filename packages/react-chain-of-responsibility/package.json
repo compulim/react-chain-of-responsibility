@@ -58,11 +58,11 @@
     "precommit:typescript:production": "tsc --noEmit --project ./src/tsconfig.precommit.production.json",
     "precommit:typescript:test": "tsc --noEmit --project ./src/tsconfig.precommit.test.json",
     "prepack": "cp ../../CHANGELOG.md . && cp ../../LICENSE . && cp ../../README.md .",
-    "switch:react": "npm install @testing-library/react@$TESTING_LIBRARY_VERSION @types/react@$REACT_VERSION react@$REACT_VERSION react-test-renderer@$REACT_VERSION",
-    "switch:react:16": "REACT_VERSION=16.8.0 TESTING_LIBRARY_VERSION=12 npm run switch:react",
-    "switch:react:17": "REACT_VERSION=17.0.0 TESTING_LIBRARY_VERSION=12 npm run switch:react",
-    "switch:react:18": "REACT_VERSION=18.0.0 TESTING_LIBRARY_VERSION=latest npm run switch:react",
-    "switch:react:latest": "REACT_VERSION=latest TESTING_LIBRARY_VERSION=latest npm run switch:react",
+    "switch:react": "npm install @testing-library/react@$TESTING_LIBRARY_VERSION @types/react@$TYPES_REACT_VERSION react@$REACT_VERSION react-test-renderer@$REACT_VERSION",
+    "switch:react:16": "REACT_VERSION=16.8.0 TESTING_LIBRARY_VERSION=12 TYPES_REACT_VERSION=16 npm run switch:react",
+    "switch:react:17": "REACT_VERSION=17.0.0 TESTING_LIBRARY_VERSION=12 TYPES_REACT_VERSION=17 npm run switch:react",
+    "switch:react:18": "REACT_VERSION=18.0.0 TESTING_LIBRARY_VERSION=latest TYPES_REACT_VERSION=18 npm run switch:react",
+    "switch:react:latest": "REACT_VERSION=latest TESTING_LIBRARY_VERSION=latest TYPES_REACT_VERSION=latest npm run switch:react",
     "test": "jest"
   },
   "repository": {
