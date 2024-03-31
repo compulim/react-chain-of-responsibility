@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bump dependencies, by [@compulim](https://github.com/compulim), in PR [#42](https://github.com/compulim/react-chain-of-responsibility/pull/42) and [#43](https://github.com/compulim/react-chain-of-responsibility/pull/43)
+- Bumped dependencies, by [@compulim](https://github.com/compulim), in PR [#42](https://github.com/compulim/react-chain-of-responsibility/pull/42) and [#43](https://github.com/compulim/react-chain-of-responsibility/pull/43)
    - Production dependencies
       - [`@babel/runtime-corejs3@7.24.1`](https://npmjs.com/package/@babel/runtime-corejs3)
    - Development dependencies
@@ -34,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - [`eslint@8.57.0`](https://npmjs.com/package/eslint)
       - [`prettier@3.2.5`](https://npmjs.com/package/prettier)
       - [`typescript@5.4.3`](https://npmjs.com/package/typescript)
+- Updated pull request validation to test against various React versions, in PR [#44](https://github.com/compulim/react-chain-of-responsibility/pull/44)
+   - Moved from JSX Runtime to JSX Classic to support testing against React 16
 
 ## [0.0.2] - 2023-10-09
 
@@ -41,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added type-checking for test, by [@compulim](https://github.com/compulim), in PR [#20](https://github.com/compulim/react-chain-of-responsibility/pull/20)
 - Updates `tsconfig.json` to extend from [`@tsconfig/strictest`](https://npmjs.com/package/@tsconfig/strictest), by [@compulim](https://github.com/compulim), in PR [#20](https://github.com/compulim/react-chain-of-responsibility/pull/20)
-- Bump dependencies, by [@compulim](https://github.com/compulim), in PR [#24](https://github.com/compulim/react-chain-of-responsibility/pull/24), and PR [#36](https://github.com/compulim/react-chain-of-responsibility/pull/36)
+- Bumped dependencies, by [@compulim](https://github.com/compulim), in PR [#24](https://github.com/compulim/react-chain-of-responsibility/pull/24), and PR [#36](https://github.com/compulim/react-chain-of-responsibility/pull/36)
    - Production dependencies
       - [`@babel/runtime-corejs3@7.23.1`](https://npmjs.com/package/@babel/runtime-corejs3)
    - Development dependencies
@@ -80,7 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bump dependencies, by [@compulim](https://github.com/compulim), in PR [#1](https://github.com/compulim/react-chain-of-responsibility/pull/1)
+- Bumped dependencies, by [@compulim](https://github.com/compulim), in PR [#1](https://github.com/compulim/react-chain-of-responsibility/pull/1)
    -  Production dependencies
       -  [`@babel/runtime-corejs3@7.21.0`](https://npmjs.com/package/@babel/runtime-corejs3)
    -  Development dependencies
