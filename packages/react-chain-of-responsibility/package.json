@@ -59,9 +59,9 @@
     "precommit:typescript:test": "tsc --noEmit --project ./src/tsconfig.precommit.test.json",
     "prepack": "cp ../../CHANGELOG.md . && cp ../../LICENSE . && cp ../../README.md .",
     "switch": "cat package.json | jq --arg TEMPLATE_NAME $TEMPLATE_NAME '. as $ROOT | (.[\"switch:\" + $TEMPLATE_NAME] // {}) as $TEMPLATE | $ROOT | .devDependencies += ($TEMPLATE.devDependencies // {}) | .dependencies += ($TEMPLATE.dependencies // {})'",
-    "switch:react:16": "TEMPLATE_NAME=react:16 npm run preswitch",
-    "switch:react:17": "TEMPLATE_NAME=react:17 npm run preswitch",
-    "switch:react:18": "TEMPLATE_NAME=react:18 npm run preswitch",
+    "switch:react:16": "TEMPLATE_NAME=react:16 npm run switch",
+    "switch:react:17": "TEMPLATE_NAME=react:17 npm run switch",
+    "switch:react:18": "TEMPLATE_NAME=react:18 npm run switch",
     "test": "jest"
   },
   "repository": {
