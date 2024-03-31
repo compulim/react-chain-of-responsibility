@@ -15,7 +15,8 @@
     "precommit:typescript": "tsc --project ./src/tsconfig.json",
     "preswitch": "PACKAGES_TO_UNINSTALL=$(cat package.json | jq --arg SWITCH_NAME $SWITCH_NAME -r '((.[\"switch:\" + $SWITCH_NAME] // {}).devDependencies // {}) + ((.[\"switch:\" + $SWITCH_NAME] // {}).dependencies // {}) | keys | join(\" \")') && [ ! -z \"$PACKAGES_TO_UNINSTALL\" ] && npm uninstall $PACKAGES_TO_UNINSTALL || true",
     "reinstall": "rm -r node_modules package-lock.json && npm install",
-    "start": "npm run build -- --servedir=./public"
+    "start": "npm run build -- --servedir=./public",
+    "switch2": "cat package.json | jq --arg SWITCH_NAME $SWITCH_NAME -r '(.[\"switch:\" + $SWITCH_NAME] // {}) as $TEMPLATE | .devDependencies += ($TEMPLATE.devDependencies // {}) | .dependencies += ($TEMPLATE.dependencies // {})' | tee ./package.json.tmp && mv ./package.json.tmp ./package.json"
   },
   "author": "William Wong (https://github.com/compulim)",
   "license": "MIT",
