@@ -21,10 +21,9 @@
     "postscaffold": "npm run postscaffold:eslint:react && npm run postscaffold --if-present --workspaces",
     "postscaffold:eslint:react": "npm run bump:eslintrc",
     "precommit": "npm run precommit --if-present --workspaces",
-    "switch": "[ ! -z \"$SWITCH_NAME\" ] && npm run --workspaces preswitch && npm run --workspaces postswitch",
-    "switch:react:16": "SWITCH_NAME=react:16 npm run --workspaces switch2 && npm install --prefer-dedupe --workspaces && npm dedupe --workspaces",
-    "switch:react:17": "SWITCH_NAME=react:17 npm run --workspaces switch2 && npm install --prefer-dedupe --workspaces && npm dedupe --workspaces",
-    "switch:react:18": "SWITCH_NAME=react:18 npm run --workspaces switch2 && npm install --prefer-dedupe --workspaces && npm dedupe --workspaces",
+    "switch:react:16": "rm package-lock.json && SWITCH_NAME=react:16 npm run --workspaces switch2 && npm install --prefer-dedupe",
+    "switch:react:17": "rm package-lock.json && SWITCH_NAME=react:17 npm run --workspaces switch2 && npm install --prefer-dedupe",
+    "switch:react:18": "rm package-lock.json && SWITCH_NAME=react:18 npm run --workspaces switch2 && npm install --prefer-dedupe",
     "test": "npm run test --if-present --workspaces"
   },
   "devDependencies": {
