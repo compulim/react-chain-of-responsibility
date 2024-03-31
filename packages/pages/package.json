@@ -13,7 +13,7 @@
     "postswitch:prod": "PACKAGES_TO_INSTALL=$(cat package.json | jq --arg SWITCH_NAME $SWITCH_NAME -r '((.[\"switch:\" + $SWITCH_NAME] // {}).dependencies // {}) | to_entries | map(.key + \"@\" + .value) | join(\" \")') && [ ! -z \"$PACKAGES_TO_INSTALL\" ] && npm install --save $PACKAGES_TO_INSTALL || true",
     "precommit": "npm run precommit:typescript",
     "precommit:typescript": "tsc --project ./src/tsconfig.json",
-    "preswitch": "PACKAGES_TO_UNINSTALL=$(cat package.json | jq --arg SWITCH_NAME $SWITCH_NAME -r '((.[\"switch:\" + $SWITCH_NAME] // {}).devDependencies // {}) + ((.[\"switch:\" + $SWITCH_NAME] // {}).dependencies // {}) | keys | join(\" \")') && [ ! -z \"$PACKAGES_TO_UNINSTALL\" ] && echo npm uninstall $PACKAGES_TO_UNINSTALL || true",
+    "preswitch": "PACKAGES_TO_UNINSTALL=$(cat package.json | jq --arg SWITCH_NAME $SWITCH_NAME -r '((.[\"switch:\" + $SWITCH_NAME] // {}).devDependencies // {}) + ((.[\"switch:\" + $SWITCH_NAME] // {}).dependencies // {}) | keys | join(\" \")') && [ ! -z \"$PACKAGES_TO_UNINSTALL\" ] && npm uninstall $PACKAGES_TO_UNINSTALL || true",
     "reinstall": "rm -r node_modules package-lock.json && npm install",
     "start": "npm run build -- --servedir=./public"
   },

@@ -61,7 +61,7 @@
     "precommit:typescript:production": "tsc --noEmit --project ./src/tsconfig.precommit.production.json",
     "precommit:typescript:test": "tsc --noEmit --project ./src/tsconfig.precommit.test.json",
     "prepack": "cp ../../CHANGELOG.md . && cp ../../LICENSE . && cp ../../README.md .",
-    "preswitch": "PACKAGES_TO_UNINSTALL=$(cat package.json | jq --arg SWITCH_NAME $SWITCH_NAME -r '((.[\"switch:\" + $SWITCH_NAME] // {}).devDependencies // {}) + ((.[\"switch:\" + $SWITCH_NAME] // {}).dependencies // {}) | keys | join(\" \")') && [ ! -z \"$PACKAGES_TO_UNINSTALL\" ] && echo npm uninstall $PACKAGES_TO_UNINSTALL || true",
+    "preswitch": "PACKAGES_TO_UNINSTALL=$(cat package.json | jq --arg SWITCH_NAME $SWITCH_NAME -r '((.[\"switch:\" + $SWITCH_NAME] // {}).devDependencies // {}) + ((.[\"switch:\" + $SWITCH_NAME] // {}).dependencies // {}) | keys | join(\" \")') && [ ! -z \"$PACKAGES_TO_UNINSTALL\" ] && npm uninstall $PACKAGES_TO_UNINSTALL || true",
     "test": "jest"
   },
   "repository": {
