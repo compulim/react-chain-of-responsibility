@@ -21,6 +21,10 @@
     "postscaffold": "npm run postscaffold:eslint:react && npm run postscaffold --if-present --workspaces",
     "postscaffold:eslint:react": "npm run bump:eslintrc",
     "precommit": "npm run precommit --if-present --workspaces",
+    "switch:react:16": "npm run --workspaces switch:react:16",
+    "switch:react:17": "npm run --workspaces switch:react:17",
+    "switch:react:18": "npm run --workspaces switch:react:18",
+    "switch:react:latest": "npm run --workspaces switch:react:latest",
     "test": "npm run test --if-present --workspaces"
   },
   "devDependencies": {

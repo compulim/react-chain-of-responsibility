@@ -1,8 +1,8 @@
 /** @jest-environment jsdom */
 /// <reference types="@types/jest" />
 
-import { Fragment, useMemo } from 'react';
 import { render } from '@testing-library/react';
+import React, { Fragment, useMemo } from 'react';
 
 import createChainOfResponsibilityForFluentUI from './createChainOfResponsibilityForFluentUI';
 

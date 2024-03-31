@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 
-import { Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { createChainOfResponsibility, createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility';
 import { create } from 'react-test-renderer';
 

@@ -6,6 +6,7 @@ const {
 } = require('react-chain-of-responsibility');
 const { create } = require('react-test-renderer');
 const { Fragment } = require('react');
+const React = require('react');
 
 const HelloWorld = () => <Fragment>Hello, World!</Fragment>;
 

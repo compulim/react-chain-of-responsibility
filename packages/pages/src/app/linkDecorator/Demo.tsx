@@ -1,4 +1,7 @@
 import './Demo.css';
+
+import React from 'react';
+
 import Link from './linkDecoratorService/Link';
 import Provider from './linkDecoratorService/Provider';
 

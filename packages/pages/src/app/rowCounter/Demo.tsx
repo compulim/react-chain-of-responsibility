@@ -1,7 +1,5 @@
+import React, { Fragment, useCallback, useMemo, useState, type FormEventHandler } from 'react';
 import { createChainOfResponsibility } from 'react-chain-of-responsibility';
-import { Fragment, useCallback, useMemo, useState } from 'react';
-
-import type { FormEventHandler } from 'react';
 
 const { Provider, types, useBuildComponentCallback } = createChainOfResponsibility<number>();
 

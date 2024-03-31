@@ -9,6 +9,11 @@
     "bump:dev": "PACKAGES_TO_BUMP=$(cat package.json | jq -r '.localPeerDependencies // {} as $L | .devDependencies // {} | to_entries | map(select(.key as $K | $L | has($K) | not)) | map(.key + \"@latest\") | join(\" \")') && [ ! -z \"$PACKAGES_TO_BUMP\" ] && npm install $PACKAGES_TO_BUMP || true",
     "bump:prod": "PACKAGES_TO_BUMP=$(cat package.json | jq -r '.localPeerDependencies // {} as $L | .dependencies // {} | to_entries | map(select(.key as $K | $L | has($K) | not)) | map(.key + \"@latest\") | join(\" \")') && [ ! -z \"$PACKAGES_TO_BUMP\" ] && npm install $PACKAGES_TO_BUMP || true",
     "precommit": "eslint --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts ./",
+    "switch:react": "npm install @types/react@$REACT_VERSION react@$REACT_VERSION react-testing-library@$REACT_VERSION",
+    "switch:react:16": "REACT_VERSION=16.8.0 npm run switch:react",
+    "switch:react:17": "REACT_VERSION=17.0.0 npm run switch:react",
+    "switch:react:18": "REACT_VERSION=18.0.0 npm run switch:react",
+    "switch:react:latest": "REACT_VERSION=latest npm run switch:react",
     "test": "jest"
   },
   "author": "William Wong (https://github.com/compulim)",

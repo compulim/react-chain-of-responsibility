@@ -1,7 +1,6 @@
+import React, { type ReactNode } from 'react';
 import { createChainOfResponsibility } from 'react-chain-of-responsibility';
 import { wrapWith } from 'react-wrap-with';
-
-import type { ReactNode } from 'react';
 
 type Props = { children?: ReactNode };
 

@@ -11,7 +11,12 @@
     "precommit": "npm run precommit:typescript",
     "precommit:typescript": "tsc --project ./src/tsconfig.json",
     "reinstall": "rm -r node_modules package-lock.json && npm install",
-    "start": "npm run build -- --servedir=./public"
+    "start": "npm run build -- --servedir=./public",
+    "switch:react": "npm install @types/react@$REACT_VERSION @types/react-dom@$REACT_VERSION react@$REACT_VERSION react-dom@$REACT_VERSION",
+    "switch:react:16": "REACT_VERSION=16.8.0 npm run switch:react && cp ./src/index.react16.tsx ./src/index.tsx",
+    "switch:react:17": "REACT_VERSION=17.0.0 npm run switch:react",
+    "switch:react:18": "REACT_VERSION=18.0.0 npm run switch:react",
+    "switch:react:latest": "REACT_VERSION=latest npm run switch:react"
   },
   "author": "William Wong (https://github.com/compulim)",
   "license": "MIT",

@@ -1,13 +1,11 @@
-import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility';
+import { type IColumn, type IDetailsColumnFieldProps } from '@fluentui/react';
 import { DetailsList } from '@fluentui/react/lib/DetailsList';
-import { Fragment, useCallback, useMemo, useState } from 'react';
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 import { Link } from '@fluentui/react/lib/Link';
-import { mergeStyles } from '@fluentui/react/lib/Styling';
 import { Rating } from '@fluentui/react/lib/Rating';
-
-import type { FormEventHandler } from 'react';
-import type { IColumn, IDetailsColumnFieldProps } from '@fluentui/react';
+import { mergeStyles } from '@fluentui/react/lib/Styling';
+import React, { Fragment, useCallback, useMemo, useState, type FormEventHandler } from 'react';
+import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility';
 
 initializeIcons();
 
@@ -78,13 +76,13 @@ const Inner = () => {
 const Demo = () => {
   const [shouldDecorateNameColumn, setShouldDecorateNameColumn] = useState(true);
   const [shouldDecorateRatingColumn, setShouldDecorateRatingColumn] = useState(true);
-  const middleware = useMemo<(typeof types.middleware)[]>(() => {
+  const middleware = useMemo<readonly (typeof types.middleware)[]>(() => {
     const middleware = [];
 
     shouldDecorateNameColumn && middleware.push(decorateFieldWithLink);
     shouldDecorateRatingColumn && middleware.push(decorateFieldWithRating);
 
-    return middleware;
+    return Object.freeze(middleware);
   }, [shouldDecorateNameColumn, shouldDecorateRatingColumn]);
 
   const handleShouldDecorateNameColumnChange = useCallback<FormEventHandler<HTMLInputElement>>(

@@ -1,6 +1,5 @@
+import React, { type ReactNode } from 'react';
 import { createChainOfResponsibility } from 'react-chain-of-responsibility';
-
-import type { ReactNode } from 'react';
 
 type Props = { children?: ReactNode };
 
