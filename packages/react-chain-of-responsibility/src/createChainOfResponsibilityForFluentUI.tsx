@@ -1,9 +1,7 @@
-import { useCallback } from 'react';
+import { type IRenderFunction } from '@fluentui/react';
+import React, { useCallback, type Key } from 'react';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
-
-import type { IRenderFunction } from '@fluentui/react';
-import type { Key } from 'react';
 
 type UseBuildRenderFunctionOptions<Props> = { getKey?: (props: Props | undefined) => Key };
 

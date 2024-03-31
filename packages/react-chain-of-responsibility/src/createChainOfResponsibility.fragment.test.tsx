@@ -1,8 +1,8 @@
 /** @jest-environment jsdom */
 /// <reference types="@types/jest" />
 
-import { Fragment, type ReactNode } from 'react';
 import { render } from '@testing-library/react';
+import React, { Fragment, type ReactNode } from 'react';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 

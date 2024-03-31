@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Proxy } from './private/chainOfResponsibility';
 
 import type { Props } from './private/types';

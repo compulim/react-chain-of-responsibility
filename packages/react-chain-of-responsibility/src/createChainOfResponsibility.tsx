@@ -1,18 +1,18 @@
 import PropTypes from 'prop-types';
-import {
-  type ComponentType,
+import React, {
   createContext,
   isValidElement,
   memo,
-  type PropsWithChildren,
   useCallback,
   useContext,
-  useMemo
+  useMemo,
+  type ComponentType,
+  type PropsWithChildren
 } from 'react';
 
-import { type ComponentMiddleware } from './types';
-import applyMiddleware from './private/applyMiddleware';
 import isReactComponent from './isReactComponent';
+import applyMiddleware from './private/applyMiddleware';
+import { type ComponentMiddleware } from './types';
 
 type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ComponentType<Props> | false | null | undefined };
 

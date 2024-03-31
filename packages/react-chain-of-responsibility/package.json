@@ -58,6 +58,7 @@
     "precommit:typescript:production": "tsc --noEmit --project ./src/tsconfig.precommit.production.json",
     "precommit:typescript:test": "tsc --noEmit --project ./src/tsconfig.precommit.test.json",
     "prepack": "cp ../../CHANGELOG.md . && cp ../../LICENSE . && cp ../../README.md .",
+    "switch": "cat package.json | jq --arg SWITCH_NAME $SWITCH_NAME -r '(.[\"switch:\" + $SWITCH_NAME] // {}) as $TEMPLATE | .devDependencies += ($TEMPLATE.devDependencies // {}) | .dependencies += ($TEMPLATE.dependencies // {})' | tee ./package.json.tmp && mv ./package.json.tmp ./package.json",
     "test": "jest"
   },
   "repository": {
@@ -75,6 +76,32 @@
     "url": "https://github.com/compulim/react-chain-of-responsibility/issues"
   },
   "homepage": "https://github.com/compulim/react-chain-of-responsibility#readme",
+  "switch:react:16": {
+    "devDependencies": {
+      "@testing-library/react": "^12",
+      "@types/react": "^16",
+      "react": "16.9.0",
+      "react-dom": "16.9.0",
+      "react-test-renderer": "16.9.0"
+    }
+  },
+  "switch:react:17": {
+    "devDependencies": {
+      "@testing-library/react": "^12",
+      "@types/react": "^17",
+      "react": "17.0.0",
+      "react-dom": "17.0.0",
+      "react-test-renderer": "17.0.0"
+    }
+  },
+  "switch:react:18": {
+    "devDependencies": {
+      "@types/react": "^18",
+      "react": "18.0.0",
+      "react-dom": "18.0.0",
+      "react-test-renderer": "18.0.0"
+    }
+  },
   "devDependencies": {
     "@babel/cli": "^7.24.1",
     "@babel/core": "^7.24.3",
@@ -100,7 +127,7 @@
     "typescript": "^5.4.3"
   },
   "peerDependencies": {
-    "react": ">=16.9.0"
+    "react": ">=16.8.0"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.24.1",

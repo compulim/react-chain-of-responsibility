@@ -2,6 +2,7 @@
 /// <reference types="@types/jest" />
 
 import { render } from '@testing-library/react';
+import React from 'react';
 import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from './createChainOfResponsibility';

@@ -1,3 +1,5 @@
+import React from 'react';
+
 import OpenInNewTabIcon from './OpenInNewTabIcon';
 
 import type { Props } from './types';
