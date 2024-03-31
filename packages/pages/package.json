@@ -12,16 +12,45 @@
     "precommit:typescript": "tsc --project ./src/tsconfig.json",
     "reinstall": "rm -r node_modules package-lock.json && npm install",
     "start": "npm run build -- --servedir=./public",
-    "switch:react": "npm install @types/react@$TYPES_REACT_VERSION @types/react-dom@$TYPES_REACT_VERSION react@$REACT_VERSION react-dom@$REACT_VERSION",
-    "switch:react:16": "REACT_VERSION=16.8.0 TYPES_REACT_VERSION=16 npm run switch:react && cp ./src/index.react16.tsx ./src/index.tsx",
-    "switch:react:17": "REACT_VERSION=17.0.0 TYPES_REACT_VERSION=17 npm run switch:react",
-    "switch:react:18": "REACT_VERSION=18.0.0 TYPES_REACT_VERSION=18 npm run switch:react",
-    "switch:react:latest": "REACT_VERSION=latest TYPES_REACT_VERSION=latest npm run switch:react"
+    "switch": "cat package.json | jq --arg TEMPLATE_NAME $TEMPLATE_NAME '. as $ROOT | (.[\"switch:\" + $TEMPLATE_NAME] // {}) as $TEMPLATE | $ROOT | .devDependencies += ($TEMPLATE.devDependencies // {}) | .dependencies += ($TEMPLATE.dependencies // {})'",
+    "switch:react:16": "TEMPLATE_NAME=react:16 npm run preswitch",
+    "switch:react:17": "TEMPLATE_NAME=react:17 npm run preswitch",
+    "switch:react:18": "TEMPLATE_NAME=react:18 npm run preswitch"
   },
   "author": "William Wong (https://github.com/compulim)",
   "license": "MIT",
   "localPeerDependencies": {
     "react-chain-of-responsibility": "^0.0.0-0"
+  },
+  "switch:react:16": {
+    "devDependencies": {
+      "@types/react": "^16",
+      "@types/react-dom": "^16"
+    },
+    "dependencies": {
+      "react": "16.0.0",
+      "react-dom": "16.0.0"
+    }
+  },
+  "switch:react:17": {
+    "devDependencies": {
+      "@types/react": "^17",
+      "@types/react-dom": "^17"
+    },
+    "dependencies": {
+      "react": "17.0.0",
+      "react-dom": "17.0.0"
+    }
+  },
+  "switch:react:18": {
+    "devDependencies": {
+      "@types/react": "^18",
+      "@types/react-dom": "^18"
+    },
+    "dependencies": {
+      "react": "18.0.0",
+      "react-dom": "18.0.0"
+    }
   },
   "devDependencies": {
     "@fluentui/react": "^8.111.2",

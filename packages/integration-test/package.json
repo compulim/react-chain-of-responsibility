@@ -9,17 +9,37 @@
     "bump:dev": "PACKAGES_TO_BUMP=$(cat package.json | jq -r '.localPeerDependencies // {} as $L | .devDependencies // {} | to_entries | map(select(.key as $K | $L | has($K) | not)) | map(.key + \"@latest\") | join(\" \")') && [ ! -z \"$PACKAGES_TO_BUMP\" ] && npm install $PACKAGES_TO_BUMP || true",
     "bump:prod": "PACKAGES_TO_BUMP=$(cat package.json | jq -r '.localPeerDependencies // {} as $L | .dependencies // {} | to_entries | map(select(.key as $K | $L | has($K) | not)) | map(.key + \"@latest\") | join(\" \")') && [ ! -z \"$PACKAGES_TO_BUMP\" ] && npm install $PACKAGES_TO_BUMP || true",
     "precommit": "eslint --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts ./",
-    "switch:react": "npm install @types/react@$TYPES_REACT_VERSION react@$REACT_VERSION react-test-renderer@$REACT_VERSION",
-    "switch:react:16": "REACT_VERSION=16.8.0 TYPES_REACT_VERSION=16 npm run switch:react",
-    "switch:react:17": "REACT_VERSION=17.0.0 TYPES_REACT_VERSION=17 npm run switch:react",
-    "switch:react:18": "REACT_VERSION=18.0.0 TYPES_REACT_VERSION=18 npm run switch:react",
-    "switch:react:latest": "REACT_VERSION=latest TYPES_REACT_VERSION=latest npm run switch:react",
+    "switch": "cat package.json | jq --arg TEMPLATE_NAME $TEMPLATE_NAME '. as $ROOT | (.[\"switch:\" + $TEMPLATE_NAME] // {}) as $TEMPLATE | $ROOT | .devDependencies += ($TEMPLATE.devDependencies // {}) | .dependencies += ($TEMPLATE.dependencies // {})'",
+    "switch:react:16": "TEMPLATE_NAME=react:16 npm run preswitch",
+    "switch:react:17": "TEMPLATE_NAME=react:17 npm run preswitch",
+    "switch:react:18": "TEMPLATE_NAME=react:18 npm run preswitch",
     "test": "jest"
   },
   "author": "William Wong (https://github.com/compulim)",
   "license": "MIT",
   "localPeerDependencies": {
     "react-chain-of-responsibility": "^0.0.0-0"
+  },
+  "switch:react:16": {
+    "devDependencies": {
+      "@types/react": "^16",
+      "react": "16.0.0",
+      "react-test-renderer": "16.0.0"
+    }
+  },
+  "switch:react:17": {
+    "devDependencies": {
+      "@types/react": "^17",
+      "react": "17.0.0",
+      "react-test-renderer": "17.0.0"
+    }
+  },
+  "switch:react:18": {
+    "devDependencies": {
+      "@types/react": "^18",
+      "react": "18.0.0",
+      "react-test-renderer": "18.0.0"
+    }
   },
   "devDependencies": {
     "@babel/core": "^7.22.17",

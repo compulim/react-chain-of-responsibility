@@ -58,11 +58,10 @@
     "precommit:typescript:production": "tsc --noEmit --project ./src/tsconfig.precommit.production.json",
     "precommit:typescript:test": "tsc --noEmit --project ./src/tsconfig.precommit.test.json",
     "prepack": "cp ../../CHANGELOG.md . && cp ../../LICENSE . && cp ../../README.md .",
-    "switch:react": "npm install @testing-library/react@$TESTING_LIBRARY_VERSION @types/react@$TYPES_REACT_VERSION react@$REACT_VERSION react-test-renderer@$REACT_VERSION",
-    "switch:react:16": "REACT_VERSION=16.8.0 TESTING_LIBRARY_VERSION=12 TYPES_REACT_VERSION=16 npm run switch:react",
-    "switch:react:17": "REACT_VERSION=17.0.0 TESTING_LIBRARY_VERSION=12 TYPES_REACT_VERSION=17 npm run switch:react",
-    "switch:react:18": "REACT_VERSION=18.0.0 TESTING_LIBRARY_VERSION=latest TYPES_REACT_VERSION=18 npm run switch:react",
-    "switch:react:latest": "REACT_VERSION=latest TESTING_LIBRARY_VERSION=latest TYPES_REACT_VERSION=latest npm run switch:react",
+    "switch": "cat package.json | jq --arg TEMPLATE_NAME $TEMPLATE_NAME '. as $ROOT | (.[\"switch:\" + $TEMPLATE_NAME] // {}) as $TEMPLATE | $ROOT | .devDependencies += ($TEMPLATE.devDependencies // {}) | .dependencies += ($TEMPLATE.dependencies // {})'",
+    "switch:react:16": "TEMPLATE_NAME=react:16 npm run preswitch",
+    "switch:react:17": "TEMPLATE_NAME=react:17 npm run preswitch",
+    "switch:react:18": "TEMPLATE_NAME=react:18 npm run preswitch",
     "test": "jest"
   },
   "repository": {
@@ -80,6 +79,30 @@
     "url": "https://github.com/compulim/react-chain-of-responsibility/issues"
   },
   "homepage": "https://github.com/compulim/react-chain-of-responsibility#readme",
+  "switch:react:16": {
+    "devDependencies": {
+      "@testing-library/react": "^12",
+      "@types/react": "16",
+      "react": "16.0.0",
+      "react-test-renderer": "16.0.0"
+    }
+  },
+  "switch:react:17": {
+    "devDependencies": {
+      "@testing-library/react": "^12",
+      "@types/react": "17",
+      "react": "17.0.0",
+      "react-test-renderer": "17.0.0"
+    }
+  },
+  "switch:react:18": {
+    "devDependencies": {
+      "@testing-library/react": "^14",
+      "@types/react": "18",
+      "react": "18.0.0",
+      "react-test-renderer": "18.0.0"
+    }
+  },
   "devDependencies": {
     "@babel/cli": "^7.24.1",
     "@babel/core": "^7.24.3",
