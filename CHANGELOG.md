@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - [`typescript@5.4.3`](https://npmjs.com/package/typescript)
 - Updated pull request validation to test against various React versions, in PR [#44](https://github.com/compulim/react-chain-of-responsibility/pull/44)
    - Moved from JSX Runtime to JSX Classic to support testing against React 16
+   - Added NPM scripts `switch:react:*` to provide a one-way door to switch to a specific React version for testing purpose
 
 ## [0.0.2] - 2023-10-09
 
