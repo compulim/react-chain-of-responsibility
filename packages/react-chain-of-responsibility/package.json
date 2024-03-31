@@ -60,8 +60,8 @@
     "prepack": "cp ../../CHANGELOG.md . && cp ../../LICENSE . && cp ../../README.md .",
     "switch:react": "npm install @testing-library/react@$TESTING_LIBRARY_VERSION @types/react@$REACT_VERSION react@$REACT_VERSION react-test-renderer@$REACT_VERSION",
     "switch:react:16": "REACT_VERSION=16.8.0 TESTING_LIBRARY_VERSION=12 npm run switch:react",
-    "switch:react:17": "REACT_VERSION=17.0.0 TESTING_LIBRARY_VERSION=13 npm run switch:react",
-    "switch:react:18": "REACT_VERSION=18.0.0 TESTING_LIBRARY_VERSION=14 npm run switch:react",
+    "switch:react:17": "REACT_VERSION=17.0.0 TESTING_LIBRARY_VERSION=12 npm run switch:react",
+    "switch:react:18": "REACT_VERSION=18.0.0 TESTING_LIBRARY_VERSION=latest npm run switch:react",
     "switch:react:latest": "REACT_VERSION=latest TESTING_LIBRARY_VERSION=latest npm run switch:react",
     "test": "jest"
   },
