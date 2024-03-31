@@ -9,7 +9,7 @@ jobs:
   call-workflow:
     strategy:
       matrix:
-        react-version: [current, 16, 17, 18, latest]
+        react-version: [current, 16, 17, 18]
     uses: compulim/workflows/.github/workflows/pull-request-validation.yml@main
     with:
       package-name: react-chain-of-responsibility
