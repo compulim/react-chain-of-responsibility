@@ -24,7 +24,11 @@ const middleware: (typeof types.middleware)[] = [
 
     return Next;
   },
-  () => next => request => wrapWith(request?.has('italic') && Italic)(next(request)),
+  () => next => request => {
+    const nextValue = next(request);
+
+    return request?.has('italic') && nextValue ? wrapWith(Italic)(nextValue) : nextValue;
+  },
   () => () => () => Plain
 ];
 
