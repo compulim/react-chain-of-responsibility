@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bumped dependencies, by [@compulim](https://github.com/compulim), in PR [#42](https://github.com/compulim/react-chain-of-responsibility/pull/42) and [#43](https://github.com/compulim/react-chain-of-responsibility/pull/43)
+- Relaxed peer dependencies requirements to `react@>=16.8.0`, by [@compulim](https://github.com/compulim) in PR [#XX](https://github.com/compulim/react-chain-of-responsibility/pull/XX)
+- Bumped dependencies, by [@compulim](https://github.com/compulim), in PR [#42](https://github.com/compulim/react-chain-of-responsibility/pull/42), [#43](https://github.com/compulim/react-chain-of-responsibility/pull/43), and [#XX](https://github.com/compulim/react-chain-of-responsibility/pull/XX)
    - Production dependencies
       - [`@babel/runtime-corejs3@7.24.1`](https://npmjs.com/package/@babel/runtime-corejs3)
    - Development dependencies
@@ -33,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - [`eslint-plugin-react@7.34.1`](https://npmjs.com/package/eslint-plugin-react)
       - [`eslint@8.57.0`](https://npmjs.com/package/eslint)
       - [`prettier@3.2.5`](https://npmjs.com/package/prettier)
+      - [`react-wrap-with@0.1.0`](https://npmjs.com/package/react-wrap-with)
       - [`typescript@5.4.3`](https://npmjs.com/package/typescript)
 - Updated pull request validation to test against various React versions, in PR [#44](https://github.com/compulim/react-chain-of-responsibility/pull/44)
    - Moved from JSX Runtime to JSX Classic to support testing against React 16
