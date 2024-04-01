@@ -25,8 +25,8 @@
       "@types/react-dom": "^16"
     },
     "dependencies": {
-      "react": "16.9.0",
-      "react-dom": "16.9.0"
+      "react": "16.8.0",
+      "react-dom": "16.8.0"
     }
   },
   "switch:react:17": {
@@ -55,7 +55,7 @@
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "esbuild": "^0.19.2",
-    "react-wrap-with": "^0.0.2",
+    "react-wrap-with": "^0.1.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {
