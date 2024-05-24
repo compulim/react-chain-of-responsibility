@@ -17,21 +17,21 @@
   "localPeerDependencies": {
     "react-chain-of-responsibility": "^0.0.0-0"
   },
-  "switch:react:16": {
+  "switch:react-16": {
     "devDependencies": {
       "@types/react": "^16",
       "react": "16.8.0",
       "react-test-renderer": "16.8.0"
     }
   },
-  "switch:react:17": {
+  "switch:react-17": {
     "devDependencies": {
       "@types/react": "^17",
       "react": "17.0.0",
       "react-test-renderer": "17.0.0"
     }
   },
-  "switch:react:18": {
+  "switch:react-18": {
     "devDependencies": {
       "@types/react": "^18",
       "react": "18.0.0",
