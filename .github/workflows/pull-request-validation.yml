@@ -12,6 +12,7 @@ jobs:
         switch: [current, react-16, react-17, react-18]
     uses: compulim/workflows/.github/workflows/pull-request-validation.yml@main
     with:
+      node-version: lts/*
       package-name: react-chain-of-responsibility
       skip-integration-test: false
       switch: ${{ matrix.switch }}
