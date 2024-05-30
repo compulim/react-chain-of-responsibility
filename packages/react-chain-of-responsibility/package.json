@@ -15,6 +15,16 @@
         "types": "./dist/react-chain-of-responsibility.d.ts",
         "default": "./dist/react-chain-of-responsibility.js"
       }
+    },
+    "./fluentUI": {
+      "import": {
+        "types": "./dist/react-chain-of-responsibility.fluentUI.d.mts",
+        "default": "./dist/react-chain-of-responsibility.fluentUI.mjs"
+      },
+      "require": {
+        "types": "./dist/react-chain-of-responsibility.fluentUI.d.ts",
+        "default": "./dist/react-chain-of-responsibility.fluentUI.js"
+      }
     }
   },
   "main": "./dist/react-chain-of-responsibility.js",
