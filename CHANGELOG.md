@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Breaking changes
+
+- Removed named exports, please import the defaults instead
+   - Use `import { createChainOfResponsibility } from 'react-chain-of-responsibility'` instead
+   - `import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility/fluentUI'` for Fluent UI renderer function
+- Moved build tools from Babel to tsup/esbuild
+
 ### Changed
 
 - Bumped dependencies, by [@compulim](https://github.com/compulim), in PR [#49](https://github.com/compulim/react-chain-of-responsibility/pull/49)

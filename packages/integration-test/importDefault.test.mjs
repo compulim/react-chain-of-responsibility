@@ -1,7 +1,8 @@
 /** @jest-environment jsdom */
 
 import React, { Fragment } from 'react';
-import { createChainOfResponsibility, createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility';
+import { createChainOfResponsibility } from 'react-chain-of-responsibility';
+import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility/fluentUI';
 import { create } from 'react-test-renderer';
 
 const HelloWorld = () => <Fragment>Hello, World!</Fragment>;

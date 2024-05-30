@@ -146,7 +146,6 @@ export default function createChainOfResponsibility<
     return <context.Provider value={contextValue}>{children}</context.Provider>;
   };
 
-  Provider.defaultProps = {};
   Provider.displayName = 'ChainOfResponsibilityProvider';
   Provider.propTypes = {
     children: PropTypes.any,
@@ -174,7 +173,6 @@ export default function createChainOfResponsibility<
     }
   );
 
-  Proxy.defaultProps = {};
   Proxy.displayName = 'Proxy';
   Proxy.propTypes = {
     fallbackComponent: PropTypes.any,

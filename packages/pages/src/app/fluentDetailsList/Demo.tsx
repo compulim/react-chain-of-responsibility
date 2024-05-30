@@ -5,7 +5,7 @@ import { Link } from '@fluentui/react/lib/Link';
 import { Rating } from '@fluentui/react/lib/Rating';
 import { mergeStyles } from '@fluentui/react/lib/Styling';
 import React, { Fragment, useCallback, useMemo, useState, type FormEventHandler } from 'react';
-import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility';
+import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility/fluentUI';
 
 initializeIcons();
 

@@ -3,56 +3,38 @@
   "version": "0.0.0-0",
   "description": "Using chain of responsibility design pattern for React component customization.",
   "files": [
-    "./lib/"
+    "./dist/"
   ],
   "exports": {
     ".": {
       "import": {
-        "types": "./lib/esmodules/index.d.ts",
-        "default": "./lib/esmodules/index.js"
+        "types": "./dist/react-chain-of-responsibility.d.mts",
+        "default": "./dist/react-chain-of-responsibility.mjs"
       },
       "require": {
-        "types": "./lib/commonjs/index.d.ts",
-        "default": "./lib/commonjs/index.js"
+        "types": "./dist/react-chain-of-responsibility.d.ts",
+        "default": "./dist/react-chain-of-responsibility.js"
       }
     },
-    "./createChainOfResponsibility": {
+    "./fluentUI": {
       "import": {
-        "types": "./lib/esmodules/createChainOfResponsibility.d.ts",
-        "default": "./lib/esmodules/createChainOfResponsibility.js"
+        "types": "./dist/react-chain-of-responsibility.fluentUI.d.mts",
+        "default": "./dist/react-chain-of-responsibility.fluentUI.mjs"
       },
       "require": {
-        "types": "./lib/commonjs/createChainOfResponsibility.d.ts",
-        "default": "./lib/commonjs/createChainOfResponsibility.js"
-      }
-    },
-    "./createChainOfResponsibilityForFluentUI": {
-      "import": {
-        "types": "./lib/esmodules/createChainOfResponsibilityForFluentUI.d.ts",
-        "default": "./lib/esmodules/createChainOfResponsibilityForFluentUI.js"
-      },
-      "require": {
-        "types": "./lib/commonjs/createChainOfResponsibilityForFluentUI.d.ts",
-        "default": "./lib/commonjs/createChainOfResponsibilityForFluentUI.js"
+        "types": "./dist/react-chain-of-responsibility.fluentUI.d.ts",
+        "default": "./dist/react-chain-of-responsibility.fluentUI.js"
       }
     }
   },
-  "main": "./lib/commonjs/index.js",
-  "typings": "./lib/commonjs/index.d.ts",
+  "main": "./dist/react-chain-of-responsibility.js",
+  "typings": "./dist/react-chain-of-responsibility.d.ts",
   "scripts": {
-    "build": "npm run build:babel:commonjs && npm run build:babel:esmodules && npm run build:typescript:commonjs && npm run build:typescript:esmodules",
-    "build:babel:commonjs": "babel src --config-file ./babel.commonjs.config.json --extensions .ts,.tsx --out-dir ./lib/commonjs/",
-    "build:babel:esmodules": "babel src --config-file ./babel.esmodules.config.json --extensions .ts,.tsx --out-dir ./lib/esmodules/",
-    "build:typescript:commonjs": "tsc --project ./src/tsconfig.declaration.commonjs.json",
-    "build:typescript:esmodules": "tsc --project ./src/tsconfig.declaration.esmodules.json",
-    "bump": "npm run bump:prod && npm run bump:dev && npm run bump:auditfix && npm run bump:babel",
+    "build": "tsup",
+    "bump": "npm run bump:prod && npm run bump:dev && npm run bump:auditfix",
     "bump:auditfix": "npm audit fix || exit 0",
-    "bump:babel": "npm run bump:babel:commonjs && npm run bump:babel:esmodules",
-    "bump:babel:commonjs": "cat babel.commonjs.config.json | jq --arg CORE_JS_VERSION `[ -f node_modules/@babel/runtime-corejs3/package.json ] && cat node_modules/@babel/runtime-corejs3/package.json | jq -r .version || cat ../../node_modules/@babel/runtime-corejs3/package.json | jq -r .version` '(.plugins[] | select(.[0] == \"@babel/plugin-transform-runtime\"))[1].version = $CORE_JS_VERSION' | prettier --parser json > babel.commonjs.config.json.tmp && mv babel.commonjs.config.json.tmp babel.commonjs.config.json",
-    "bump:babel:esmodules": "cat babel.esmodules.config.json | jq --arg CORE_JS_VERSION `[ -f node_modules/@babel/runtime-corejs3/package.json ] && cat node_modules/@babel/runtime-corejs3/package.json | jq -r .version || cat ../../node_modules/@babel/runtime-corejs3/package.json | jq -r .version` '(.plugins[] | select(.[0] == \"@babel/plugin-transform-runtime\"))[1].version = $CORE_JS_VERSION' | prettier --parser json > babel.esmodules.config.json.tmp && mv babel.esmodules.config.json.tmp babel.esmodules.config.json",
     "bump:dev": "PACKAGES_TO_BUMP=$(cat package.json | jq -r '.localPeerDependencies // {} as $L | .devDependencies // {} | to_entries | map(select(.key as $K | $L | has($K) | not)) | map(.key + \"@latest\") | join(\" \")') && [ ! -z \"$PACKAGES_TO_BUMP\" ] && npm install $PACKAGES_TO_BUMP || true",
     "bump:prod": "PACKAGES_TO_BUMP=$(cat package.json | jq -r '.localPeerDependencies // {} as $L | .dependencies // {} | to_entries | map(select(.key as $K | $L | has($K) | not)) | map(.key + \"@latest\") | join(\" \")') && [ ! -z \"$PACKAGES_TO_BUMP\" ] && npm install $PACKAGES_TO_BUMP || true",
-    "postscaffold": "npm run bump:babel",
     "precommit": "npm run precommit:eslint && npm run precommit:typescript:production && npm run precommit:typescript:test",
     "precommit:eslint": "eslint ./src/",
     "precommit:typescript:production": "tsc --noEmit --project ./src/tsconfig.precommit.production.json",
@@ -103,9 +85,6 @@
     }
   },
   "devDependencies": {
-    "@babel/cli": "^7.24.6",
-    "@babel/core": "^7.24.6",
-    "@babel/plugin-transform-runtime": "^7.24.6",
     "@babel/preset-env": "^7.24.6",
     "@babel/preset-react": "^7.24.6",
     "@babel/preset-typescript": "^7.24.6",
@@ -125,13 +104,13 @@
     "react-dom": "^18.3.1",
     "react-test-renderer": "^18.3.1",
     "react-wrap-with": "^0.1.0",
+    "tsup": "^8.0.2",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.24.6",
     "prop-types": "^15.8.1"
   }
 }
