@@ -58,7 +58,7 @@ After calling `createChainOfResponsibilityForFluentUI`, it will return `useBuild
 #### Sample code
 
 ```jsx
-import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility';
+import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility/fluentUI';
 
 // Creates a <Provider> providing the chain of responsibility service.
 const { Provider, Proxy } = createChainOfResponsibilityForFluentUI();
@@ -95,7 +95,7 @@ render(
 
 There are subtle differences between the standard version and the Fluent UI version:
 
-- Entrypoint is `createChainOfResponsibilityForFluentUI()`
+- Entrypoint is `createChainOfResponsibilityForFluentUI()` and imported from 'react-chain-of-responsibility/fluentUI'
 - Request and props are always of same type
   - They are optional too, as defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
 - Automatic fallback to `defaultRender`
