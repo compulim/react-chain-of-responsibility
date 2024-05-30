@@ -1,6 +1,6 @@
 import { DefaultButton } from '@fluentui/react/lib/Button';
 import React, { Fragment } from 'react';
-import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility';
+import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility/fluentUI';
 
 import type { IButtonProps } from '@fluentui/react';
 
