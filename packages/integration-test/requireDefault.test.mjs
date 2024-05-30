@@ -1,9 +1,7 @@
 /** @jest-environment jsdom */
 
-const {
-  createChainOfResponsibility,
-  createChainOfResponsibilityForFluentUI
-} = require('react-chain-of-responsibility');
+const { createChainOfResponsibility } = require('react-chain-of-responsibility');
+const { createChainOfResponsibilityForFluentUI } = require('react-chain-of-responsibility/fluentUI');
 const { create } = require('react-test-renderer');
 const { Fragment } = require('react');
 const React = require('react');
