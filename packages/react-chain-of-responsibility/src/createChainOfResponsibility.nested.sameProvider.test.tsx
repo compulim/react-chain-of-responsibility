@@ -44,6 +44,8 @@ test('two providers of chain of responsibility nested should render', () => {
     }
   ]);
 
+  const FallbackComponent = () => <Fragment>End</Fragment>;
+
   // WHEN: Render <Proxy> with same providers twice.
   const App = ({
     middleware1,
@@ -55,10 +57,10 @@ test('two providers of chain of responsibility nested should render', () => {
     <Provider init={1} middleware={middleware1}>
       {middleware2 ? (
         <Provider init={2} middleware={middleware2}>
-          <Proxy />
+          <Proxy fallbackComponent={FallbackComponent} />
         </Provider>
       ) : (
-        <Proxy />
+        <Proxy fallbackComponent={FallbackComponent} />
       )}
     </Provider>
   );
@@ -66,7 +68,7 @@ test('two providers of chain of responsibility nested should render', () => {
   const result = render(<App middleware1={middleware1} middleware2={middleware2} />);
 
   // THEN: It should render "First2 Second2 Third1 ".
-  expect(result.container).toHaveProperty('textContent', 'First2 Second2 Third1 ');
+  expect(result.container).toHaveProperty('textContent', 'First2 Second2 Third1 End');
 
   // WHEN: First middleware is updated.
   const middleware3: readonly (typeof types.middleware)[] = Object.freeze([
@@ -84,11 +86,11 @@ test('two providers of chain of responsibility nested should render', () => {
   result.rerender(<App middleware1={middleware3} middleware2={middleware2} />);
 
   // THEN: It should render "First2 Second2 Fourth1 ".
-  expect(result.container).toHaveProperty('textContent', 'First2 Second2 Fourth1 ');
+  expect(result.container).toHaveProperty('textContent', 'First2 Second2 Fourth1 End');
 
   // WHEN: Second provider is removed middleware is updated.
   result.rerender(<App middleware1={middleware3} />);
 
   // THEN: It should render "Fourth1 ".
-  expect(result.container).toHaveProperty('textContent', 'Fourth1 ');
+  expect(result.container).toHaveProperty('textContent', 'Fourth1 End');
 });
