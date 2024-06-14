@@ -11,18 +11,21 @@ import React, {
 } from 'react';
 
 import isReactComponent from './isReactComponent';
-import applyMiddleware from './private/applyMiddleware';
+import applyMiddleware, { type Enhancer } from './private/applyMiddleware';
 import { type ComponentMiddleware } from './types';
 
-type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ComponentType<Props> | false | null | undefined };
+type ResultComponent<Props> = ComponentType<Props> | false | null | undefined;
+
+type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ResultComponent<Props> };
 
 type UseBuildComponentCallback<Request, Props> = (
   request: Request,
   options?: UseBuildComponentCallbackOptions<Props>
-) => ComponentType<Props> | false | null | undefined;
+) => ResultComponent<Props>;
 
 type ProviderContext<Request, Props> = {
-  useBuildComponentCallback: UseBuildComponentCallback<Request, Props>;
+  get enhancer(): Enhancer<[Request], ResultComponent<Props>> | undefined;
+  get useBuildComponentCallback(): UseBuildComponentCallback<Request, Props>;
 };
 
 type ProviderProps<Request, Props, Init> = PropsWithChildren<{
@@ -64,6 +67,9 @@ export default function createChainOfResponsibility<
   useBuildComponentCallback: () => UseBuildComponentCallback<Request, Props>;
 } {
   const defaultUseBuildComponentCallback: ProviderContext<Request, Props> = {
+    get enhancer() {
+      return undefined;
+    },
     get useBuildComponentCallback(): ProviderContext<Request, Props>['useBuildComponentCallback'] {
       throw new Error('useBuildComponentCallback() hook cannot be used outside of its corresponding <Provider>');
     }
@@ -124,36 +130,27 @@ export default function createChainOfResponsibility<
         : []
     );
 
+    const { enhancer: parentEnhancer } = useContext(context);
+
     const enhancer = useMemo(
       () =>
         // We are reversing because it is easier to read:
         // - With reverse, [a, b, c] will become a(b(c(fn)))
         // - Without reverse, [a, b, c] will become c(b(a(fn)))
-        applyMiddleware<[Request], ComponentType<Props> | false | null | undefined, [Init]>(
-          ...[...patchedMiddleware].reverse()
+        applyMiddleware<[Request], ResultComponent<Props>, [Init]>(
+          ...[...patchedMiddleware, ...(parentEnhancer ? [() => parentEnhancer] : [])].reverse()
         )(init as Init),
-      [init, middleware]
+      [init, middleware, parentEnhancer]
     );
 
-    const parentContextValue = useContext(context);
-    const parentUseBuildComponentCallback =
-      parentContextValue === defaultUseBuildComponentCallback
-        ? undefined
-        : parentContextValue.useBuildComponentCallback;
-
     const useBuildComponentCallback = useCallback<UseBuildComponentCallback<Request, Props>>(
-      (request, options = {}) =>
-        enhancer(request =>
-          parentUseBuildComponentCallback
-            ? parentUseBuildComponentCallback(request, options)
-            : options.fallbackComponent
-        )(request),
-      [enhancer, parentUseBuildComponentCallback]
+      (request, options = {}) => enhancer(() => options.fallbackComponent)(request),
+      [enhancer]
     );
 
     const contextValue = useMemo<ProviderContext<Request, Props>>(
-      () => ({ useBuildComponentCallback }),
-      [useBuildComponentCallback]
+      () => ({ enhancer, useBuildComponentCallback }),
+      [enhancer, useBuildComponentCallback]
     );
 
     return <context.Provider value={contextValue}>{children}</context.Provider>;
