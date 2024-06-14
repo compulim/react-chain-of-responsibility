@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Support nested provider of same type, by [@compulim](https://github.com/compulim) in PR [#64](https://github.com/compulim/react-chain-of-responsibility/pull/64)
-   - Components will be built using middleware from `<Provider>` closer to the `<Proxy>` and fallback to those farther
+   - Components will be built using middleware from `<Provider>` closer to the `<Proxy>` and fallback to those farther away
 
 ### Changed
 
