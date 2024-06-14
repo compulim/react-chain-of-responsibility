@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    - `import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility/fluentUI'` for Fluent UI renderer function
 - Moved build tools from Babel to tsup/esbuild
 
+### Added
+
+- Support nested provider of same type, by [@compulim](https://github.com/compulim) in PR [#64](https://github.com/compulim/react-chain-of-responsibility/pull/64)
+   - Components will be built using middleware from `<Provider>` closer to the `<Proxy>` and fallback to those farther away
+
 ### Changed
 
 - Bumped dependencies, by [@compulim](https://github.com/compulim), in PR [#49](https://github.com/compulim/react-chain-of-responsibility/pull/49), [#58](https://github.com/compulim/react-chain-of-responsibility/pull/58), and [#63](https://github.com/compulim/react-chain-of-responsibility/pull/63)

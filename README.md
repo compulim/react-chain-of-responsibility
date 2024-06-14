@@ -31,8 +31,8 @@ const Plain = ({ children }) => <>{children}</>;
 
 // Constructs an array of middleware to handle the request and return corresponding subcomponents.
 const middleware = [
-  () => next => request => request === 'bold' ? Bold : next(request),
-  () => next => request => request === 'italic' ? Italic : next(request),
+  () => next => request => (request === 'bold' ? Bold : next(request)),
+  () => next => request => (request === 'italic' ? Italic : next(request)),
   () => () => () => Plain
 ];
 
@@ -48,6 +48,12 @@ render(
 This sample will render:
 
 > **This is bold.** _This is italic._ This is plain.
+
+```jsx
+<strong>This is bold.</strong>
+<i>This is italic.</i>
+<>This is plain.</>
+```
 
 ### Using with Fluent UI as `IRenderFunction`
 
@@ -69,8 +75,8 @@ const Orange = () => <>🍊</>;
 
 // Constructs an array of middleware to handle the request and return corresponding subcomponents.
 const middleware = [
-  () => next => props => props?.iconProps?.iconName === 'Banana' ? Banana : next(props),
-  () => next => props => props?.iconProps?.iconName === 'Orange' ? Orange : next(props)
+  () => next => props => (props?.iconProps?.iconName === 'Banana' ? Banana : next(props)),
+  () => next => props => (props?.iconProps?.iconName === 'Orange' ? Orange : next(props))
   // Fallback to `defaultRender` of `IRenderFunction` is automatically injected.
 ];
 
@@ -135,6 +141,41 @@ This sample will render:
 
 > **This is bold.** _This is italic._ **_This is bold and italic._** This is plain.
 
+```jsx
+<Bold>This is bold.</Bold>
+<Italic>This is italic.</Italic>
+<Bold><Italic>This is bold and italic.</Italic></Bold>
+<Plain>This is plain.</Plain>
+```
+
+### Nesting `<Provider>`
+
+If the `<Provider>` from the same chain appears nested in the tree, the `<Proxy>` will render using the middleware from the closest `<Provider>` and fallback up the chain. The following code snippet will render "Second First".
+
+```jsx
+const { Provider, Proxy } = createChainOfResponsibility();
+
+const firstMiddleware = () => next => request => {
+  const NextComponent = next(request);
+
+  return () => <Fragment>First {NextComponent && <NextComponent />}</Fragment>;
+};
+
+const secondMiddleware = () => next => request => {
+  const NextComponent = next(request);
+
+  return () => <Fragment>Second {NextComponent && <NextComponent />}</Fragment>;
+};
+
+render(
+  <Provider middleware={[firstMiddleware]}>
+    <Provider middleware={[secondMiddleware]}>
+      <Proxy /> <!-- Renders "Second First" -->
+    </Provider>
+  </Provider>
+);
+```
+
 ## API
 
 ```ts
@@ -155,12 +196,12 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
 
 ### Return value
 
-| Name                        | Type                                              | Description                                                                           |
-| --------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `Provider`                  | `React.ComponentType`                             | Entrypoint component, must wraps all usage of customizations                          |
-| `Proxy`                     | `React.ComponentType`                             | Proxy component, process the `request` from props and morph into the result component |
-| `types`                     | `{ init, middleware, props, request }`            | TypeScript: shorthand types, all objects are `undefined` intentionally                |
-| `useBuildComponentCallback` | `() => (request, options) => React.ComponentType` | Callback hook which return a function to build the component for rendering the result |
+| Name                        | Type                                                                            | Description                                                                           |
+| --------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `Provider`                  | `React.ComponentType`                                                           | Entrypoint component, must wraps all usage of customizations                          |
+| `Proxy`                     | `React.ComponentType`                                                           | Proxy component, process the `request` from props and morph into the result component |
+| `types`                     | `{ init, middleware, props, request }`                                          | TypeScript: shorthand types, all objects are `undefined` intentionally                |
+| `useBuildComponentCallback` | `() => (request, options) => React.ComponentType \| false \| null \| undefined` | Callback hook which return a function to build the component for rendering the result |
 
 ### Options
 
