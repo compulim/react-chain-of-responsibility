@@ -49,6 +49,12 @@ This sample will render:
 
 > **This is bold.** _This is italic._ This is plain.
 
+```jsx
+<strong>This is bold.</strong>
+<i>This is italic.</i>
+<>This is plain.</>
+```
+
 ### Using with Fluent UI as `IRenderFunction`
 
 The chain of responsibility design pattern can be used in Fluent UI.
@@ -135,6 +141,13 @@ This sample will render:
 
 > **This is bold.** _This is italic._ **_This is bold and italic._** This is plain.
 
+```jsx
+<Bold>This is bold.</Bold>
+<Italic>This is italic.</Italic>
+<Bold><Italic>This is bold and italic.</Italic></Bold>
+<Plain>This is plain.</Plain>
+```
+
 ## API
 
 ```ts
@@ -212,7 +225,7 @@ const secondMiddleware = () => next => request => {
 render(
   <Provider middleware={[firstMiddleware]}>
     <Provider middleware={[secondMiddleware]}>
-      <Proxy />
+      <Proxy /> <!-- Renders "Second First" -->
     </Provider>
   </Provider>
 );
