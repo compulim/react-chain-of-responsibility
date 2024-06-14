@@ -14,31 +14,31 @@ test('two providers of chain of responsibility nested should render', () => {
 
   const middleware1: readonly (typeof types.middleware)[] = Object.freeze([
     init => next => request => {
-      const Component = next(request);
+      const Next = next(request);
 
       return props => (
         <Fragment>
-          Third{init} {Component && <Component {...props} />}
+          Third{init} {Next && <Next {...props} />}
         </Fragment>
       );
     }
   ]);
   const middleware2: readonly (typeof types.middleware)[] = Object.freeze([
     init => next => request => {
-      const Component = next(request);
+      const Next = next(request);
 
       return props => (
         <Fragment>
-          First{init} {Component && <Component {...props} />}
+          First{init} {Next && <Next {...props} />}
         </Fragment>
       );
     },
     init => next => request => {
-      const Component = next(request);
+      const Next = next(request);
 
       return props => (
         <Fragment>
-          Second{init} {Component && <Component {...props} />}
+          Second{init} {Next && <Next {...props} />}
         </Fragment>
       );
     }
@@ -73,11 +73,11 @@ test('two providers of chain of responsibility nested should render', () => {
   // WHEN: First middleware is updated.
   const middleware3: readonly (typeof types.middleware)[] = Object.freeze([
     init => next => request => {
-      const Component = next(request);
+      const Next = next(request);
 
       return props => (
         <Fragment>
-          Fourth{init} {Component && <Component {...props} />}
+          Fourth{init} {Next && <Next {...props} />}
         </Fragment>
       );
     }
