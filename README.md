@@ -31,8 +31,8 @@ const Plain = ({ children }) => <>{children}</>;
 
 // Constructs an array of middleware to handle the request and return corresponding subcomponents.
 const middleware = [
-  () => next => request => request === 'bold' ? Bold : next(request),
-  () => next => request => request === 'italic' ? Italic : next(request),
+  () => next => request => (request === 'bold' ? Bold : next(request)),
+  () => next => request => (request === 'italic' ? Italic : next(request)),
   () => () => () => Plain
 ];
 
@@ -75,8 +75,8 @@ const Orange = () => <>🍊</>;
 
 // Constructs an array of middleware to handle the request and return corresponding subcomponents.
 const middleware = [
-  () => next => props => props?.iconProps?.iconName === 'Banana' ? Banana : next(props),
-  () => next => props => props?.iconProps?.iconName === 'Orange' ? Orange : next(props)
+  () => next => props => (props?.iconProps?.iconName === 'Banana' ? Banana : next(props)),
+  () => next => props => (props?.iconProps?.iconName === 'Orange' ? Orange : next(props))
   // Fallback to `defaultRender` of `IRenderFunction` is automatically injected.
 ];
 
@@ -196,12 +196,12 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
 
 ### Return value
 
-| Name                        | Type                                              | Description                                                                           |
-| --------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `Provider`                  | `React.ComponentType`                             | Entrypoint component, must wraps all usage of customizations                          |
-| `Proxy`                     | `React.ComponentType`                             | Proxy component, process the `request` from props and morph into the result component |
-| `types`                     | `{ init, middleware, props, request }`            | TypeScript: shorthand types, all objects are `undefined` intentionally                |
-| `useBuildComponentCallback` | `() => (request, options) => React.ComponentType` | Callback hook which return a function to build the component for rendering the result |
+| Name                        | Type                                                                            | Description                                                                           |
+| --------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `Provider`                  | `React.ComponentType`                                                           | Entrypoint component, must wraps all usage of customizations                          |
+| `Proxy`                     | `React.ComponentType`                                                           | Proxy component, process the `request` from props and morph into the result component |
+| `types`                     | `{ init, middleware, props, request }`                                          | TypeScript: shorthand types, all objects are `undefined` intentionally                |
+| `useBuildComponentCallback` | `() => (request, options) => React.ComponentType \| false \| null \| undefined` | Callback hook which return a function to build the component for rendering the result |
 
 ### Options
 
