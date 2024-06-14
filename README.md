@@ -190,6 +190,34 @@ type UseBuildComponentCallback<Request, Props> = (
 
 The `fallbackComponent` is a component which all unhandled requests will sink into.
 
+### Nesting `<Provider>`
+
+If the `<Provider>` from the same chain appears nested in the tree, the `<Proxy>` will render using the middleware from the closest `<Provider>` and fallback up the chain. The following code snippet will render "Second First".
+
+```jsx
+const { Provider, Proxy } = createChainOfResponsibility();
+
+const firstMiddleware = () => next => request => {
+  const NextComponent = next(request);
+
+  return () => <Fragment>First {NextComponent && <NextComponent />}</Fragment>;
+};
+
+const secondMiddleware = () => next => request => {
+  const NextComponent = next(request);
+
+  return () => <Fragment>Second {NextComponent && <NextComponent />}</Fragment>;
+};
+
+render(
+  <Provider middleware={[firstMiddleware]}>
+    <Provider middleware={[secondMiddleware]}>
+      <Proxy />
+    </Provider>
+  </Provider>
+);
+```
+
 ### API for Fluent UI
 
 ```ts

@@ -63,11 +63,13 @@ export default function createChainOfResponsibility<
   };
   useBuildComponentCallback: () => UseBuildComponentCallback<Request, Props>;
 } {
-  const context = createContext<ProviderContext<Request, Props>>({
+  const defaultUseBuildComponentCallback: ProviderContext<Request, Props> = {
     get useBuildComponentCallback(): ProviderContext<Request, Props>['useBuildComponentCallback'] {
       throw new Error('useBuildComponentCallback() hook cannot be used outside of its corresponding <Provider>');
     }
-  });
+  };
+
+  const context = createContext<ProviderContext<Request, Props>>(defaultUseBuildComponentCallback);
 
   const Provider: ComponentType<ProviderProps<Request, Props, Init>> = ({ children, init, middleware }) => {
     // TODO: Related to https://github.com/microsoft/TypeScript/issues/17002.
@@ -133,9 +135,20 @@ export default function createChainOfResponsibility<
       [init, middleware]
     );
 
+    const parentContextValue = useContext(context);
+    const parentUseBuildComponentCallback =
+      parentContextValue === defaultUseBuildComponentCallback
+        ? undefined
+        : parentContextValue.useBuildComponentCallback;
+
     const useBuildComponentCallback = useCallback<UseBuildComponentCallback<Request, Props>>(
-      (request, options = {}) => enhancer(() => options.fallbackComponent)(request),
-      [enhancer]
+      (request, options = {}) =>
+        enhancer(request =>
+          parentUseBuildComponentCallback
+            ? parentUseBuildComponentCallback(request, options)
+            : options.fallbackComponent
+        )(request),
+      [enhancer, parentUseBuildComponentCallback]
     );
 
     const contextValue = useMemo<ProviderContext<Request, Props>>(
