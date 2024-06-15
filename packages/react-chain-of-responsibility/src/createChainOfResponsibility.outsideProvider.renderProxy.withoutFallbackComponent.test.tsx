@@ -20,11 +20,11 @@ afterEach(() => {
   consoleErrorMock.mockRestore();
 });
 
-test('when rendering <Proxy> outside of its <Provider> should throw', () => {
+test('when rendering <Proxy> outside of its <Provider> without fallbackComponent should throw', () => {
   // GIVEN: A <Proxy> of a newly created chain of responsibility.
   const { Proxy } = createChainOfResponsibility<undefined, Props>();
 
   // WHEN: Render.
-  // THEN: It should throw an error saying <Proxy> cannot be used outside of its corresponding <Provider>.
-  expect(() => render(<Proxy />)).toThrow('<Proxy> cannot be used outside of its corresponding <Provider>');
+  // THEN: It should throw an error saying "This component/hook cannot be used outside of its corresponding <Provider>".
+  expect(() => render(<Proxy />)).toThrow('This component/hook cannot be used outside of its corresponding <Provider>');
 });

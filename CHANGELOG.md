@@ -13,11 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    - Use `import { createChainOfResponsibility } from 'react-chain-of-responsibility'` instead
    - `import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility/fluentUI'` for Fluent UI renderer function
 - Moved build tools from Babel to tsup/esbuild
+- Outside of `<Provider>`, when `useBuildComponentCallback` and `<Proxy>` is used with `fallbackComponent`, they will render the fallback component and no longer throwing exception
 
 ### Added
 
 - Support nested provider of same type, by [@compulim](https://github.com/compulim) in PR [#64](https://github.com/compulim/react-chain-of-responsibility/pull/64)
    - Components will be built using middleware from `<Provider>` closer to the `<Proxy>` and fallback to those farther away
+- Support `<Provider>`-less usage if `fallbackComponent` is provided, by [@compulim](https://github.com/compulim) in PR [#XXX](https://github.com/compulim/react-chain-of-responsibility/pull/XXX)
 
 ### Changed
 
