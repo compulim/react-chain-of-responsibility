@@ -25,7 +25,7 @@ type UseBuildComponentCallback<Request, Props> = (
 
 type ProviderContext<Request, Props> = {
   get enhancer(): Enhancer<[Request], ResultComponent<Props>> | undefined;
-  get useBuildComponentCallback(): UseBuildComponentCallback<Request, Props>;
+  useBuildComponentCallback: UseBuildComponentCallback<Request, Props>;
 };
 
 type ProviderProps<Request, Props, Init> = PropsWithChildren<{
@@ -70,8 +70,12 @@ export default function createChainOfResponsibility<
     get enhancer() {
       return undefined;
     },
-    get useBuildComponentCallback(): ProviderContext<Request, Props>['useBuildComponentCallback'] {
-      throw new Error('useBuildComponentCallback() hook cannot be used outside of its corresponding <Provider>');
+    useBuildComponentCallback(_, options) {
+      if (options?.fallbackComponent) {
+        return options.fallbackComponent;
+      }
+
+      throw new Error('This component/hook cannot be used outside of its corresponding <Provider>');
     }
   };
 
@@ -169,14 +173,7 @@ export default function createChainOfResponsibility<
     // False positive: "children" is not a prop.
     // eslint-disable-next-line react/prop-types
     ({ children, fallbackComponent, request, ...props }) => {
-      let enhancer: ReturnType<typeof useBuildComponentCallback>;
-
-      try {
-        enhancer = useBuildComponentCallback();
-      } catch {
-        throw new Error('<Proxy> cannot be used outside of its corresponding <Provider>');
-      }
-
+      const enhancer = useBuildComponentCallback();
       const Component = enhancer(request as Request, { fallbackComponent });
 
       return Component ? <Component {...(props as Props)}>{children}</Component> : null;

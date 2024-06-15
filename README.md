@@ -229,7 +229,7 @@ type UseBuildComponentCallback<Request, Props> = (
 ) => ComponentType<Props> | false | null | undefined;
 ```
 
-The `fallbackComponent` is a component which all unhandled requests will sink into.
+The `fallbackComponent` is a component which all unhandled requests will sink into, including calls without ancestral `<Provider>`.
 
 ### API for Fluent UI
 

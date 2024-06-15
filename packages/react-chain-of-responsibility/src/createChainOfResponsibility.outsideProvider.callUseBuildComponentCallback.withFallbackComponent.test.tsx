@@ -2,7 +2,7 @@
 /// <reference types="@types/jest" />
 
 import { render } from '@testing-library/react';
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -20,19 +20,21 @@ afterEach(() => {
   consoleErrorMock.mockRestore();
 });
 
-test('when calling useBuildComponentCallback() outside of its <Provider> should throw', () => {
+test('when calling useBuildComponentCallback() outside of its <Provider> with fallbackComponent should render', () => {
   // GIVEN: useBuildComponentCallback() from a newly created chain of responsibility.
   const { useBuildComponentCallback } = createChainOfResponsibility<undefined, Props>();
 
-  const App = () => {
-    useBuildComponentCallback();
+  const Fallback = () => <div>Hello, World!</div>;
 
-    return <Fragment />;
+  const App = () => {
+    const Component = useBuildComponentCallback()(undefined, { fallbackComponent: Fallback });
+
+    return Component ? <Component /> : null;
   };
 
   // WHEN: Render.
-  // THEN: It should throw an error saying useBuildComponentCallback() hook cannot be used outside of its corresponding <Provider>.
-  expect(() => render(<App />)).toThrow(
-    'useBuildComponentCallback() hook cannot be used outside of its corresponding <Provider>'
-  );
+  const result = render(<App />);
+
+  // THEN: Should render fallbackComponent.
+  expect(result.container).toHaveProperty('textContent', 'Hello, World!');
 });
