@@ -27,7 +27,7 @@ test('when calling useBuildComponentCallback() outside of its <Provider> should 
   const App = () => {
     const Component = useBuildComponentCallback()(undefined);
 
-    return Component && <Component />;
+    return !!Component && <Component />;
   };
 
   // WHEN: Render.
