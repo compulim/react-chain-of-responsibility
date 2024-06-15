@@ -29,7 +29,7 @@ test('when calling useBuildComponentCallback() outside of its <Provider> with fa
   const App = () => {
     const Component = useBuildComponentCallback()(undefined, { fallbackComponent: Fallback });
 
-    return !!Component && <Component />;
+    return Component ? <Component /> : null;
   };
 
   // WHEN: Render.
