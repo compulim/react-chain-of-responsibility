@@ -36,7 +36,7 @@ test('constructing middleware with minimal typings should render', () => {
 
   const middleware: (typeof types.middleware)[] = [
     (_init: typeof types.init) => _next => (_request: typeof types.request) => (_props: typeof types.props) => (
-      <span>Hello, World</span>
+      <span>Hello, World!</span>
     )
   ];
 
