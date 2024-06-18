@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support nested provider of same type, by [@compulim](https://github.com/compulim) in PR [#64](https://github.com/compulim/react-chain-of-responsibility/pull/64)
    - Components will be built using middleware from `<Provider>` closer to the `<Proxy>` and fallback to those farther away
 - Support `<Provider>`-less usage if `fallbackComponent` is specified, by [@compulim](https://github.com/compulim) in PR [#65](https://github.com/compulim/react-chain-of-responsibility/pull/65)
-- Support omitting `init` or `request` props in `<Provider>` and `<Proxy>` if they are of type `void`, by [@compulim](https://github.com/compulim) in PR [#XXX](https://github.com/compulim/react-chain-of-responsibility/pull/XXX)
+- Support omitting `init` or `request` props in `<Provider>` and `<Proxy>` if they are of type `void`, by [@compulim](https://github.com/compulim) in PR [#66](https://github.com/compulim/react-chain-of-responsibility/pull/66)
 
 ### Changed
 
