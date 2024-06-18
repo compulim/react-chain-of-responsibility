@@ -29,3 +29,27 @@ test('constructing middleware using all typings from "types" should render', () 
   // THEN: It should render "hello world".
   expect(result.container).toHaveProperty('textContent', 'Hello, World!');
 });
+
+test('constructing middleware with minimal typings should render', () => {
+  // GIVEN: A chain of responsibility which specify init, props, and request.
+  const { Provider, Proxy, types } = createChainOfResponsibility<void, Record<string, never>, void>();
+
+  const middleware: (typeof types.middleware)[] = [
+    (_init: typeof types.init) => _next => (_request: typeof types.request) => (_props: typeof types.props) => (
+      <span>Hello, World</span>
+    )
+  ];
+
+  const App = () => (
+    // Allows <Provider> without "init" prop and <Proxy> without "request" prop.
+    <Provider middleware={middleware}>
+      <Proxy />
+    </Provider>
+  );
+
+  // WHEN: Render.
+  const result = render(<App />);
+
+  // THEN: It should render "hello world".
+  expect(result.container).toHaveProperty('textContent', 'Hello, World!');
+});
