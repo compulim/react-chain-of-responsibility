@@ -31,12 +31,14 @@ type ProviderContext<Request, Props> = {
 type ProviderProps<Request, Props, Init> = PropsWithChildren<{
   middleware: readonly ComponentMiddleware<Request, Props, Init>[];
 }> &
-  (Init extends never | undefined ? { init?: Init } : { init: Init });
+  (Init extends never | void ? { init?: undefined } : Init extends undefined ? { init?: Init } : { init: Init });
 
 type ProxyProps<Request, Props> = PropsWithChildren<
-  Request extends never | undefined
-    ? Props & { fallbackComponent?: ComponentType<Props>; request?: Request }
-    : Props & { fallbackComponent?: ComponentType<Props>; request: Request }
+  Request extends never | void
+    ? Props & { fallbackComponent?: ComponentType<Props>; request?: undefined }
+    : Request extends undefined
+      ? Props & { fallbackComponent?: ComponentType<Props>; request?: Request }
+      : Props & { fallbackComponent?: ComponentType<Props>; request: Request }
 >;
 
 type Options = {
