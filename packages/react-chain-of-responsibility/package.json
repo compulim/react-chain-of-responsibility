@@ -88,13 +88,13 @@
     "@babel/preset-env": "^7.24.7",
     "@babel/preset-react": "^7.24.7",
     "@babel/preset-typescript": "^7.24.7",
-    "@fluentui/react": "^8.118.7",
-    "@testing-library/dom": "^10.1.0",
+    "@fluentui/react": "^8.119.0",
+    "@testing-library/dom": "^10.2.0",
     "@testing-library/react": "^16.0.0",
     "@tsconfig/recommended": "^1.0.6",
     "@tsconfig/strictest": "^2.0.5",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.14.2",
+    "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",
     "esbuild": "^0.21.5",
     "escape-string-regexp": "^5.0.0",
@@ -106,7 +106,7 @@
     "react-test-renderer": "^18.3.1",
     "react-wrap-with": "^0.1.0",
     "tsup": "^8.1.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.2"
   },
   "peerDependencies": {
     "react": ">=16.8.0"

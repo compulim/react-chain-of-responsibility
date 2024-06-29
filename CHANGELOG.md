@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bumped dependencies, by [@compulim](https://github.com/compulim), in PR [#49](https://github.com/compulim/react-chain-of-responsibility/pull/49), [#58](https://github.com/compulim/react-chain-of-responsibility/pull/58), and [#63](https://github.com/compulim/react-chain-of-responsibility/pull/63)
+- Bumped dependencies, by [@compulim](https://github.com/compulim), in PR [#49](https://github.com/compulim/react-chain-of-responsibility/pull/49), [#58](https://github.com/compulim/react-chain-of-responsibility/pull/58), [#63](https://github.com/compulim/react-chain-of-responsibility/pull/63), and [#67](https://github.com/compulim/react-chain-of-responsibility/pull/67)
    - Production dependencies
       - [`@babel/runtime-corejs3@7.24.6`](https://npmjs.com/package/@babel/runtime-corejs3)
    - Development dependencies
@@ -34,12 +34,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - [`@babel/preset-env@7.24.7`](https://npmjs.com/package/@babel/preset-env/v/7.24.7)
       - [`@babel/preset-react@7.24.7`](https://npmjs.com/package/@babel/preset-react/v/7.24.7)
       - [`@babel/preset-typescript@7.24.7`](https://npmjs.com/package/@babel/preset-typescript/v/7.24.7)
-      - [`@fluentui/react@8.118.7`](https://npmjs.com/package/@fluentui/react/v/8.118.7)
+      - [`@fluentui/react@8.119.0`](https://npmjs.com/package/@fluentui/react/v/8.119.0)
+      - [`@testing-library/dom@10.2.0`](https://npmjs.com/package/@testing-library/dom/v/10.2.0)
       - [`@testing-library/react@16.0.0`](https://npmjs.com/package/@testing-library/react/v/16.0.0)
       - [`@tsconfig/recommended@1.0.6`](https://npmjs.com/package/@tsconfig/recommended)
       - [`@tsconfig/strictest@2.0.5`](https://npmjs.com/package/@tsconfig/strictest/v/2.0.5)
       - [`@types/jest@29.5.12`](https://npmjs.com/package/@types/jest/v/29.5.12)
-      - [`@types/node@20.14.2`](https://npmjs.com/package/@types/node/v/20.14.2)
+      - [`@types/node@20.14.9`](https://npmjs.com/package/@types/node/v/20.14.9)
       - [`@types/react-dom@18.3.0`](https://npmjs.com/package/@types/react-dom/v/18.3.0)
       - [`@types/react@18.3.3`](https://npmjs.com/package/@types/react/v/18.3.3)
       - [`esbuild@0.21.5`](https://npmjs.com/package/esbuild/v/0.21.5)
@@ -50,7 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - [`react-test-renderer@18.3.1`](https://npmjs.com/package/react-test-renderer/v/18.3.1)
       - [`react@18.3.1`](https://npmjs.com/package/react/v/18.3.1)
       - [`tsup@8.1.0`](https://npmjs.com/package/tsup/v/8.1.0)
-      - [`typescript@5.4.5`](https://npmjs.com/package/typescript/v/5.4.5)
+      - [`typescript@5.5.2`](https://npmjs.com/package/typescript/v/5.5.2)
 
 ## [0.1.0] - 2024-04-01
 
