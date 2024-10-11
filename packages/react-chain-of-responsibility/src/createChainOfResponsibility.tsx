@@ -10,9 +10,9 @@ import React, {
   type PropsWithChildren
 } from 'react';
 
-import isReactComponent from './isReactComponent';
-import applyMiddleware, { type Enhancer } from './private/applyMiddleware';
-import { type ComponentMiddleware } from './types';
+import isReactComponent from './isReactComponent.ts';
+import applyMiddleware, { type Enhancer } from './private/applyMiddleware.ts';
+import { type ComponentMiddleware } from './types.ts';
 
 type ResultComponent<Props> = ComponentType<Props> | false | null | undefined;
 

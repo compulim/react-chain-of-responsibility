@@ -1,3 +1,3 @@
-import createChainOfResponsibilityForFluentUI from './createChainOfResponsibilityForFluentUI';
+import createChainOfResponsibilityForFluentUI from './createChainOfResponsibilityForFluentUI.tsx';
 
 export { createChainOfResponsibilityForFluentUI };

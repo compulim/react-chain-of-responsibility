@@ -1,5 +1,5 @@
-import type { ComponentType } from 'react';
-import type { Middleware } from './private/applyMiddleware';
+import { type ComponentType } from 'react';
+import { type Middleware } from './private/applyMiddleware.ts';
 
 export type ComponentMiddleware<Request, Props = { children?: never }, Init = undefined> = Middleware<
   [Request],
