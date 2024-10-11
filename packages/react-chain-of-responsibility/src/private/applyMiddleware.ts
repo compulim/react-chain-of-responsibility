@@ -1,4 +1,4 @@
-import compose from './compose';
+import compose from './compose.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Fn<P extends any[], R> = (...args: P) => R;
