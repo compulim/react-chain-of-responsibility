@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useMemo, useState, type FormEventHandler } from 'react';
 import { createChainOfResponsibility } from 'react-chain-of-responsibility';
 
-const { Provider, types, useBuildComponentCallback } = createChainOfResponsibility<number>();
+const { Provider, types: _types, useBuildComponentCallback } = createChainOfResponsibility<number>();
 
 type Props = { items: number[] };
 
@@ -37,8 +37,8 @@ const Demo = () => {
     ({ currentTarget: { checked } }) => setEvenOnly(checked),
     [setEvenOnly]
   );
-  const middleware = useMemo<(typeof types.middleware)[]>(() => {
-    const middleware: (typeof types.middleware)[] = [];
+  const middleware = useMemo<(typeof _types.middleware)[]>(() => {
+    const middleware: (typeof _types.middleware)[] = [];
 
     evenOnly &&
       middleware.push(() => next => value => {

@@ -4,13 +4,13 @@ import { wrapWith } from 'react-wrap-with';
 
 type Props = { children?: ReactNode };
 
-const { Provider, Proxy, types } = createChainOfResponsibility<Set<string> | undefined, Props>();
+const { Provider, Proxy, types: _types } = createChainOfResponsibility<Set<string> | undefined, Props>();
 
 const Bold = ({ children }: Props) => <strong>{children}</strong>;
 const Italic = ({ children }: Props) => <i>{children}</i>;
 const Plain = ({ children }: Props) => <>{children}</>;
 
-const middleware: (typeof types.middleware)[] = [
+const middleware: (typeof _types.middleware)[] = [
   () => next => request => {
     const Next = next(request);
 

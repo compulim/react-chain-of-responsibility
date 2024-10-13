@@ -51,13 +51,13 @@
     }
   },
   "devDependencies": {
-    "@fluentui/react": "^8.119.0",
+    "@fluentui/react": "^8.121.4",
     "@tsconfig/strictest": "^2.0.5",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "esbuild": "^0.21.5",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "esbuild": "^0.24.0",
     "react-wrap-with": "^0.1.0",
-    "typescript": "^5.5.2"
+    "typescript": "^5.6.3"
   },
   "dependencies": {
     "react": "^18.3.1",
