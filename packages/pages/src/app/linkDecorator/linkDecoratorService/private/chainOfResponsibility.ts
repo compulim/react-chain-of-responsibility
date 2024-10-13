@@ -1,7 +1,7 @@
 import { createChainOfResponsibility } from 'react-chain-of-responsibility';
 
-import type { Init, Props } from './types';
+import { type Init, type Props } from './types.ts';
 
 const { Provider, Proxy, types } = createChainOfResponsibility<string | undefined, Props, Init>();
 
-export { Proxy, Provider, types };
+export { Provider, Proxy, types };

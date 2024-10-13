@@ -1,8 +1,7 @@
+import { type IButtonProps } from '@fluentui/react';
 import { DefaultButton } from '@fluentui/react/lib/Button';
 import React, { Fragment } from 'react';
 import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility/fluentUI';
-
-import type { IButtonProps } from '@fluentui/react';
 
 // Creates a <Provider> to contain all elements.
 const { Provider, types, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI<IButtonProps>();
