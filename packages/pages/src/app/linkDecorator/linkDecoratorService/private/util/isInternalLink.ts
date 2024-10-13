@@ -9,7 +9,7 @@ export default function isInternalLink(href: string, internalHosts: string[]): b
     if (internalHosts.includes(url.host)) {
       return true;
     }
-  } catch (error) {}
+  } catch {}
 
   return false;
 }

@@ -10,9 +10,9 @@ type Props = { children?: never };
 
 test('two providers of chain of responsibility nested should render', () => {
   // GIVEN: One chain of responsibility.
-  const { Provider, Proxy, types } = createChainOfResponsibility<undefined, Props, number>();
+  const { Provider, Proxy, types: _types } = createChainOfResponsibility<undefined, Props, number>();
 
-  const middleware1: readonly (typeof types.middleware)[] = Object.freeze([
+  const middleware1: readonly (typeof _types.middleware)[] = Object.freeze([
     init => next => request => {
       const Next = next(request);
 
@@ -23,7 +23,7 @@ test('two providers of chain of responsibility nested should render', () => {
       );
     }
   ]);
-  const middleware2: readonly (typeof types.middleware)[] = Object.freeze([
+  const middleware2: readonly (typeof _types.middleware)[] = Object.freeze([
     init => next => request => {
       const Next = next(request);
 
@@ -51,8 +51,8 @@ test('two providers of chain of responsibility nested should render', () => {
     middleware1,
     middleware2
   }: {
-    middleware1: readonly (typeof types.middleware)[];
-    middleware2?: readonly (typeof types.middleware)[] | undefined;
+    middleware1: readonly (typeof _types.middleware)[];
+    middleware2?: readonly (typeof _types.middleware)[] | undefined;
   }) => (
     <Provider init={1} middleware={middleware1}>
       {middleware2 ? (
@@ -71,7 +71,7 @@ test('two providers of chain of responsibility nested should render', () => {
   expect(result.container).toHaveProperty('textContent', 'First2 Second2 Third1 End');
 
   // WHEN: First middleware is updated.
-  const middleware3: readonly (typeof types.middleware)[] = Object.freeze([
+  const middleware3: readonly (typeof _types.middleware)[] = Object.freeze([
     init => next => request => {
       const Next = next(request);
 

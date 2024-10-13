@@ -9,12 +9,12 @@ import createChainOfResponsibility from './createChainOfResponsibility';
 
 test('constructing middleware using all typings from "types" should render', () => {
   // GIVEN: A chain of responsibility which specify init, props, and request.
-  const { Provider, Proxy, types } = createChainOfResponsibility<string, { className: string }, string>();
+  const { Provider, Proxy, types: _types } = createChainOfResponsibility<string, { className: string }, string>();
 
-  const middleware: (typeof types.middleware)[] = [
-    (init: typeof types.init) => next => (request: typeof types.request) =>
+  const middleware: (typeof _types.middleware)[] = [
+    (init: typeof _types.init) => next => (request: typeof _types.request) =>
       request === 'hello'
-        ? ({ className }: typeof types.props) => <span className={className}>{init}</span>
+        ? ({ className }: typeof _types.props) => <span className={className}>{init}</span>
         : next(request)
   ];
 
@@ -32,10 +32,10 @@ test('constructing middleware using all typings from "types" should render', () 
 
 test('constructing middleware with minimal typings should render', () => {
   // GIVEN: A chain of responsibility which specify init, props, and request.
-  const { Provider, Proxy, types } = createChainOfResponsibility<void, Record<string, never>, void>();
+  const { Provider, Proxy, types: _types } = createChainOfResponsibility<void, Record<string, never>, void>();
 
-  const middleware: (typeof types.middleware)[] = [
-    (_init: typeof types.init) => _next => (_request: typeof types.request) => (_props: typeof types.props) => (
+  const middleware: (typeof _types.middleware)[] = [
+    (_init: typeof _types.init) => _next => (_request: typeof _types.request) => (_props: typeof _types.props) => (
       <span>Hello, World!</span>
     )
   ];

@@ -10,7 +10,7 @@ type Props = { value?: number };
 
 test('useBuildRenderFunction should call getKey() for computing "key" attribute', () => {
   // GIVEN: A middleware.
-  const { Provider, types, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI<Props>();
+  const { Provider, types: _types, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI<Props>();
 
   const keys: (null | number | string | undefined)[] = [];
   const getKey = jest.fn(() => 'a');
@@ -26,7 +26,7 @@ test('useBuildRenderFunction should call getKey() for computing "key" attribute'
   };
 
   const App = () => {
-    const middleware = useMemo<(typeof types.middleware)[]>(
+    const middleware = useMemo<(typeof _types.middleware)[]>(
       () => [
         () =>
           () =>

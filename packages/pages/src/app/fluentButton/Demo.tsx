@@ -4,7 +4,7 @@ import React, { Fragment } from 'react';
 import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility/fluentUI';
 
 // Creates a <Provider> to contain all elements.
-const { Provider, types, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI<IButtonProps>();
+const { Provider, types: _types, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI<IButtonProps>();
 
 // List of subcomponents.
 const Banana = () => <Fragment>🍌</Fragment>;
@@ -12,7 +12,7 @@ const Orange = () => <Fragment>🍊</Fragment>;
 
 // Constructs an array of middleware to handle the request and return corresponding subcomponents.
 // Fallback to `defaultRender` of `IRenderFunction` is handled by the hook.
-const middleware: (typeof types.middleware)[] = [
+const middleware: (typeof _types.middleware)[] = [
   () => next => props => (props?.iconProps?.iconName === 'Banana' ? Banana : next(props)),
   () => next => props => (props?.iconProps?.iconName === 'Orange' ? Orange : next(props))
 ];

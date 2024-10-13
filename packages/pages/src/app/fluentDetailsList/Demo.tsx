@@ -11,7 +11,11 @@ initializeIcons();
 
 const cellClassName = mergeStyles({ paddingBottom: 4, paddingLeft: 12, paddingTop: 4 });
 
-const { Provider, types, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI<IDetailsColumnFieldProps>();
+const {
+  Provider,
+  types: _types,
+  useBuildRenderFunction
+} = createChainOfResponsibilityForFluentUI<IDetailsColumnFieldProps>();
 
 const COLUMNS: IColumn[] = [
   { fieldName: 'name', key: 'name', minWidth: 0, name: 'Fruit' },
@@ -30,7 +34,7 @@ const ITEMS: Item[] = [
   { name: 'Orange', canClick: true, rating: 3.5 }
 ];
 
-const decorateFieldWithLink: typeof types.middleware = () => next => request => {
+const decorateFieldWithLink: typeof _types.middleware = () => next => request => {
   const NextComponent = next(request);
 
   if (request?.column.fieldName === 'name' && request?.item.canClick) {
@@ -49,7 +53,7 @@ const decorateFieldWithLink: typeof types.middleware = () => next => request => 
 const ItemRating = ({ item }: { item: Item }) =>
   item.rating ? <Rating className={cellClassName} rating={item.rating} readOnly={true} /> : null;
 
-const decorateFieldWithRating: typeof types.middleware = () => next => request => {
+const decorateFieldWithRating: typeof _types.middleware = () => next => request => {
   if (request?.column.fieldName === 'rating') {
     if (request?.item.rating) {
       return ItemRating;
@@ -76,7 +80,7 @@ const Inner = () => {
 const Demo = () => {
   const [shouldDecorateNameColumn, setShouldDecorateNameColumn] = useState(true);
   const [shouldDecorateRatingColumn, setShouldDecorateRatingColumn] = useState(true);
-  const middleware = useMemo<readonly (typeof types.middleware)[]>(() => {
+  const middleware = useMemo<readonly (typeof _types.middleware)[]>(() => {
     const middleware = [];
 
     shouldDecorateNameColumn && middleware.push(decorateFieldWithLink);

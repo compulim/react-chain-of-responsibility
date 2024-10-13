@@ -42,7 +42,7 @@ function isInternalLink(href: string, internalHosts: string[]) {
     if (internalHosts.includes(url.host)) {
       return true;
     }
-  } catch (error) {}
+  } catch {}
 
   return false;
 }
