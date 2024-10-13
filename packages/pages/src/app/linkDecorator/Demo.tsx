@@ -2,8 +2,8 @@ import './Demo.css';
 
 import React from 'react';
 
-import Link from './linkDecoratorService/Link';
-import Provider from './linkDecoratorService/Provider';
+import Link from './linkDecoratorService/Link.tsx';
+import Provider from './linkDecoratorService/Provider.tsx';
 
 const INTERNAL_HOSTS = ['internal.example.com'];
 

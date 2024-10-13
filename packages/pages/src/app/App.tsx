@@ -1,11 +1,11 @@
 import React from 'react';
 
-import DecorationDemo from './decoration/Demo';
-import FluentButtonDemo from './fluentButton/Demo';
-import FluentDemo from './fluentDetailsList/Demo';
-import LinkDecoratorDemo from './linkDecorator/Demo';
-import RowCounterDemo from './rowCounter/Demo';
-import SimpleDemo from './simple/Demo';
+import DecorationDemo from './decoration/Demo.tsx';
+import FluentButtonDemo from './fluentButton/Demo.tsx';
+import FluentDemo from './fluentDetailsList/Demo.tsx';
+import LinkDecoratorDemo from './linkDecorator/Demo.tsx';
+import RowCounterDemo from './rowCounter/Demo.tsx';
+import SimpleDemo from './simple/Demo.tsx';
 
 const App = () => {
   return (

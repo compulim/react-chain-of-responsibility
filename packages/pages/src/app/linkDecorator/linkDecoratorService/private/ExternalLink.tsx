@@ -1,8 +1,7 @@
 import React from 'react';
 
-import OpenInNewTabIcon from './OpenInNewTabIcon';
-
-import type { Props } from './types';
+import OpenInNewTabIcon from './OpenInNewTabIcon.tsx';
+import { type Props } from './types.ts';
 
 const ExternalLink = ({ children, className, href }: Props) => {
   return (

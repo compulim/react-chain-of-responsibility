@@ -1,10 +1,10 @@
 import React, { type PropsWithChildren } from 'react';
 
-import ExternalLink from './private/ExternalLink';
-import InternalLink from './private/InternalLink';
-import PlainText from './private/PlainText';
-import { Provider as RawProvider, types } from './private/chainOfResponsibility';
-import isInternalLink from './private/util/isInternalLink';
+import ExternalLink from './private/ExternalLink.tsx';
+import InternalLink from './private/InternalLink.tsx';
+import PlainText from './private/PlainText.tsx';
+import { Provider as RawProvider, types } from './private/chainOfResponsibility.ts';
+import isInternalLink from './private/util/isInternalLink.ts';
 
 const middleware: (typeof types.middleware)[] = [
   // If it does not have "href", treat it as plain text.
