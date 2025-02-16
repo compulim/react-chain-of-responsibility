@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Bumped dependencies, in PR [#76](https://github.com/compulim/react-chain-of-responsibility/pull/76)
+  - Development dependencies
+    - [`@babel/preset-env@7.26.9`](https://npmjs.com/package/@babel/preset-env/v/7.26.9)
+    - [`@babel/preset-react@7.26.3`](https://npmjs.com/package/@babel/preset-react/v/7.26.3)
+    - [`@types/jest@29.5.14`](https://npmjs.com/package/@types/jest/v/29.5.14)
+    - [`@types/react@19.0.9`](https://npmjs.com/package/@types/react/v/19.0.9)
+    - [`@typescript-eslint/eslint-plugin@8.24.0`](https://npmjs.com/package/@typescript-eslint/eslint-plugin/v/8.24.0)
+    - [`@typescript-eslint/parser@8.24.0`](https://npmjs.com/package/@typescript-eslint/parser/v/8.24.0)
+    - [`eslint@9.20.1`](https://npmjs.com/package/eslint/v/9.20.1)
+    - [`eslint-import-resolver-typescript@3.8.0`](https://npmjs.com/package/eslint-import-resolver-typescript/v/3.8.0)
+    - [`eslint-plugin-prettier@5.2.3`](https://npmjs.com/package/eslint-plugin-prettier/v/5.2.3)
+    - [`eslint-plugin-react@7.37.4`](https://npmjs.com/package/eslint-plugin-react/v/7.37.4)
+    - [`prettier@3.5.1`](https://npmjs.com/package/prettier/v/3.5.1)
+    - [`react@19.0.0`](https://npmjs.com/package/react/v/19.0.0)
+    - [`react-dom@19.0.0`](https://npmjs.com/package/react-dom/v/19.0.0)
+    - [`react-test-renderer@19.0.0`](https://npmjs.com/package/react-test-renderer/v/19.0.0)
+    - [`typescript@5.7.3`](https://npmjs.com/package/typescript/v/5.7.3)
+
 ## [0.2.0] - 2025-02-14
 
 ### Added
@@ -177,6 +199,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       -  [`prettier@2.8.4`](https://npmjs.com/package/prettier)
       -  [`typescript@4.9.5`](https://npmjs.com/package/typescript)
 
+[Unreleased]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.2.0...HEAD
 [0.2.0]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.0.2...v0.1.0
 [0.0.2]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.0.1...v0.0.2
