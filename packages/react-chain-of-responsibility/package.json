@@ -87,6 +87,20 @@
       "react-test-renderer": "18.0.0"
     }
   },
+  "pinDependencies": {
+    "@types/react": [
+      "18"
+    ],
+    "react": [
+      "18"
+    ],
+    "react-dom": [
+      "18"
+    ],
+    "react-test-renderer": [
+      "18"
+    ]
+  },
   "devDependencies": {
     "@babel/preset-env": "^7.25.8",
     "@babel/preset-react": "^7.25.7",

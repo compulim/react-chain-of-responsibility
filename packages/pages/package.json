@@ -50,6 +50,20 @@
       "react-dom": "18.0.0"
     }
   },
+  "pinDependencies": {
+    "@types/react": [
+      "18"
+    ],
+    "@types/react-dom": [
+      "18"
+    ],
+    "react": [
+      "18"
+    ],
+    "react-dom": [
+      "18"
+    ]
+  },
   "devDependencies": {
     "@fluentui/react": "^8.121.4",
     "@tsconfig/strictest": "^2.0.5",
