@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Bumped dependencies, in PR [#78](https://github.com/compulim/react-chain-of-responsibility/pull/78)
+  - Development dependencies
+    - [`@babel/preset-env@7.26.9`](https://npmjs.com/package/@babel/preset-env/v/7.26.9)
+    - [`@babel/preset-react@7.26.3`](https://npmjs.com/package/@babel/preset-react/v/7.26.3)
+    - [`@babel/preset-typescript@7.26.0`](https://npmjs.com/package/@babel/preset-typescript/v/7.26.0)
+    - [`@fluentui/react@8.122.9`](https://npmjs.com/package/@fluentui/react/v/8.122.9)
+    - [`@testing-library/react@16.2.0`](https://npmjs.com/package/@testing-library/react/v/16.2.0)
+    - [`@tsconfig/recommended@1.0.8`](https://npmjs.com/package/@tsconfig/recommended/v/1.0.8)
+    - [`@types/jest@29.5.14`](https://npmjs.com/package/@types/jest/v/29.5.14)
+    - [`@types/node@22.13.4`](https://npmjs.com/package/@types/node/v/22.13.4)
+    - [`@types/react@18.3.18`](https://npmjs.com/package/@types/react/v/18.3.18)
+    - [`@types/react-dom@18.3.5`](https://npmjs.com/package/@types/react-dom/v/18.3.5)
+    - [`@typescript-eslint/eslint-plugin@8.24.0`](https://npmjs.com/package/@typescript-eslint/eslint-plugin/v/8.24.0)
+    - [`@typescript-eslint/parser@8.24.0`](https://npmjs.com/package/@typescript-eslint/parser/v/8.24.0)
+    - [`esbuild@0.25.0`](https://npmjs.com/package/esbuild/v/0.25.0)
+    - [`eslint@9.20.1`](https://npmjs.com/package/eslint/v/9.20.1)
+    - [`eslint-import-resolver-typescript@3.8.0`](https://npmjs.com/package/eslint-import-resolver-typescript/v/3.8.0)
+    - [`eslint-plugin-prettier@5.2.3`](https://npmjs.com/package/eslint-plugin-prettier/v/5.2.3)
+    - [`eslint-plugin-react@7.37.4`](https://npmjs.com/package/eslint-plugin-react/v/7.37.4)
+    - [`prettier@3.5.1`](https://npmjs.com/package/prettier/v/3.5.1)
+    - [`publint@0.3.5`](https://npmjs.com/package/publint/v/0.3.5)
+    - [`tsup@8.3.6`](https://npmjs.com/package/tsup/v/8.3.6)
+    - [`typescript@5.7.3`](https://npmjs.com/package/typescript/v/5.7.3)
+
 ## [0.2.0] - 2025-02-14
 
 ### Added
@@ -177,6 +205,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       -  [`prettier@2.8.4`](https://npmjs.com/package/prettier)
       -  [`typescript@4.9.5`](https://npmjs.com/package/typescript)
 
+[Unreleased]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.2.0...HEAD
 [0.2.0]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.0.2...v0.1.0
 [0.0.2]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.0.1...v0.0.2
