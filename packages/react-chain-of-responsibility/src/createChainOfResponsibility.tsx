@@ -199,6 +199,7 @@ export default function createChainOfResponsibility<
     request: PropTypes.any
   };
 
+  // TODO: Add tests.
   const asMiddleware: (
     middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props>>
   ) => ComponentMiddleware<Request, Props, Init> =
