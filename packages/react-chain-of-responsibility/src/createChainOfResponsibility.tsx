@@ -180,7 +180,7 @@ export default function createChainOfResponsibility<
     const enhancer = useBuildComponentCallback();
     const Component = enhancer(request as Request, { fallbackComponent });
 
-    return Component ? <Component {...(props as any)}>{children}</Component> : null;
+    return Component ? <Component {...(props as any)}>{children}</Component> : undefined;
   }
 
   // TODO: Add tests.
