@@ -33,7 +33,7 @@ type ProviderProps<Request, Props, Init> = PropsWithChildren<{
 }> &
   (Init extends never | void ? { init?: undefined } : Init extends undefined ? { init?: Init } : { init: Init });
 
-type ProxyProps<Request, Props> = PropsWithChildren<
+type ProxyProps<Request, Props extends {}> = PropsWithChildren<
   Request extends never | void
     ? Props & { fallbackComponent?: ComponentType<Props>; request?: undefined }
     : Request extends undefined
@@ -51,18 +51,29 @@ type Options = {
   passModifiedRequest?: boolean;
 };
 
+type MiddlewareProps<Props, Request> = Readonly<{
+  Next: ComponentType<Props>;
+  request: Request;
+}>;
+
+type MiddlewareComponentProps<Request, Props> = Props & Readonly<{ middleware: MiddlewareProps<Props, Request> }>;
+
 export default function createChainOfResponsibility<
   Request = undefined,
-  Props = { children?: never },
+  Props extends {} = Readonly<{ children?: never }>,
   Init = undefined
 >(
   options: Options = {}
 ): {
+  asMiddleware: (
+    middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props>>
+  ) => ComponentMiddleware<Request, Props, Init>;
   Provider: ComponentType<ProviderProps<Request, Props, Init>>;
   Proxy: ComponentType<ProxyProps<Request, Props>>;
   types: {
     init: Init;
     middleware: ComponentMiddleware<Request, Props, Init>;
+    middlwareComponentProps: MiddlewareComponentProps<Request, Props>;
     props: Props;
     request: Request;
   };
@@ -178,7 +189,7 @@ export default function createChainOfResponsibility<
       const enhancer = useBuildComponentCallback();
       const Component = enhancer(request as Request, { fallbackComponent });
 
-      return Component ? <Component {...(props as Props)}>{children}</Component> : null;
+      return Component ? <Component {...(props as any)}>{children}</Component> : null;
     }
   );
 
@@ -188,10 +199,41 @@ export default function createChainOfResponsibility<
     request: PropTypes.any
   };
 
+  const asMiddleware: (
+    middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props>>
+  ) => ComponentMiddleware<Request, Props, Init> =
+    (
+      MiddlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props>>
+    ): ComponentMiddleware<Request, Props, Init> =>
+    () =>
+    next =>
+    request => {
+      const RawNextComponent = next(request);
+
+      return (props: Props) => {
+        const middleware = useMemo(
+          () =>
+            Object.freeze({
+              Next: memo<Props>(
+                RawNextComponent
+                  ? (overridingProps: Props) => <RawNextComponent {...props} {...overridingProps} />
+                  : () => undefined
+              ),
+              request
+            }),
+          []
+        );
+
+        return <MiddlewareComponent {...props} middleware={middleware} />;
+      };
+    };
+
   return {
+    asMiddleware,
     Provider,
     Proxy,
     types: {
+      middlwareComponentProps: undefined as unknown as MiddlewareComponentProps<Request, Props>,
       init: undefined as unknown as Init,
       middleware: undefined as unknown as ComponentMiddleware<Request, Props, Init>,
       props: undefined as unknown as Props,
