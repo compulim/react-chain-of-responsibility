@@ -52,7 +52,7 @@ type Options = {
 
 type MiddlewareProps<Init, Request, Props> = Readonly<{
   init: Init;
-  Next: ComponentType<Props>;
+  Next: ComponentType<Partial<Props>>;
   request: Request;
 }>;
 
@@ -200,9 +200,9 @@ export default function createChainOfResponsibility<
           () =>
             Object.freeze({
               init,
-              Next: memo<Props>(
+              Next: memo<Partial<Props>>(
                 RawNextComponent
-                  ? (overridingProps: Props) => <RawNextComponent {...props} {...overridingProps} />
+                  ? (overridingProps: Partial<Props>) => <RawNextComponent {...props} {...overridingProps} />
                   : () => undefined
               ),
               request
