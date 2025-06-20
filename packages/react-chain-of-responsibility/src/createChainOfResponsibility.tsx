@@ -195,7 +195,7 @@ export default function createChainOfResponsibility<
     request => {
       const RawNextComponent = next(request);
 
-      return (props: Props) => {
+      return memo<Props>((props: Props) => {
         const middleware = useMemo(
           () =>
             Object.freeze({
@@ -211,7 +211,7 @@ export default function createChainOfResponsibility<
         );
 
         return <MiddlewareComponent {...props} middleware={middleware} />;
-      };
+      });
     };
 
   return {
