@@ -216,8 +216,8 @@ export default function createChainOfResponsibility<
 
   return {
     asMiddleware,
-    Provider: ChainOfResponsibilityProvider,
-    Proxy,
+    Provider: memo<ProviderProps<Request, Props, Init>>(ChainOfResponsibilityProvider),
+    Proxy: memo<ProxyProps<Request, Props>>(Proxy),
     types: {
       middlwareComponentProps: undefined as unknown as MiddlewareComponentProps<Init, Request, Props>,
       init: undefined as unknown as Init,
