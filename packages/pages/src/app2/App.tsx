@@ -1,11 +1,12 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import './App.css';
 import GitHubLogo from './GitHubLogo';
 import SourceCode from './SourceCode';
+import TableOfContent from './TableOfContent';
 import WebPage, { CodeEventHandler } from './WebPage';
 
 function App() {
-  const [tab] = useState('demo1.html');
+  const [tab, setTab] = useState(location.hash.replace(/^#/u, ''));
   const [code, setCode] = useState('');
 
   const handleCode = useCallback<CodeEventHandler>(
@@ -14,6 +15,14 @@ function App() {
     },
     [setCode]
   );
+
+  useEffect(() => {
+    const handleHashChange = () => setTab(location.hash.replace(/^#/u, ''));
+
+    window.addEventListener('hashchange', handleHashChange);
+
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [setTab]);
 
   return (
     <div className="app">
@@ -32,11 +41,9 @@ function App() {
         </div>
       </div>
       <div className="app__pane app__pane--code app__pane--left">
-        <SourceCode code={code} title={tab} />
+        {tab ? <SourceCode code={code} /> : <TableOfContent />}
       </div>
-      <div className="app__pane app__pane--right">
-        <WebPage onCode={handleCode} src={tab} />
-      </div>
+      <div className="app__pane app__pane--right">{tab && <WebPage onCode={handleCode} src={tab} />}</div>
     </div>
   );
 }

@@ -6,8 +6,7 @@ import prettify from './private/prettify';
 
 const propsSchema = pipe(
   object({
-    code: string(),
-    title: string()
+    code: string()
   }),
   readonly()
 );
@@ -15,7 +14,7 @@ const propsSchema = pipe(
 type Props = InferInput<typeof propsSchema>;
 
 function SourceCode(props: Props) {
-  const { code, title } = parse(propsSchema, props);
+  const { code } = parse(propsSchema, props);
 
   const [prettifiedCode, setPrettifiedCode] = useState<string>('');
   const [htmlCode, setHTMLCode] = useState<Readonly<{ __html: string }> | undefined>(undefined);
