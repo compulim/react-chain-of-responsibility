@@ -42,7 +42,8 @@ function SourceCode(props: Props) {
     (async () => {
       const htmlCode = await codeToHtml(prettifiedCode, {
         lang: 'javascript',
-        theme: 'dark-plus'
+        tabindex: -1,
+        theme: 'dark-plus',
       });
 
       unmounted || setHTMLCode({ __html: htmlCode });
