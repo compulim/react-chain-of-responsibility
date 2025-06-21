@@ -6,13 +6,105 @@
 
 This package is designed for React component developers to enable component customization via composition using the [chain of responsibility design pattern](https://refactoring.guru/design-patterns/chain-of-responsibility).
 
-Additional entrypoint and hook are provided to use with [Fluent UI as `IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts).
-
 By composing customizations, they can be decoupled and published separately. App developers could import these published customizations and orchestrate them to their needs. This pattern encourages [separation of concerns](https://en.wikipedia.org/wiki/Separation_of_concerns) and enables economy of customizability.
+
+Additional entrypoint and hook are provided to use with [Fluent UI as `IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts).
 
 ## Demo
 
 Click here for [our live demo](https://compulim.github.io/react-chain-of-responsibility/).
+
+## Sample
+
+In this sample, we are using the chain-of-responsibility pattern to render few different types of file, including images, videos, and binary files. Depends on type of the file, the rendering will be handled by `<Image>`, `<Video>`, and `<Binary>` respectively.
+
+```jsx
+import { createChainOfResponsibility } from 'react-chain-of-responsibility';
+
+type Request = { contentType: string; };
+type Props = { url: string; };
+
+const { asMiddleware, Provider, Proxy } = createChainOfResponsibility<Request, Props>();
+
+// Will handle request with content type `image/*`.
+const Image = ({ middleware: { request, Next }, url }) =>
+  request.contentType.startsWith('image/') ? <img src={url} /> : <Next />;
+
+// Will handle request with content type `video/*`.
+const Video = ({ middleware: { request, Next }, url }) =>
+  request.contentType.startsWith('video/') ? <video><source src={url} /></video> : <Next />;
+
+// Will handle everything.
+const Binary = ({ url }) => <a href={url}>{url}</a>
+
+const middleware = [
+  asMiddleware(Image),
+  asMiddleware(Video),
+  asMiddleware(Binary)
+];
+
+render(
+  <Provider middleware={middleware}>
+    <Proxy request={{ contentType: 'image/png' }} url="https://.../cat.png" />
+    <Proxy request={{ contentType: 'video/mp4' }} url="https://.../cat-jump.mp4" />
+    <Proxy request={{ contentType: 'application/octet-stream' }} url="https://.../cat.zip" />
+  </Provider>
+);
+```
+
+When the app is run, the following HTML will be produced:
+
+```html
+```
+
+## Explanation
+
+### Middleware component
+
+```jsx
+const Image = ({ middleware: { request, Next }, url }) =>
+  request.contentType.startsWith('image/') ? <img src={url} /> : <Next />;
+```
+
+`<Image>` is a React component. If the `request.contentType` is `image/*`, it will render via `<img>`. Otherwise, it will fallback to the next middleware.
+
+### Forming the chain
+
+```jsx
+const middleware = [
+  asMiddleware(Image),
+  asMiddleware(Video),
+  asMiddleware(Binary)
+];
+```
+
+`<Image>` will be rendered first. If the request is of type `image/*`, it will render. Otherwise, it will ask the next middleware to render, which is `<Video>`.
+
+`<Video>` will render if the type is `video/*`, otherwise, it will fallback again to `<Binary>`.
+
+Lastly, `<Binary>` is a catch-all and it will render everything as a link.
+
+### Rendering requests
+
+```jsx
+render(
+  <Provider middleware={middleware}>
+    <Proxy request={{ contentType: 'image/png' }} url="https://.../cat.png" />
+    <Proxy request={{ contentType: 'video/mp4' }} url="https://.../cat-jump.mp4" />
+    <Proxy request={{ contentType: 'application/octet-stream' }} url="https://.../cat.zip" />
+  </Provider>
+);
+```
+
+Register our middleware chain to `<Provider>`.
+
+`<Proxy>` is a proxy component. Depends on the request, it could be either `<Image>`, `<Video>`, or `<Binary>`.
+
+The first `<Proxy>` will be proxied to `<Image>`, which accept the content type of `image/png` and render as `<img src="https://.../cat.png" />`.
+
+The second `<Proxy>` will be proxied to `<Image>` too. But `<Image>` does not understand the content type, thus, it render the `<Next>` component.The `<Next>` is a proxy of `<Video>` (next middleware in the chain), which accept the content type of `video/mp4` and render as `<video><source src="https://.../cat-jump.mp4" /></video>`.
+
+The last `<Proxy>` will proxy to `<Image>`, then `<Video>`, then `<Binary>`. The catch-all `<Binary>` will render it as `<a href="https://.../cat.zip">https://.../cat.zip</a>`.
 
 ## How to use
 
@@ -182,6 +274,9 @@ render(
 function createChainOfResponsibility<Request = undefined, Props = { children?: never }, Init = undefined>(
   options?: Options
 ): {
+  asMiddleware: (
+    middlewareComponent: ComponentType<MiddlewareComponentProps<Init, Request, Props>>
+  ) => ComponentMiddleware<Request, Props, Init>;
   Provider: ComponentType<ProviderProps<Request, Props, Init>>;
   Proxy: ComponentType<ProxyProps<Request, Props>>;
   types: {
@@ -196,14 +291,17 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
 
 ### Return value
 
-| Name                        | Type                                                                            | Description                                                                           |
-| --------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `Provider`                  | `React.ComponentType`                                                           | Entrypoint component, must wraps all usage of customizations                          |
-| `Proxy`                     | `React.ComponentType`                                                           | Proxy component, process the `request` from props and morph into the result component |
-| `types`                     | `{ init, middleware, props, request }`                                          | TypeScript: shorthand types, all objects are `undefined` intentionally                |
-| `useBuildComponentCallback` | `() => (request, options) => React.ComponentType \| false \| null \| undefined` | Callback hook which return a function to build the component for rendering the result |
+| Name                        | Description                                                                           |
+| --------------------------- | ------------------------------------------------------------------------------------- |
+| `asMiddleware`              | A helper function to convert a React component into a middleware.                     |
+| `Provider`                  | Entrypoint component, must wraps all usage of customizations                          |
+| `Proxy`                     | Proxy component, process the `request` from props and morph into the result component |
+| `types`                     | TypeScript: shorthand types, all objects are `undefined` intentionally                |
+| `useBuildComponentCallback` | Callback hook which return a function to build the component for rendering the result |
 
 ### Options
+
+> `passModifiedRequest` is not supported by `asMiddleware`.
 
 ```ts
 type Options = {

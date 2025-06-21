@@ -195,6 +195,7 @@ export default function createChainOfResponsibility<
     request => {
       const RawNextComponent = next(request);
 
+      // TODO: Can we prebuild this component during init?
       return memo<Props>((props: Props) => {
         const middleware = useMemo(
           () =>

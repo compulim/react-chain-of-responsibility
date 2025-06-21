@@ -1,0 +1,55 @@
+.app {
+  --padding: 10px;
+
+  background-color: #333;
+  color: #eee;
+  display: grid;
+  gap: var(--padding);
+  grid-template-areas: 'title title' 'left right';
+  grid-template-columns: 2fr minmax(480px, 1fr);
+  grid-template-rows: auto 1fr;
+  height: calc(100% - var(--padding) * 2);
+  padding: var(--padding);
+}
+
+.app__title-bar {
+  display: grid;
+  grid-area: title;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+.app__title {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: x-large;
+  font-weight: 200;
+  margin: 0;
+  word-break: keep-all;
+}
+
+.app__logo {
+  display: grid;
+}
+
+.app__pane {
+  background-color: Black;
+  border: solid 1px #444;
+  border-radius: var(--padding);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  height: 100%;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.app__pane--left {
+  grid-area: left;
+}
+
+.app__pane--right {
+  grid-area: right;
+}
+
+.app__pane--code {
+  background-color: #1e1e1e;
+}
