@@ -24,21 +24,30 @@
       import { createRoot } from 'react-dom/client';
       import { createChainOfResponsibility } from 'react-chain-of-responsibility';
 
-      type Request = { contentType: string; };
-      type Props = { url: string; };
+      type MiddlewareProps = { url: string; };
+      type MiddlewareRequest = { contentType: string; };
 
-      const { asMiddleware, Provider, Proxy } = createChainOfResponsibility<Request, Props>();
+      const { asMiddleware, Provider, Proxy } = createChainOfResponsibility<MiddlewareRequest, MiddlewareProps>();
 
-      // Will handle request with content type `image/*`.
+      // <Image> will handle request with content type `image/*`.
       const Image = ({ middleware: { request, Next }, url }) =>
         request.contentType.startsWith('image/') ? <img className="file file--image" src={url} /> : <Next />;
 
-      // Will handle request with content type `video/*`.
+      // <Video> will handle request with content type `video/*`.
       const Video = ({ middleware: { request, Next }, url }) =>
         request.contentType.startsWith('video/') ? <video className="file file--video" controls><source src={url} /></video> : <Next />;
 
-      // Will handle everything.
+      // <Binary> will handle everything.
       const Binary = ({ url }) => <div className="file file--binary">{url}</div>
+
+      // Wrap <Proxy> into its own component for reusability.
+      type FileProps = {
+        contentType: string,
+        url: string
+      };
+
+      const File = (props: FileProps) =>
+        <Proxy request={{ contentType: props.contentType }} url={props.url} />
 
       // Register 3 middleware in the chain.
       const middleware = [
@@ -50,9 +59,9 @@
       // Render 3 files each with different content type.
       createRoot(document.getElementById('root')).render(
         <Provider middleware={middleware}>
-          <Proxy request={{ contentType: 'image/jpeg' }} url="https://picsum.photos/426/240" />
-          <Proxy request={{ contentType: 'video/mp4' }} url="https://www.pexels.com/download/video/5692323/?h=240&w=426" />
-          <Proxy request={{ contentType: 'application/octet-stream' }} url="filename.zip" />
+          <File contentType="image/jpeg" url="https://picsum.photos/426/240" />
+          <File contentType="video/mp4" url="https://www.pexels.com/download/video/5692323/?h=240&w=426" />
+          <File contentType="application/octet-stream" url="filename.zip" />
         </Provider>
       );
     </script>
