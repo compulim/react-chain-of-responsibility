@@ -28,8 +28,7 @@ scenario('use asMiddleware', bdd => {
             () =>
               () =>
               () =>
-              ({ text }) =>
-                text.toUpperCase()
+              ({ text }) => <Fragment>{text.toUpperCase()}</Fragment>
           ]}
         >
           <Proxy request={request} text={text} />
