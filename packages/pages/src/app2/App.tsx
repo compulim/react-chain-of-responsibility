@@ -1,9 +1,9 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import './App.css';
-import GitHubLogo from './GitHubLogo';
-import SourceCode from './SourceCode';
-import TableOfContent from './TableOfContent';
-import WebPage, { CodeEventHandler } from './WebPage';
+import GitHubLogo from './GitHubLogo.tsx';
+import SourceCode from './SourceCode.tsx';
+import TableOfContent from './TableOfContent.tsx';
+import WebPage, { CodeEventHandler } from './WebPage.tsx';
 
 function App() {
   const [tab, setTab] = useState(location.hash.replace(/^#/u, ''));
@@ -38,7 +38,7 @@ function App() {
           <a
             className="app__logo"
             href="https://github.com/compulim/react-chain-of-responsibility"
-            rel="noopener noreferer"
+            rel="noopener noreferrer"
             target="_blank"
             title="GitHub repository"
           >

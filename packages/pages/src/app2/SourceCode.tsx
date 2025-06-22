@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { codeToHtml } from 'shiki';
 import { object, parse, pipe, readonly, string, type InferInput } from 'valibot';
 import './SourceCode.css';
-import prettify from './private/prettify';
+import prettify from './private/prettify.ts';
 
 const propsSchema = pipe(
   object({
