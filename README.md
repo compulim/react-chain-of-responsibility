@@ -514,7 +514,7 @@ You can use the following decision tree to know when to use `<Proxy>` vs. `useBu
 
 ### Calling `next()` multiple times
 
-It is possible to call `next()` multiple times to render multiple copies of UI. Middleware should be written as a stateless function.
+It is possible to call `next()` multiple times. However, the return value should be stable, calling it multiple times without a different request should yield the same result.
 
 This is best used with options `passModifiedRequest` set to `true`. This combination allow a middleware to render the UI multiple times with some variations, such as rendering content and minimap at the same time.
 
@@ -527,6 +527,8 @@ This is because React does not allow asynchronous render. An exception will be t
 ### Good middleware is stateless
 
 When writing middleware, keep them as stateless as possible and do not relies on data outside of the `request` object. The way it is writing should be similar to React function components.
+
+When using functional programming to register the middleware, the return value should be stable.
 
 ### Good middleware returns `false`/`null`/`undefined` to skip rendering
 
