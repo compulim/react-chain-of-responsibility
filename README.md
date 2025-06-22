@@ -20,11 +20,13 @@ Click here for [our live demo](https://compulim.github.io/react-chain-of-respons
 1. [Register handlers in the chain](#register-handlers-in-the-chain)
 1. [Make a render request](#make-a-render-request)
 
+In this sample, we will use chain of responsibility pattern to create a file preview UI which can handle various file types.
+
 ### Create a chain
 
-A chain consists of multiple handlers (a.k.a. middleware) and they would handle rendering requests.
+A chain consists of multiple handlers (a.k.a. middleware) and each would handle rendering requests.
 
-The request will be passed to the first handler and may traverse down the chain. The returning result will be a React component which can be used to render. If the chain decided not to render anything, `undefined` will be returned.
+The request will be passed to the first handler and may traverse down the chain. The returning result will be a React component. If the chain decided not to render anything, it will return `undefined`.
 
 ```tsx
 import { createChainOfResponsibility } from 'react-chain-of-responsibility';
@@ -35,25 +37,29 @@ type Props = { url: string };
 const { asMiddleware, Provider, Proxy } = createChainOfResponsibility<Request, Props>();
 ```
 
-In this sample, the `request` contains content type of the file. And the `props` contains the URL to be rendered.
+In this sample, the `request` contains file type. And the `props` contains the URL of the file.
 
-Tips: `request` is for deciding which component to render, `props` is for what to render.
+Tips: `request` is appearance, while `props` is for content.
 
 ### Register handlers in the chain
 
 Based on the rendering request, each middleware is called in turn and they will make decision:
 
 - Will render
-  - Will render a component by solely itself
+  - Will render a component on its own
   - Will render a component by compositing component from the next middleware in the chain
 - Will not render
   - Will not render anything at all
-  - Will not render but let the next middleware in the chain to decide what to render
+  - Will not render, but let the next middleware in the chain to decide what to render
 
 ```tsx
 // Will handle request with content type `image/*`.
 const Image = ({ middleware: { request, Next }, url }) =>
-  request.contentType.startsWith('image/') ? <img src={url} /> : <Next />;
+  request.contentType.startsWith('image/') ? (
+    <img src={url} />
+  ) : (
+    <Next />
+  );
 
 // Will handle request with content type `video/*`.
 const Video = ({ middleware: { request, Next }, url }) =>
@@ -73,9 +79,9 @@ const middleware = [asMiddleware(Image), asMiddleware(Video), asMiddleware(Binar
 
 In this sample, 3 middleware are registered:
 
-- `<Image>` will render `<img>` if content type is `'image/*'`, otherwise, will pass to `<Video>`
-- `<Video>` will render `<video>` if content type is `'video/*'`, otherwise, will pass to `<Binary>`
-- `<Binary>` is a catch-all and will render a link
+- `<Image>` will render `<img>` if content type is `'image/*'`, otherwise, will pass to next middleware (`<Video>`)
+- `<Video>` will render `<video>` if content type is `'video/*'`, otherwise, will pass to next middleware (`<Binary>`)
+- `<Binary>` is a catch-all and will render as a link
 
 ### Make a render request
 
@@ -93,7 +99,7 @@ render(
 );
 ```
 
-This will be rendered as:
+The code above will render:
 
 ```html
 <img src="https://.../cat.png" />
@@ -408,7 +414,20 @@ When rendering the element, `getKey` is called to compute the `key` attribute. T
 
 ### What is the difference between request, and props?
 
-`request` is for deciding which component to render. `props` is for what to render.
+- Request is for appearance, while props is for content
+- Request is for deciding which component to render, while props is for what to render
+
+For example:
+
+- Button
+  - Request: button, link button, push button
+  - Props: icon, text
+- File preview
+  - Request: image preview, video preview
+  - Props: file name, URL
+- Input
+  - Request: text input, number input, password input
+  - Props: label, value, instruction
 
 ### Why the type of request and props can be different?
 
