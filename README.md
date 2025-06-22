@@ -1,6 +1,6 @@
 # `react-chain-of-responsibility`
 
-[Chain of responsibility design pattern](https://refactoring.guru/design-patterns/chain-of-responsibility) for React component customization.
+[Chain of responsibility design pattern](https://refactoring.guru/design-patterns/chain-of-responsibility) for compositing and customizing React component.
 
 ## Background
 

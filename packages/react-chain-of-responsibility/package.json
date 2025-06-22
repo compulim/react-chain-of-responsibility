@@ -1,7 +1,7 @@
 {
   "name": "react-chain-of-responsibility",
   "version": "0.0.0-0",
-  "description": "Using chain of responsibility design pattern for React component customization.",
+  "description": "Using chain of responsibility design pattern for compositing and customizing React component.",
   "files": [
     "./dist/"
   ],
