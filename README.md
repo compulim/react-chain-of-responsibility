@@ -115,7 +115,7 @@ For advanced scenario with precise rendering control, use the `useBuildComponent
 
 ## How should I use?
 
-Here are some recipes on leveraging the chain of responsibility pattern for UI composition.
+Here are some recipes leveraging the chain of responsibility pattern for UI composition and customization.
 
 ### Bring your own component
 
