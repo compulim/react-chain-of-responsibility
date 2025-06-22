@@ -302,23 +302,14 @@ There are subtle differences between the standard version and the Fluent UI vers
 If the `<Provider>` from the same chain appears nested in the tree, the `<Proxy>` will render using the middleware from the closest `<Provider>` and fallback up the chain. The following code snippet will render "Second First".
 
 ```jsx
-const { Provider, Proxy } = createChainOfResponsibility();
+const { asMiddleware, Provider, Proxy } = createChainOfResponsibility();
 
-const firstMiddleware = () => next => request => {
-  const Next = next(request);
-
-  return () => <>First {Next && <Next />}</>;
-};
-
-const secondMiddleware = () => next => request => {
-  const Next = next(request);
-
-  return () => <>Second {Next && <Next />}</>;
-};
+const First = ({ middleware: { Next } }) => <>First <Next /></>;
+const Second = ({ middleware: { Next } }) => <>Second <Next /></>;
 
 render(
-  <Provider middleware={[firstMiddleware]}>
-    <Provider middleware={[secondMiddleware]}>
+  <Provider middleware={[asMiddleware(First)]}>
+    <Provider middleware={[asMiddleware(Second)]}>
       <Proxy /> <!-- Renders "Second First" -->
     </Provider>
   </Provider>
