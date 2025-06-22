@@ -7,4 +7,5 @@ on:
 
 jobs:
   call-workflow:
+    permissions: {}
     uses: compulim/workflows/.github/workflows/list-outdated-dependencies.yml@main
