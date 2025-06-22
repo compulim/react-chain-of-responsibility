@@ -180,11 +180,12 @@ For example, in a date picker UI, using the chain of responsibility pattern enab
 The "which component to render" decision in the middleware enables 4 key customization techniques:
 
 - Add a new component
-  - Register a new `<Audio>` middleware component to handle content type of "audio/\*"
+  - Register a new `<Audio>` middleware component to handle content type of `audio/\*`
 - Replace an existing component
-  - Register a new `<Image2>` middleware component to handle content type of "image/\*"
+  - Register a new `<ImageV2>` middleware component to handle content type of `image/\*`
+  - The original `<Image>` will be replaced through starvation
 - Remove an existing component
-  - Return `undefined` when handling content type of "video/\*"
+  - Return `undefined` when handling content type of `video/\*`
 - Decorate an existing component
   - Return a component which render `<div class="my-border"><Next /></div>`
 
