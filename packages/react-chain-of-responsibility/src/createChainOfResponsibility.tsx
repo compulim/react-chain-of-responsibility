@@ -134,7 +134,7 @@ export default function createChainOfResponsibility<
                 if (isValidElement(returnValue)) {
                   throw new Error('middleware must not return React element directly');
                 } else if (
-                  (returnValue as unknown) !== false &&
+                  returnValue !== false &&
                   returnValue !== null &&
                   typeof returnValue !== 'undefined' &&
                   !isReactComponent(returnValue)
