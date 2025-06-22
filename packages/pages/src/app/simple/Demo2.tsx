@@ -8,7 +8,7 @@ const { asMiddleware, Provider, Proxy, types: _types } = createChainOfResponsibi
 
 const Plain = ({ children }: Props) => <>{children}</>;
 
-const Bold = ({ children, middleware }: typeof _types.middlwareComponentProps) =>
+const Bold = ({ children, middleware }: typeof _types.middlewareComponentProps) =>
   middleware.request === 'bold' ? <strong>{children}</strong> : <middleware.Next />;
 
 const Italic = ({ children }: Props) => <i>{children}</i>;
