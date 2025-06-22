@@ -341,14 +341,6 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
     }
   ) => ComponentType<Props> | undefined;
 };
-
-type MiddlewareComponentProps<Request, Props, Init> = Props & {
-  middleware: {
-    init: Init;
-    Next: ComponentType<Partial<Props>>;
-    request: Request;
-  }
-}
 ```
 
 ### Return value
@@ -377,6 +369,25 @@ If `passModifiedRequest` is default or `false`, middleware will not be allowed t
 Setting to `true` will enable advanced scenarios and allow a middleware to influence their downstreamers.
 
 When the option is default or `false`, middleware could still modify the `request` object and influence their downstreamers. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
+
+### API of `asMiddleware`
+
+```ts
+function asMiddleware(
+  middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
+): ComponentMiddleware<Request, Props, Init>;
+
+type MiddlewareProps<Request, Props, Init> = Readonly<{
+  init: Init;
+  Next: ComponentType<Partial<Props>>;
+  request: Request;
+}>;
+
+type MiddlewareComponentProps<Request, Props, Init> = Props &
+  Readonly<{
+    middleware: MiddlewareProps<Request, Props, Init>
+  }>;
+```
 
 ### API of `useBuildComponentCallback`
 
