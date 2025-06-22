@@ -204,7 +204,7 @@ export default function createChainOfResponsibility<
               Next: memo<Partial<Props>>(
                 RawNextComponent
                   ? (overridingProps: Partial<Props>) => <RawNextComponent {...props} {...overridingProps} />
-                  : () => undefined
+                  : () => null
               ),
               request
             }),
