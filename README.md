@@ -14,13 +14,13 @@ Click here for [our live demo](https://compulim.github.io/react-chain-of-respons
 
 ## How to use?
 
-3 steps to adopt the chain of responsibility pattern.
+There are 3 steps to adopt the chain of responsibility pattern.
 
 1. [Create a chain](#create-a-chain)
 1. [Register handlers in the chain](#register-handlers-in-the-chain)
 1. [Make a render request](#make-a-render-request)
 
-In this sample, we will use chain of responsibility pattern to create a file preview UI which can handle various file types.
+In this sample, we will use chain of responsibility pattern to create a file preview UI to handle various file types.
 
 ### Create a chain
 
