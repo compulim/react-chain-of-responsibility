@@ -177,7 +177,7 @@ For example, in a date picker UI, using the chain of responsibility pattern enab
 
 ### Customizing component
 
-The "which component to render" decision in the middleware enables 4 key customization scenarios:
+The "which component to render" decision in the middleware enables 4 key customization techniques:
 
 - Add a new component
   - Register a new `<Audio>` middleware component to handle content type of "audio/\*"
@@ -190,9 +190,9 @@ The "which component to render" decision in the middleware enables 4 key customi
 
 ### Improve load time through code splitting and lazy loading
 
-After lazy-loading a bundle, register the component in the middleware.
+After a bundle is lazy-loaded, register the component in the middleware.
 
-When the `<Provider>` is updated, the lazy-loaded component will be rendered.
+When the chain of the `<Provider>` is updated, the lazy-loaded component will be rendered immediately.
 
 This recipe can also used to build multiple flavors of bundle and allow bundle to be composited to suit the apps need.
 
