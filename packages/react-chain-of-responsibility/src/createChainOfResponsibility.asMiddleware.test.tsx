@@ -12,9 +12,9 @@ type Props = { children?: never; text: string };
 scenario('use asMiddleware', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { asMiddleware, Provider, Proxy, types } = createChainOfResponsibility<string, Props, number>();
+      const { asMiddleware, Provider, Proxy, types: _types } = createChainOfResponsibility<string, Props, number>();
 
-      const TestComponent = ({ middleware, text }: typeof types.middlewareComponentProps) => (
+      const TestComponent = ({ middleware, text }: typeof _types.middlewareComponentProps) => (
         <Fragment>
           init = {middleware.init}, request = {middleware.request}, text = {text}, next = <middleware.Next />
         </Fragment>

@@ -33,7 +33,7 @@ type ProviderProps<Request, Props, Init> = PropsWithChildren<{
 }> &
   (Init extends never | void ? { init?: undefined } : Init extends undefined ? { init?: Init } : { init: Init });
 
-type ProxyProps<Request, Props extends {}> = PropsWithChildren<
+type ProxyProps<Request, Props extends object> = PropsWithChildren<
   Request extends never | void
     ? Props & { fallbackComponent?: ComponentType<Props>; request?: undefined }
     : Request extends undefined
@@ -62,7 +62,7 @@ type MiddlewareComponentProps<Request, Props, Init> = Props &
 
 export default function createChainOfResponsibility<
   Request = undefined,
-  Props extends {} = Readonly<{ children?: never }>,
+  Props extends object = Readonly<{ children?: never }>,
   Init = undefined
 >(
   options: Options = {}
@@ -181,7 +181,7 @@ export default function createChainOfResponsibility<
     const enhancer = useBuildComponentCallback();
     const Component = enhancer(request as Request, { fallbackComponent });
 
-    return Component ? <Component {...(props as any)}>{children}</Component> : null;
+    return Component ? <Component {...(props as Props)}>{children}</Component> : null;
   }
 
   const asMiddleware: (
@@ -196,7 +196,7 @@ export default function createChainOfResponsibility<
       const RawNextComponent = next(request);
 
       // TODO: Can we pre-build this component during init?
-      return memo<Props>((props: Props) => {
+      const MiddlewareOf = (props: Props) => {
         const middleware = useMemo(
           () =>
             Object.freeze({
@@ -212,7 +212,11 @@ export default function createChainOfResponsibility<
         );
 
         return <MiddlewareComponent {...props} middleware={middleware} />;
-      });
+      };
+
+      MiddlewareOf.displayName = `MiddlewareOf<${MiddlewareComponent.displayName || ''}>`;
+
+      return memo<Props>(MiddlewareOf);
     };
 
   return {
