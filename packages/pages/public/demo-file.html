@@ -31,11 +31,11 @@
       const { asMiddleware, Provider, Proxy } = createChainOfResponsibility<Request, Props>();
 
       // <Image> will handle request with content type `image/*`.
-      const Image = ({ middleware: { request, Next }, url }) =>
+      const Image = ({ middleware: { Next, request }, url }) =>
         request.contentType.startsWith('image/') ? <img className="file file--image" src={url} /> : <Next />;
 
       // <Video> will handle request with content type `video/*`.
-      const Video = ({ middleware: { request, Next }, url }) =>
+      const Video = ({ middleware: { Next, request }, url }) =>
         request.contentType.startsWith('video/') ? <video className="file file--video" controls><source src={url} /></video> : <Next />;
 
       // <Binary> will handle everything.

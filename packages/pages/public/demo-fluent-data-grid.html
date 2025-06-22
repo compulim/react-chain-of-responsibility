@@ -129,29 +129,29 @@
       // #region react-chain-of-responsibility
       const { asMiddleware, Provider, Proxy } = createChainOfResponsibility();
 
-      const DocumentFileCell = ({ file, middleware }) => (
+      const DocumentFileCell = ({ file }) => (
         <TableCellLayout media={<DocumentRegular />}>{file.label}</TableCellLayout>
       );
 
-      const FolderFileCell = ({ file, middleware }) =>
+      const FolderFileCell = ({ file, middleware: { Next } }) =>
         file.contentType === 'text/directory' ? (
           <TableCellLayout media={<FolderRegular />}>{file.label}</TableCellLayout>
         ) : (
-          <middleware.Next />
+          <Next />
         );
 
-      const VideoFileCell = ({ file, middleware }) =>
+      const VideoFileCell = ({ file, middleware: { Next } }) =>
         file.contentType === 'video/mp4' ? (
           <TableCellLayout media={<VideoRegular />}>{file.label}</TableCellLayout>
         ) : (
-          <middleware.Next />
+          <Next />
         );
 
-      const PDFFileCell = ({ file, middleware }) =>
+      const PDFFileCell = ({ file, middleware: { Next } }) =>
         file.contentType === 'application/pdf' ? (
           <TableCellLayout media={<DocumentPdfRegular />}>{file.label}</TableCellLayout>
         ) : (
-          <middleware.Next />
+          <Next />
         );
 
       const middleware = [

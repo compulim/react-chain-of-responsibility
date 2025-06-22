@@ -37,25 +37,25 @@
       type Request = { contentType: string };
 
       // If it does not have a link, treat it as plain text.
-      const PlainText = ({ children, className, middleware }: Props) =>
-        middleware.request ? <middleware.Next /> : <span className={className}>{children}</span>;
+      const PlainText = ({ children, className, middleware: { Next, request } }: Props) =>
+        request ? <Next /> : <span className={className}>{children}</span>;
 
       // If it is a relative URL or under whitelisted domain, treat it as internal link.
-      const InternalLink = ({ children, className, middleware }: Props) =>
-        isInternalLink(middleware.request, middleware.init.internalHosts) ? (
-          <a className={className} href={middleware.request}>
+      const InternalLink = ({ children, className, middleware: { init, Next, request } }: Props) =>
+        isInternalLink(request, init.internalHosts) ? (
+          <a className={className} href={request}>
             {children}
           </a>
         ) : (
-          <middleware.Next />
+          <Next />
         );
 
       // Otherwise, treat it as external link:
       // - Security: add rel="noopener noreferrer"
       // - Usability: add target="_blank" to open in new tab
       // - Accessibility: add "open in new tab" icon and label
-      const ExternalLink = ({ children, className, middleware }: Props) => (
-        <a className={className} href={middleware.request} rel="noopener noreferrer" target="_blank">
+      const ExternalLink = ({ children, className, middleware: { request } }: Props) => (
+        <a className={className} href={request} rel="noopener noreferrer" target="_blank">
           {children} <OpenInNewTabIcon />
         </a>
       );

@@ -34,22 +34,22 @@
         types: { middleware: middlwareType }
       } = createChainOfResponsibility<Request, Props>();
 
-      const Bold = ({ middleware }: Props) =>
-        middleware.request?.has('bold') ? (
+      const Bold = ({ middleware: { Next, request } }: Props) =>
+        request?.has('bold') ? (
           <strong>
-            <middleware.Next />
+            <Next />
           </strong>
         ) : (
-          <middleware.Next />
+          <Next />
         );
 
-      const Italic = ({ middleware }: Props) =>
-        middleware.request?.has('italic') ? (
+      const Italic = ({ middleware: { Next, request } }: Props) =>
+        request?.has('italic') ? (
           <i>
-            <middleware.Next />
+            <Next />
           </i>
         ) : (
-          <middleware.Next />
+          <Next />
         );
 
       const Plain = ({ children }: Props) => <>{children}</>;
