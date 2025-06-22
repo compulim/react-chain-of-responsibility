@@ -331,9 +331,9 @@ render(
 function createChainOfResponsibility<Request = undefined, Props = { children?: never }, Init = undefined>(
   options?: Options
 ): {
-  asMiddleware: (
+  asMiddleware(
     middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
-  ) => ComponentMiddleware<Request, Props, Init>;
+  ): ComponentMiddleware<Request, Props, Init>;
   Provider: ComponentType<ProviderProps<Request, Props, Init>>;
   Proxy: ComponentType<ProxyProps<Request, Props>>;
   types: {
@@ -430,8 +430,8 @@ When rendering the element, `getKey` is called to compute the `key` attribute. T
 
 ### What is the difference between request, and props?
 
-- Request is for appearance, while props is for content
-- Request is for deciding which component to render, while props is for what to render
+- Request is for *appearance*, while props is for *content*
+- Request is for *deciding which component to render*, while props is for *what to render*
 
 For example:
 
@@ -487,6 +487,14 @@ This is for supporting multiple providers/proxies under a single app/tree.
 To reduce learning curve and likelihood of bugs, we disabled this feature until developers are more proficient with this package.
 
 With the default settings, if the `request` object passed to `next()` differs from the original `request` object, a reminder will be logged in the console.
+
+### Why `request` cannot be modified using `asMiddleware` even `passModifiedRequest` is enabled?
+
+Request is for deciding which component to render. It is a build-time value.
+
+For component registered using `asMiddleware()`, the `request` prop is a render-time value. A render-time value cannot be used to influence build phase.
+
+To modify request, the middleware component must be converted to functional programming.
 
 ## Behaviors
 
