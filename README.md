@@ -14,13 +14,13 @@ Click here for [our live demo](https://compulim.github.io/react-chain-of-respons
 
 ## How to use?
 
-3 steps to adopt the chain of responsibility pattern.
+There are 3 steps to adopt the chain of responsibility pattern.
 
 1. [Create a chain](#create-a-chain)
 1. [Register handlers in the chain](#register-handlers-in-the-chain)
 1. [Make a render request](#make-a-render-request)
 
-In this sample, we will use chain of responsibility pattern to create a file preview UI which can handle various file types.
+In this sample, we will use chain of responsibility pattern to create a file preview UI to handle various file types.
 
 ### Create a chain
 
@@ -77,19 +77,19 @@ const Binary = ({ url }) => <a href={url}>{url}</a>;
 const middleware = [asMiddleware(Image), asMiddleware(Video), asMiddleware(Binary)];
 ```
 
-In this sample, 3 middleware are registered:
+In this sample, 3 middleware will be registered in the chain. They will be called based on their order in the array:
 
-- `<Image>` will render `<img>` if content type is `'image/*'`, otherwise, will pass to next middleware (`<Video>`)
-- `<Video>` will render `<video>` if content type is `'video/*'`, otherwise, will pass to next middleware (`<Binary>`)
-- `<Binary>` is a catch-all and will render as a link
+1. `<Image>` will render `<img>` if content type is `'image/*'`, otherwise, will pass to next middleware
+1. `<Video>` will render `<video>` if content type is `'video/*'`, otherwise, will pass to next middleware
+1. `<Binary>` is a catch-all and will render as a link
 
-Notes: props passed to `<Next>` will override original props, however, `request` cannot be overridden.
+Notes: if props are passed to `<Next>`, they will override the original props. However, `request` cannot be overridden.
 
 ### Make a render request
 
-Before calling any components or hooks, the `<Provider>` component must be set up with the chain.
+Before calling any components or hooks, the `<Provider>` component must be initialized with the chain.
 
-When `<Proxy>` is being rendered, it will pass the `request` to the chain. The component returned from the chain will be rendered with `...props`. If no component is returned, it will be rendered as `undefined`.
+When `<Proxy>` is being rendered, it will pass the `request` to the chain. The component returned from the chain will be rendered with `...props`. If no component is returned, it will render `undefined`.
 
 ```tsx
 render(
@@ -115,7 +115,7 @@ For advanced scenario with precise rendering control, use the `useBuildComponent
 
 ## How should I use?
 
-Here are some recipes on leveraging the chain of responsibility pattern for UI composition.
+Here are some recipes leveraging the chain of responsibility pattern for UI composition and customization.
 
 ### Bring your own component
 
@@ -180,11 +180,12 @@ For example, in a date picker UI, using the chain of responsibility pattern enab
 The "which component to render" decision in the middleware enables 4 key customization techniques:
 
 - Add a new component
-  - Register a new `<Audio>` middleware component to handle content type of "audio/\*"
+  - Register a new `<Audio>` middleware component to handle content type of `audio/\*`
 - Replace an existing component
-  - Register a new `<Image2>` middleware component to handle content type of "image/\*"
+  - Register a new `<ImageV2>` middleware component to handle content type of `image/\*`
+  - The original `<Image>` will be replaced through starvation
 - Remove an existing component
-  - Return `undefined` when handling content type of "video/\*"
+  - Return `undefined` when handling content type of `video/\*`
 - Decorate an existing component
   - Return a component which render `<div class="my-border"><Next /></div>`
 
@@ -194,15 +195,15 @@ After a bundle is lazy-loaded, register the component in the middleware.
 
 When the chain of the `<Provider>` is updated, the lazy-loaded component will be rendered immediately.
 
-This recipe can also used to build multiple flavors of bundle and allow bundle to be composited to suit the apps need.
+This recipe can also help creating bundles with multiple flavors.
 
 ## Advanced usage
 
-### Registering component using functional pattern
+### Registering component via functional programming
 
-The `asMiddleware()` is a helper function to turn a React component into a component middleware for simpler registration. As it operates in render-time, there are disadvantages. For example, a VDOM node is always required.
+The `asMiddleware()` is a helper function to turn a React component into a middleware for simpler registration. As it operates in render-time, there are disadvantages. For example, a VDOM node is always required.
 
-If precise rendering control is a requirement, consider registering the component natively using functional programming.
+If precise rendering control is required, consider registering the component natively using functional programming.
 
 The following code snippet shows the conversion from the `<Image>` middleware component in our previous sample, into a component registered via functional programming.
 
@@ -345,13 +346,13 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
 
 ### Return value
 
-| Name                        | Description                                                                           |
-| --------------------------- | ------------------------------------------------------------------------------------- |
-| `asMiddleware`              | A helper function to convert a React component into a middleware.                     |
-| `Provider`                  | Entrypoint component, must wraps all usage of customizations                          |
-| `Proxy`                     | Proxy component, process the `request` from props and morph into the result component |
-| `types`                     | TypeScript: shorthand types, all objects are `undefined` intentionally                |
-| `useBuildComponentCallback` | Callback hook which return a function to build the component for rendering the result |
+| Name                        | Description                                                                            |
+| --------------------------- | -------------------------------------------------------------------------------------- |
+| `asMiddleware`              | A helper function to convert a React component into a middleware.                      |
+| `Provider`                  | Entrypoint component, must wraps all usage of customizations                           |
+| `Proxy`                     | Proxy component, process the `request` from props and morph into the result component  |
+| `types`                     | TypeScript: shorthand types, all objects are `undefined` intentionally                 |
+| `useBuildComponentCallback` | Callback hook which return a function to build the component for rendering the request |
 
 ### Options
 
@@ -366,26 +367,26 @@ type Options = {
 
 If `passModifiedRequest` is default or `false`, middleware will not be allowed to pass another reference of `request` object to their `next()` middleware. Instead, the `request` object passed to `next()` will be ignored and the next middleware always receive the original `request` object. This behavior is similar to [Express](https://expressjs.com/) middleware.
 
-Setting to `true` will enable advanced scenarios and allow a middleware to influence their downstreamers.
+Setting to `true` will enable advanced scenarios and allow one middleware to pass another instance of `request` object to influence their downstreamers.
 
-When the option is default or `false`, middleware could still modify the `request` object and influence their downstreamers. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
+When the option is default or `false` but the `request` object is mutable, one middleware could still modify the `request` object and influence their downstreamers. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
 
 ### API of `asMiddleware`
+
+`asMiddleware` wraps a React component into a middleware. Build will be done through additional `middleware` prop.
 
 ```ts
 function asMiddleware(
   middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
 ): ComponentMiddleware<Request, Props, Init>;
 
-type MiddlewareProps<Request, Props, Init> = Readonly<{
-  init: Init;
-  Next: ComponentType<Partial<Props>>;
-  request: Request;
-}>;
-
 type MiddlewareComponentProps<Request, Props, Init> = Props &
   Readonly<{
-    middleware: MiddlewareProps<Request, Props, Init>
+    middleware: Readonly<{
+      init: Init;
+      Next: ComponentType<Partial<Props>>;
+      request: Request;
+    }>
   }>;
 ```
 
@@ -400,9 +401,9 @@ type UseBuildComponentCallback<Request, Props> = (
 ) => ComponentType<Props> | undefined;
 ```
 
-For simplicity, instead of returning a component or `false`/`null`/`undefined`, the `useBuildComponentCallback` will only return a component or `undefined`.
+For simplicity, instead of returning a React component or `false`/`null`/`undefined`, the `useBuildComponentCallback` will only return a React component or `undefined`.
 
-The `fallbackComponent` is a component which all unhandled requests will sink into, including calls without ancestral `<Provider>`.
+The `fallbackComponent` is a component which all unhandled requests will sink into, including calls outside of `<Provider>`.
 
 ### API for Fluent UI
 
@@ -432,7 +433,7 @@ When rendering the element, `getKey` is called to compute the `key` attribute. T
 
 ## Designs
 
-### What is the difference between request, and props?
+### How can I choose between request and props?
 
 - Request is for *appearance*, while props is for *content*
 - Request is for *deciding which component to render*, while props is for *what to render*
