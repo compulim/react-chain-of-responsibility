@@ -184,7 +184,6 @@ export default function createChainOfResponsibility<
     return Component ? <Component {...(props as any)}>{children}</Component> : undefined;
   }
 
-  // TODO: Add tests.
   const asMiddleware: (
     middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
   ) => ComponentMiddleware<Request, Props, Init> =
@@ -196,7 +195,7 @@ export default function createChainOfResponsibility<
     request => {
       const RawNextComponent = next(request);
 
-      // TODO: Can we prebuild this component during init?
+      // TODO: Can we pre-build this component during init?
       return memo<Props>((props: Props) => {
         const middleware = useMemo(
           () =>
