@@ -42,6 +42,7 @@
       const Binary = ({ url }) => <div className="file file--binary">{url}</div>
 
       // Register 3 middleware in the chain.
+      // In production component, this will be expanded by bring-your-own middleware/components.
       const middleware = [
         asMiddleware(Image),
         asMiddleware(Video),

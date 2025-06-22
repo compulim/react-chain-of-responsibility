@@ -4,45 +4,86 @@
 
 ## Background
 
-This package is designed for React component developers to enable component customization via composition using the [chain of responsibility design pattern](https://refactoring.guru/design-patterns/chain-of-responsibility).
+This package is designed for React component developers to enable component customization via composition using the [chain of responsibility design pattern](https://refactoring.guru/design-patterns/chain-of-responsibility). This pattern is also used in [Express](https://expressjs.com/) and [Redux](https://redux.js.org/).
 
 By composing customizations, they can be decoupled and published separately. App developers could import these published customizations and orchestrate them to their needs. This pattern encourages [separation of concerns](https://en.wikipedia.org/wiki/Separation_of_concerns) and enables economy of customizability.
-
-Additional entrypoint and hook are provided to use with [Fluent UI as `IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts).
 
 ## Demo
 
 Click here for [our live demo](https://compulim.github.io/react-chain-of-responsibility/).
 
-## Sample
+## How to use?
 
-In this sample, we are using the chain-of-responsibility pattern to render few different types of file, including images, videos, and binary files. Depends on type of the file, the rendering will be handled by `<Image>`, `<Video>`, and `<Binary>` respectively.
+3 steps to adopt the chain of responsibility pattern.
 
-```jsx
+1. [Create a chain](#create-a-chain)
+1. [Register handlers in the chain](#register-handlers-in-the-chain)
+1. [Make a render request](#make-a-render-request)
+
+### Create a chain
+
+A chain consists of multiple handlers (a.k.a. middleware) and they would handle rendering requests.
+
+The request will be passed to the first handler and may traverse down the chain. The returning result will be a React component which can be used to render. If the chain decided not to render anything, `undefined` will be returned.
+
+```tsx
 import { createChainOfResponsibility } from 'react-chain-of-responsibility';
 
-type Request = { contentType: string; };
-type Props = { url: string; };
+type Request = { contentType: string };
+type Props = { url: string };
 
 const { asMiddleware, Provider, Proxy } = createChainOfResponsibility<Request, Props>();
+```
 
+In this sample, the `request` contains content type of the file. And the `props` contains the URL to be rendered.
+
+Tips: `request` is for deciding which component to render, `props` is for what to render.
+
+### Register handlers in the chain
+
+Based on the rendering request, each middleware is called in turn and they will make decision:
+
+- Will render
+  - Will render a component by solely itself
+  - Will render a component by compositing component from the next middleware in the chain
+- Will not render
+  - Will not render anything at all
+  - Will not render but let the next middleware in the chain to decide what to render
+
+```tsx
 // Will handle request with content type `image/*`.
 const Image = ({ middleware: { request, Next }, url }) =>
   request.contentType.startsWith('image/') ? <img src={url} /> : <Next />;
 
 // Will handle request with content type `video/*`.
 const Video = ({ middleware: { request, Next }, url }) =>
-  request.contentType.startsWith('video/') ? <video><source src={url} /></video> : <Next />;
+  request.contentType.startsWith('video/') ? (
+    <video>
+      <source src={url} />
+    </video>
+  ) : (
+    <Next />
+  );
 
 // Will handle everything.
-const Binary = ({ url }) => <a href={url}>{url}</a>
+const Binary = ({ url }) => <a href={url}>{url}</a>;
 
-const middleware = [
-  asMiddleware(Image),
-  asMiddleware(Video),
-  asMiddleware(Binary)
-];
+const middleware = [asMiddleware(Image), asMiddleware(Video), asMiddleware(Binary)];
+```
 
+In this sample, 3 middleware are registered:
+
+- `<Image>` will render `<img>` if content type is `'image/*'`, otherwise, will pass to `<Video>`
+- `<Video>` will render `<video>` if content type is `'video/*'`, otherwise, will pass to `<Binary>`
+- `<Binary>` is a catch-all and will render a link
+
+### Make a render request
+
+Before calling any components or hooks, the `<Provider>` component must be set up with the chain.
+
+When `<Proxy>` is being rendered, it will pass the `request` to the chain. The component returned from the chain will be rendered with `...props`. If no component is returned, it will be rendered as `undefined`.
+
+```tsx
 render(
   <Provider middleware={middleware}>
     <Proxy request={{ contentType: 'image/png' }} url="https://.../cat.png" />
@@ -52,104 +93,100 @@ render(
 );
 ```
 
-When the app is run, the following HTML will be produced:
+This will be rendered as:
 
 ```html
+<img src="https://.../cat.png" />
+<video>
+  <source src="https://.../cat-jump.mp4" />
+</video>
+<a href="https://.../cat.zip">https://.../cat.zip</a>
 ```
 
-## Explanation
+For advanced scenario with precise rendering control, use the `useBuildComponentCallback` hook. This can be found in our live demo and latter sections.
 
-### Middleware component
+## How should I use?
 
-```jsx
-const Image = ({ middleware: { request, Next }, url }) =>
-  request.contentType.startsWith('image/') ? <img src={url} /> : <Next />;
+Here are some recipes on leveraging the chain of responsibility pattern for UI composition.
+
+### Bring your own component
+
+Customer of a component library can "bring your own" component by registering their component in the `<Provider>` component.
+
+For example, in a data grid UI, the app developer can bring a "table cell renderer" component to customize how some/all cells in the table should be rendered.
+
+### Customizing component
+
+The "what component to render" decision enables 4 key customization scenarios:
+
+- Add a new component
+  - Register a new `<Audio>` middleware component to handle content type of "audio/\*"
+- Replace an existing component
+  - Register a new `<Image2>` middleware component to handle content type of "image/\*"
+- Remove an existing component
+  - Return `undefined` when handling content type of "video/\*"
+- Decorate an existing component
+  - Return a component which render `<div class="my-border"><Next /></div>`
+
+### Improve load time through code splitting and lazy loading
+
+After lazy-loading a bundle, register the component in the middleware.
+
+When the `<Provider>` is updated, the lazy-loaded component will be rendered.
+
+This recipe can also used for building multiple flavors of bundle and allow bundle to be composited to suit the apps need.
+
+## Advanced usage
+
+### Registering component using functional pattern
+
+The `asMiddleware()` is a helper function to turn a React component into a component middleware for simpler registration. As it operates in render-time, there are disadvantages. For example, a VDOM node is always required.
+
+If precise rendering control is a requirement, consider registering the component natively using functional programming.
+
+The following code snippet shows the conversion from the `<Image>` middleware component in our previous sample, into a component registered via functional programming.
+
+```diff
+  // Simplify the `<Image>` component by removing `middleware` props.
+- const Image = ({ middleware: { request, Next }, url }) =>
+-   request.contentType.startsWith('image/') ? <img src={url} /> : <Next />;
++ const Image = ({ url }) => <img src={url} />;
+
+  // Registering the `<Image>` component functionally.
+  const middleware = [
+-   asMiddleware(Image);
++   () => next => request =>
++     request.contentType.startsWith('image/') ? Image : next(request)
+  ];
 ```
 
-`<Image>` is a React component. If the `request.contentType` is `image/*`, it will render via `<img>`. Otherwise, it will fallback to the next middleware.
+Notes: for performance reason, the return value of the `next(request)` should be a stable value. In the example above, the middleware return `Image`, which is a constant and is stable.
 
-### Forming the chain
+### Making render request through `useBuildMiddlewareCallback`
 
-```jsx
-const middleware = [
-  asMiddleware(Image),
-  asMiddleware(Video),
-  asMiddleware(Binary)
-];
+Similar the `asMiddleware`, the `<Proxy>` component is a helper component for easier rendering. It shares similar disadvantages as well.
+
+The following code snippet shows the conversion from the `<Proxy>` component into the `useBuildMiddlewareCallback()` hook.
+
+```diff
+  function App() {
+    // Make a render request (a.k.a. build a component.)
++   const buildMiddleware = useBuildMiddlewareCallback();
++   const FilePreview = buildMiddleware({ contextType: 'image/png' });
+
+    return (
+      <Provider middleware={middleware}>
+        {/* Simplify the element by removing `request` props and handling `FilePreview` if it is `undefined`. */}
+-       <Proxy request={{ contentType: 'image/png' }} url="https://.../cat.png" />
++       {FilePreview && <FilePreview url="https://.../cat.png" />}
+      </Provider>
+    );
+  }
 ```
 
-`<Image>` will be rendered first. If the request is of type `image/*`, it will render. Otherwise, it will ask the next middleware to render, which is `<Video>`.
+### Using as `IRenderFunction` in Fluent UI v8
 
-`<Video>` will render if the type is `video/*`, otherwise, it will fallback again to `<Binary>`.
-
-Lastly, `<Binary>` is a catch-all and it will render everything as a link.
-
-### Rendering requests
-
-```jsx
-render(
-  <Provider middleware={middleware}>
-    <Proxy request={{ contentType: 'image/png' }} url="https://.../cat.png" />
-    <Proxy request={{ contentType: 'video/mp4' }} url="https://.../cat-jump.mp4" />
-    <Proxy request={{ contentType: 'application/octet-stream' }} url="https://.../cat.zip" />
-  </Provider>
-);
-```
-
-Register our middleware chain to `<Provider>`.
-
-`<Proxy>` is a proxy component. Depends on the request, it could be either `<Image>`, `<Video>`, or `<Binary>`.
-
-The first `<Proxy>` will be proxied to `<Image>`, which accept the content type of `image/png` and render as `<img src="https://.../cat.png" />`.
-
-The second `<Proxy>` will be proxied to `<Image>` too. But `<Image>` does not understand the content type, thus, it render the `<Next>` component.The `<Next>` is a proxy of `<Video>` (next middleware in the chain), which accept the content type of `video/mp4` and render as `<video><source src="https://.../cat-jump.mp4" /></video>`.
-
-The last `<Proxy>` will proxy to `<Image>`, then `<Video>`, then `<Binary>`. The catch-all `<Binary>` will render it as `<a href="https://.../cat.zip">https://.../cat.zip</a>`.
-
-## How to use
-
-### Using `<Proxy>` component
-
-```jsx
-import { createChainOfResponsibility } from 'react-chain-of-responsibility';
-
-// Creates a <Provider> providing the chain of responsibility service.
-const { Provider, Proxy } = createChainOfResponsibility();
-
-// List of subcomponents.
-const Bold = ({ children }) => <strong>{children}</strong>;
-const Italic = ({ children }) => <i>{children}</i>;
-const Plain = ({ children }) => <>{children}</>;
-
-// Constructs an array of middleware to handle the request and return corresponding subcomponents.
-const middleware = [
-  () => next => request => (request === 'bold' ? Bold : next(request)),
-  () => next => request => (request === 'italic' ? Italic : next(request)),
-  () => () => () => Plain
-];
-
-render(
-  <Provider middleware={middleware}>
-    <Proxy request="bold">This is bold.</Proxy>
-    <Proxy request="italic">This is italic.</Proxy>
-    <Proxy>This is plain.</Proxy>
-  </Provider>
-);
-```
-
-This sample will render:
-
-> **This is bold.** _This is italic._ This is plain.
-
-```jsx
-<strong>This is bold.</strong>
-<i>This is italic.</i>
-<>This is plain.</>
-```
-
-### Using with Fluent UI as `IRenderFunction`
-
-The chain of responsibility design pattern can be used in Fluent UI.
+The chain of responsibility design pattern can be used in Fluent UI v8.
 
 After calling `createChainOfResponsibilityForFluentUI`, it will return `useBuildRenderFunction` hook. This hook, when called, will return a function to use as [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts) in Fluent UI components.
 
@@ -197,48 +234,6 @@ There are subtle differences between the standard version and the Fluent UI vers
 - Request and props are always of same type
   - They are optional too, as defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
 - Automatic fallback to `defaultRender`
-
-### Decorating UI components
-
-One core feature of chain of responsibility design pattern is allowing middleware to control the execution flow. In other words, middleware can decorate the result of their `next()` middleware. The code snippet below shows how the wrapping could be done.
-
-The bold middleware uses traditional approach to wrap the `next()` result, which is a component named `<Next>`. The italic middleware uses [`react-wrap-with`](https://npmjs.com/package/react-wrap-with/) to simplify the wrapping code.
-
-```jsx
-const middleware = [
-  () => next => request => {
-    const Next = next(request);
-
-    if (request?.has('bold')) {
-      return props => <Bold>{Next && <Next {...props} />}</Bold>;
-    }
-
-    return Next;
-  },
-  () => next => request => wrapWith(request?.has('italic') && Italic)(next(request)),
-  () => () => () => Plain
-];
-
-const App = () => (
-  <Provider middleware={middleware}>
-    <Proxy request={new Set(['bold'])}>This is bold.</Proxy>
-    <Proxy request={new Set(['italic'])}>This is italic.</Proxy>
-    <Proxy request={new Set(['bold', 'italic'])}>This is bold and italic.</Proxy>
-    <Proxy>This is plain.</Proxy>
-  </Provider>
-);
-```
-
-This sample will render:
-
-> **This is bold.** _This is italic._ **_This is bold and italic._** This is plain.
-
-```jsx
-<Bold>This is bold.</Bold>
-<Italic>This is italic.</Italic>
-<Bold><Italic>This is bold and italic.</Italic></Bold>
-<Plain>This is plain.</Plain>
-```
 
 ### Nesting `<Provider>`
 
@@ -357,9 +352,11 @@ When rendering the element, `getKey` is called to compute the `key` attribute. T
 
 ## Designs
 
-### Why the type of request and props can be different?
+### What is the difference between request, and props?
 
-This approach may seem overkill at first.
+`request` is for deciding which component to render. `props` is for what to render.
+
+### Why the type of request and props can be different?
 
 This is to support advanced scenarios where props are not ready until all rendering components are built.
 
@@ -400,20 +397,20 @@ This is for supporting multiple providers/proxies under a single app/tree.
 
 To reduce learning curve and likelihood of bugs, we disabled this feature until developers are more proficient with this package.
 
-If the `request` object passed to `next()` differs from the original `request` object, a reminder will be logged in the console.
+With the default settings, if the `request` object passed to `next()` differs from the original `request` object, a reminder will be logged in the console.
 
 ## Behaviors
 
 ### `<Proxy>` vs. `useBuildComponentCallback`
 
-Most of the time, use `<Proxy>`.
+Most of the time, use `<Proxy>` unless precise rendering is needed.
 
 Behind the scene, `<Proxy>` call `useBuildComponentCallback()` to build the component it would morph into.
 
 You can use the following decision tree to know when to use `<Proxy>` vs. `useBuildComponentCallback`
 
-- If you want to know what component will render before actual render happen, use `useBuildComponentCallback()`
-  - For example, using `useBuildComponentCallback()` allow you to know if the middleware will skip rendering the request
+- If you need to know what component will be rendered before actual render happen, use `useBuildComponentCallback()`
+  - For example, using `useBuildComponentCallback()` allow you to know if the middleware would skip rendering the request
 - If your component use `request` prop which is conflict with `<Proxy>`, use `useBuildComponentCallback()`
 - Otherwise, use `<Proxy>`
 
@@ -433,11 +430,11 @@ This is because React does not allow asynchronous render. An exception will be t
 
 When writing middleware, keep them as stateless as possible and do not relies on data outside of the `request` object. The way it is writing should be similar to React function components.
 
-### Good middleware returns false to skip rendering
+### Good middleware returns `false`/`null`/`undefined` to skip rendering
 
 If the middleware wants to skip rendering a request, return `false`/`null`/`undefined` directly. Do not return `() => false`, `<Fragment />`, or any other invisible components.
 
-This helps the component which send the request to the chain of responsibility to determine whether the request could be rendered or not.
+This helps the hosting component to determine whether the request would be rendered or not.
 
 ### Typing a component which expect no props to be passed
 
@@ -447,27 +444,25 @@ In TypeScript, `{}` literally means any objects. Components of type `ComponentTy
 
 Although `Record<any, never>` means empty object, it is not extensible. Thus, [`Record<any, never> & { className: string }` means `Record<any, never>`](https://www.typescriptlang.org/play?#code/C4TwDgpgBACgTgezAZygXigJQgYwXAEwB4BDAOxABooyIA3COAPgG4AoUSKAZQFcAjeElQYhKKADIoAbyg4ANiWTIAciQC2EAFxRkwOAEsyAcygBfdmzxk9UMIhQ6+ghyJlzFytZp0BydSRGvubsQA).
 
-We believe the best way to type a component which does not allow any props, is `ComponentType<{ children?: undefined }>`.
-
 ## Inspirations
 
 This package is heavily inspired by [Redux](https://redux.js.org/) middleware, especially [`applyMiddleware()`](https://github.com/reduxjs/redux/blob/master/docs/api/applyMiddleware.md) and [`compose()`](https://github.com/reduxjs/redux/blob/master/docs/api/compose.md). We read [this article](https://medium.com/@jacobp100/you-arent-using-redux-middleware-enough-94ffe991e6) to understand the concept, followed by some more readings on functional programming topics.
 
 Over multiple years, the chain of responsibility design pattern is proven to be very flexible and extensible in [Bot Framework Web Chat](https://github.co/microsoft/BotFramework-WebChat/). Internal parts of Web Chat is written as middleware consumed by itself. Multiple bundles with various sizes can be offered by removing some middleware and treeshaking them off.
 
-Middleware and router in [ExpressJS](https://expressjs.com/) also inspired us to learn more about this pattern. Their fallback middleware always returns 404 is an innovative approach.
+Middleware and router in [Express](https://expressjs.com/) also inspired us to learn more about this pattern. Their fallback middleware always returns 404 is an innovative approach.
 
-[Bing chat](https://bing.com/chat/) helped us understand and experiment with different naming.
+[Microsoft Copilot](https://copilot.microsoft.com/) helped us understand and experiment with different naming.
 
-### Differences from Redux and ExpressJS
+### Differences from Redux and Express
 
-The chain of responsibility design pattern implemented in [Redux](https://redux.js.org/) and [ExpressJS](https://expressjs.com/) prefers fire-and-forget execution (a.k.a. unidirectional): the result from the last middleware will not bubble up back to the first middleware. Instead, the caller may only collect the result from the last middleware. Sometimes, middleware may interrupt the execution and never return any results.
+The chain of responsibility design pattern implemented in [Redux](https://redux.js.org/) and [Express](https://expressjs.com/) prefers fire-and-forget execution (a.k.a. unidirectional): the result from the last middleware will not bubble up back to the first middleware. Instead, the caller may only collect the result from the last middleware, or via asynchronous and intermediate `dispatch()` calls. Sometimes, middleware may interrupt the execution and never return any results.
 
-However, the chain of responsibility design pattern implemented in this package prefers call-and-return execution: the result from the last middleware will propagate back to the first middleware before returning to the caller. This gives every middleware a chance to manipulate the result from downstreamers before sending it back.
+However, the chain of responsibility design pattern implemented in this package prefers synchronous call-and-return execution: the result from the last middleware will propagate back to the first middleware before returning to the caller. This gives every middleware a chance to manipulate the result from downstreamers before sending it back.
 
 ## Plain English
 
-This package implements the _chain of responsibility_ design pattern. Based on _request_, the chain of responsibility will be asked to _build a React component_. The middleware will _form a chain_ and request is _passed to the first one in the chain_. If the chain decided to render it, a component will be returned, otherwise, `false`/`null`/`undefined`.
+This package implements the _chain of responsibility_ design pattern. Based on _request_, the chain of responsibility will be asked to _build a React component_. The middleware would _form a chain_ and request is _passed to the first one in the chain_. If the chain decided to render it, a component will be returned, otherwise, `false`/`null`/`undefined`.
 
 ## Contributions
 
