@@ -195,7 +195,7 @@ After a bundle is lazy-loaded, register the component in the middleware.
 
 When the chain of the `<Provider>` is updated, the lazy-loaded component will be rendered immediately.
 
-This recipe can also used to build multiple flavors of bundle and allow bundle to be composited to suit the apps need.
+This recipe can also help creating bundles with multiple flavors.
 
 ## Advanced usage
 
