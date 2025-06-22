@@ -1,7 +1,7 @@
 {
   "name": "react-chain-of-responsibility",
   "version": "0.0.0-0",
-  "description": "Using chain of responsibility design pattern for React component customization.",
+  "description": "Using chain of responsibility design pattern for compositing and customizing React component.",
   "files": [
     "./dist/"
   ],
@@ -106,6 +106,7 @@
     "@babel/preset-react": "^7.25.7",
     "@babel/preset-typescript": "^7.25.7",
     "@fluentui/react": "^8.121.4",
+    "@testduet/given-when-then": "^0.1.0-main.334801c",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.0.1",
     "@tsconfig/recommended": "^1.0.7",

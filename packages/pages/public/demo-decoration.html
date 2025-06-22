@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link href="demo.css" rel="stylesheet" type="text/css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18",
+          "react-chain-of-responsibility": "./static/react-chain-of-responsibility/js/main.js",
+          "react-dom/client": "https://esm.sh/react-dom@18/client"
+        }
+      }
+    </script>
+    <script type="module">
+      import React from 'react';
+
+      window.React = React;
+    </script>
+    <script src="https://esm.sh/tsx" type="module"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script async id="code" type="text/babel">
+      import { createChainOfResponsibility } from 'react-chain-of-responsibility';
+      import { createRoot } from 'react-dom/client';
+
+      type Props = { children?: ReactNode | undefined };
+      type Request = Set<string> | undefined;
+
+      const {
+        asMiddleware,
+        Provider,
+        Proxy,
+        types: { middleware: middlwareType }
+      } = createChainOfResponsibility<Request, Props>();
+
+      const Bold = ({ middleware: { Next, request } }: Props) =>
+        request?.has('bold') ? (
+          <strong>
+            <Next />
+          </strong>
+        ) : (
+          <Next />
+        );
+
+      const Italic = ({ middleware: { Next, request } }: Props) =>
+        request?.has('italic') ? (
+          <i>
+            <Next />
+          </i>
+        ) : (
+          <Next />
+        );
+
+      const Plain = ({ children }: Props) => <>{children}</>;
+
+      const middleware: (typeof middlewareType)[] = [asMiddleware(Bold), asMiddleware(Italic), asMiddleware(Plain)];
+
+      const rootContainer = createRoot(document.getElementById('root'));
+
+      rootContainer.render(
+        <Provider middleware={middleware}>
+          <ul>
+            <li>
+              <Proxy request={new Set(['bold'])}>This is bold.</Proxy>
+            </li>
+            <li>
+              <Proxy request={new Set(['italic'])}>This is italic.</Proxy>
+            </li>
+            <li>
+              <Proxy request={new Set(['bold', 'italic'])}>This is bold and italic.</Proxy>
+            </li>
+            <li>
+              <Proxy>This is plain.</Proxy>
+            </li>
+          </ul>
+        </Provider>
+      );
+    </script>
+    <script type="module">
+      window.parent.postMessage({ code: document.getElementById('code')?.textContent }, '*');
+    </script>
+  </body>
+</html>

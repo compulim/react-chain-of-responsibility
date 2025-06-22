@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React, {
   createContext,
   isValidElement,
@@ -14,6 +13,7 @@ import isReactComponent from './isReactComponent.ts';
 import applyMiddleware, { type Enhancer } from './private/applyMiddleware.ts';
 import { type ComponentMiddleware } from './types.ts';
 
+// TODO: Simplify to ComponentType<Props> | undefined.
 type ResultComponent<Props> = ComponentType<Props> | false | null | undefined;
 
 type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ResultComponent<Props> };
@@ -33,7 +33,7 @@ type ProviderProps<Request, Props, Init> = PropsWithChildren<{
 }> &
   (Init extends never | void ? { init?: undefined } : Init extends undefined ? { init?: Init } : { init: Init });
 
-type ProxyProps<Request, Props> = PropsWithChildren<
+type ProxyProps<Request, Props extends object> = PropsWithChildren<
   Request extends never | void
     ? Props & { fallbackComponent?: ComponentType<Props>; request?: undefined }
     : Request extends undefined
@@ -51,18 +51,31 @@ type Options = {
   passModifiedRequest?: boolean;
 };
 
+type MiddlewareProps<Request, Props, Init> = Readonly<{
+  init: Init;
+  Next: ComponentType<Partial<Props>>;
+  request: Request;
+}>;
+
+type MiddlewareComponentProps<Request, Props, Init> = Props &
+  Readonly<{ middleware: MiddlewareProps<Request, Props, Init> }>;
+
 export default function createChainOfResponsibility<
   Request = undefined,
-  Props = { children?: never },
+  Props extends object = Readonly<{ children?: never }>,
   Init = undefined
 >(
   options: Options = {}
 ): {
+  asMiddleware: (
+    middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
+  ) => ComponentMiddleware<Request, Props, Init>;
   Provider: ComponentType<ProviderProps<Request, Props, Init>>;
   Proxy: ComponentType<ProxyProps<Request, Props>>;
   types: {
     init: Init;
     middleware: ComponentMiddleware<Request, Props, Init>;
+    middlewareComponentProps: MiddlewareComponentProps<Request, Props, Init>;
     props: Props;
     request: Request;
   };
@@ -83,7 +96,7 @@ export default function createChainOfResponsibility<
 
   const context = createContext<ProviderContext<Request, Props>>(defaultUseBuildComponentCallback);
 
-  const Provider: ComponentType<ProviderProps<Request, Props, Init>> = ({ children, init, middleware }) => {
+  function ChainOfResponsibilityProvider({ children, init, middleware }: ProviderProps<Request, Props, Init>) {
     // TODO: Related to https://github.com/microsoft/TypeScript/issues/17002.
     //       typescript@5.2.2 has a bug, Array.isArray() is a type predicate but only works with mutable array, not readonly array.
     //       After removing "as unknown", `middleware` on the next line become `any[]`.
@@ -160,38 +173,58 @@ export default function createChainOfResponsibility<
     );
 
     return <context.Provider value={contextValue}>{children}</context.Provider>;
-  };
-
-  Provider.displayName = 'ChainOfResponsibilityProvider';
-  Provider.propTypes = {
-    children: PropTypes.any,
-    init: PropTypes.any,
-    middleware: PropTypes.any
-  };
+  }
 
   const useBuildComponentCallback = () => useContext(context).useBuildComponentCallback;
 
-  const Proxy: ComponentType<ProxyProps<Request, Props>> = memo(
-    // False positive: "children" is not a prop.
-    // eslint-disable-next-line react/prop-types
-    ({ children, fallbackComponent, request, ...props }) => {
-      const enhancer = useBuildComponentCallback();
-      const Component = enhancer(request as Request, { fallbackComponent });
+  function Proxy({ children, fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
+    const enhancer = useBuildComponentCallback();
+    const Component = enhancer(request as Request, { fallbackComponent });
 
-      return Component ? <Component {...(props as Props)}>{children}</Component> : null;
-    }
-  );
+    return Component ? <Component {...(props as Props)}>{children}</Component> : null;
+  }
 
-  Proxy.displayName = 'Proxy';
-  Proxy.propTypes = {
-    fallbackComponent: PropTypes.any,
-    request: PropTypes.any
-  };
+  const asMiddleware: (
+    middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
+  ) => ComponentMiddleware<Request, Props, Init> =
+    (
+      MiddlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
+    ): ComponentMiddleware<Request, Props, Init> =>
+    init =>
+    next =>
+    request => {
+      const RawNextComponent = next(request);
+
+      // TODO: Can we pre-build this component during init?
+      const MiddlewareOf = (props: Props) => {
+        const middleware = useMemo(
+          () =>
+            Object.freeze({
+              init,
+              Next: memo<Partial<Props>>(
+                RawNextComponent
+                  ? (overridingProps: Partial<Props>) => <RawNextComponent {...props} {...overridingProps} />
+                  : () => null
+              ),
+              request
+            }),
+          []
+        );
+
+        return <MiddlewareComponent {...props} middleware={middleware} />;
+      };
+
+      MiddlewareOf.displayName = `MiddlewareOf<${MiddlewareComponent.displayName || ''}>`;
+
+      return memo<Props>(MiddlewareOf);
+    };
 
   return {
-    Provider,
-    Proxy,
+    asMiddleware,
+    Provider: memo<ProviderProps<Request, Props, Init>>(ChainOfResponsibilityProvider),
+    Proxy: memo<ProxyProps<Request, Props>>(Proxy),
     types: {
+      middlewareComponentProps: undefined as unknown as MiddlewareComponentProps<Request, Props, Init>,
       init: undefined as unknown as Init,
       middleware: undefined as unknown as ComponentMiddleware<Request, Props, Init>,
       props: undefined as unknown as Props,
