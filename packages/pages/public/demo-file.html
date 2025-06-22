@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <link href="demo.css" rel="stylesheet" type="text/css" />
+    <link href="demo-file.css" rel="stylesheet" type="text/css" />
     <script type="importmap">
       {
         "imports": {
@@ -20,14 +21,14 @@
   </head>
   <body>
     <div id="root"></div>
-    <script id="code" type="text/babel">
-      import { createRoot } from 'react-dom/client';
+    <script asyncid="code" type="text/babel">
       import { createChainOfResponsibility } from 'react-chain-of-responsibility';
+      import { createRoot } from 'react-dom/client';
 
-      type MiddlewareProps = { url: string; };
-      type MiddlewareRequest = { contentType: string; };
+      type Props = { url: string; };
+      type Request = { contentType: string; };
 
-      const { asMiddleware, Provider, Proxy } = createChainOfResponsibility<MiddlewareRequest, MiddlewareProps>();
+      const { asMiddleware, Provider, Proxy } = createChainOfResponsibility<Request, Props>();
 
       // <Image> will handle request with content type `image/*`.
       const Image = ({ middleware: { request, Next }, url }) =>
@@ -48,7 +49,9 @@
       ];
 
       // Render 3 files each with different content type.
-      createRoot(document.getElementById('root')).render(
+      const rootContainer = createRoot(document.getElementById('root'));
+
+      rootContainer.render(
         <Provider middleware={middleware}>
           <Proxy request={{ contentType:"image/jpeg" }} url="https://picsum.photos/426/240" />
           <Proxy request={{ contentType:"video/mp4" }} url="https://www.pexels.com/download/video/5692323/?h=240&w=426" />

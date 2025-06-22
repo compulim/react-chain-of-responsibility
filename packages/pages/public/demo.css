@@ -1,26 +1,5 @@
 body {
   background-color: black;
-}
-
-#root {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.file {
-  border: solid 1px #333;
-  border-radius: 5px;
-  display: grid;
-  height: 240px;
-  width: 426px;
-}
-
-.file--binary {
-  align-items: center;
-  background-color: #111;
-  color: #ddd;
+  color: #eee;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: large;
-  justify-items: center;
 }

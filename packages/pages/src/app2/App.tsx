@@ -17,17 +17,23 @@ function App() {
   );
 
   useEffect(() => {
-    const handleHashChange = () => setTab(location.hash.replace(/^#/u, ''));
+    const handleHashChange = () => {
+      setCode('');
+      setTab(location.hash.replace(/^#/u, ''));
+    };
 
     window.addEventListener('hashchange', handleHashChange);
 
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [setTab]);
+  }, [setCode, setTab]);
 
   return (
     <div className="app">
       <div className="app__title-bar">
-        <h1 className="app__title">&gt; react-chain-of-responsibility demo<div className="app__cursor" /></h1>
+        <h1 className="app__title">
+          &gt; react-chain-of-responsibility demo
+          <div className="app__cursor" />
+        </h1>
         <div>
           <a
             className="app__logo"

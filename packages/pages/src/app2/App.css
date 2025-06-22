@@ -12,6 +12,14 @@
   padding: var(--padding);
 }
 
+@media (max-width: 768px) {
+  .app {
+    grid-template-areas: 'left' 'right' 'title';
+    grid-template-columns: unset;
+    grid-template-rows: 1fr 1fr auto;
+  }
+}
+
 .app__title-bar {
   align-items: center;
   display: grid;
@@ -29,7 +37,7 @@
 }
 
 .app__cursor {
-  animation-duration: 800ms;
+  animation-duration: 1s;
   animation-iteration-count: infinite;
   animation-name: flash;
   animation-timing-function: linear;

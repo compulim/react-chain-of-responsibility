@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link href="demo.css" rel="stylesheet" type="text/css" />
+    <link href="demo-link-decorator.css" rel="stylesheet" type="text/css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "#is-internal-link": "./is-internal-link.js",
+          "#open-in-new-tab-icon": "./open-in-new-tab-icon.js",
+          "react": "https://esm.sh/react@18",
+          "react-chain-of-responsibility": "./static/react-chain-of-responsibility/js/main.js",
+          "react-dom/client": "https://esm.sh/react-dom@18/client"
+        }
+      }
+    </script>
+    <script type="module">
+      import React from 'react';
+
+      window.React = React;
+    </script>
+    <script src="https://esm.sh/tsx" type="module"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script async id="code" type="text/babel">
+      // In this demo, we are decorator links.
+      // If the link is external, we will decorate it with accessibility/usability/security features.
+
+      import isInternalLink from '#is-internal-link';
+      import OpenInNewTabIcon from '#open-in-new-tab-icon';
+      import { useMemo } from 'react';
+      import { createChainOfResponsibility } from 'react-chain-of-responsibility';
+      import { createRoot } from 'react-dom/client';
+
+      type Props = { children?: ReactNode | undefined; className?: string | undefined; href: string };
+      type Request = { contentType: string };
+
+      // If it does not have a link, treat it as plain text.
+      const PlainText = ({ children, className, middleware }: Props) =>
+        middleware.request ? <middleware.Next /> : <span className={className}>{children}</span>;
+
+      // If it is a relative URL or under whitelisted domain, treat it as internal link.
+      const InternalLink = ({ children, className, middleware }: Props) =>
+        isInternalLink(middleware.request, middleware.init.internalHosts) ? (
+          <a className={className} href={middleware.request}>
+            {children}
+          </a>
+        ) : (
+          <middleware.Next />
+        );
+
+      // Otherwise, treat it as external link:
+      // - Security: add rel="noopener noreferrer"
+      // - Usability: add target="_blank" to open in new tab
+      // - Accessibility: add "open in new tab" icon and label
+      const ExternalLink = ({ children, className, middleware }: Props) => (
+        <a className={className} href={middleware.request} rel="noopener noreferrer" target="_blank">
+          {children} <OpenInNewTabIcon />
+        </a>
+      );
+
+      const { asMiddleware, Provider, Proxy } = createChainOfResponsibility<Request, Props>();
+
+      // #region Wrap <Link> into reusable component
+      function Link({ children, ...props }: Props) {
+        return (
+          <Proxy {...props} request={props.href}>
+            {children}
+          </Proxy>
+        );
+      }
+
+      function LinkProvider({ children }) {
+        const init = useMemo(() => ({ internalHosts: ['internal.example.com'] }), []);
+        const middleware = useMemo(
+          () => [asMiddleware(PlainText), asMiddleware(InternalLink), asMiddleware(ExternalLink)],
+          []
+        );
+
+        return (
+          <Provider
+            // Pass data to the middleware chain during initialization phase
+            init={init}
+            middleware={middleware}
+          >
+            {children}
+          </Provider>
+        );
+      }
+      // #endregion
+
+      const rootContainer = createRoot(document.getElementById('root'));
+
+      rootContainer.render(
+        <LinkProvider>
+          <div className="link-decorator-demo">
+            <p>
+              This is a{' '}
+              <Link className="link-decorator-demo__link" href="/index.html">
+                link to relative page
+              </Link>
+              .
+            </p>
+            <p>
+              This is a{' '}
+              <Link className="link-decorator-demo__link" href="https://bing.com/">
+                link to an external website
+              </Link>
+              .
+            </p>
+            <p>
+              This is a{' '}
+              <Link className="link-decorator-demo__link" href="https://internal.example.com/index.html">
+                link to a whitelisted internal website
+              </Link>
+              .
+            </p>
+            <p>
+              This is a <Link className="link-decorator-demo__link">link without destination</Link> is treated as plain text.
+            </p>
+          </div>
+        </LinkProvider>
+      );
+    </script>
+    <script type="module">
+      window.parent.postMessage({ code: document.getElementById('code')?.textContent }, '*');
+    </script>
+  </body>
+</html>

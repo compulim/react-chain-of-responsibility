@@ -13,6 +13,7 @@ import isReactComponent from './isReactComponent.ts';
 import applyMiddleware, { type Enhancer } from './private/applyMiddleware.ts';
 import { type ComponentMiddleware } from './types.ts';
 
+// TODO: Simplify to ComponentType<Props> | undefined.
 type ResultComponent<Props> = ComponentType<Props> | false | null | undefined;
 
 type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ResultComponent<Props> };

@@ -1,16 +1,21 @@
 import { micromark } from 'micromark';
-import React, { memo, useMemo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import './TableOfContent.css';
 
-const MARKDOWN = `
-## Table of content
-
-- [demo1.html](#demo1.html)
-- [demo-fluent.html](#demo-fluent.html)
-`;
-
 function TableOfContent() {
-  const html = useMemo(() => ({ __html: micromark(MARKDOWN, undefined) }), []);
+  const [html, setHTML] = useState<Readonly<{ __html: string }>>(() => ({ __html: '' }));
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    (async signal => {
+      const res = await fetch('README.md', { signal });
+
+      setHTML({ __html: micromark(await res.text(), undefined) });
+    })(abortController.signal);
+
+    return () => abortController.abort();
+  }, [setHTML]);
 
   return <div className="table-of-content" dangerouslySetInnerHTML={html} />;
 }

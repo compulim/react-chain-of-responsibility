@@ -15,10 +15,14 @@
 .source-code__code {
   box-sizing: border-box;
   font-family: Consolas, 'Courier New', Courier, monospace;
-  font-size: large;
+  font-size: 16px;
   grid-area: code;
   padding: var(--padding);
   margin: 0;
+}
+
+.source-code__code--plain {
+  color: #999;
 }
 
 .source-code__code .shiki {

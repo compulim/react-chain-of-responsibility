@@ -23,7 +23,7 @@ function SourceCode(props: Props) {
     let unmounted = false;
 
     setHTMLCode(undefined);
-    setPrettifiedCode(code);
+    setPrettifiedCode('');
 
     (async () => {
       const prettifiedCode = await prettify(code);
@@ -43,7 +43,7 @@ function SourceCode(props: Props) {
       const htmlCode = await codeToHtml(prettifiedCode, {
         lang: 'javascript',
         tabindex: -1,
-        theme: 'dark-plus',
+        theme: 'dark-plus'
       });
 
       unmounted || setHTMLCode({ __html: htmlCode });
@@ -56,9 +56,8 @@ function SourceCode(props: Props) {
 
   return (
     <div className="source-code">
-      {/* <h2 className="source-code__title">{title}</h2> */}
       {htmlCode ? (
-        <pre className="source-code__code source-code__code--shiki" dangerouslySetInnerHTML={htmlCode} />
+        <div className="source-code__code source-code__code--shiki" dangerouslySetInnerHTML={htmlCode} />
       ) : (
         <pre className="source-code__code source-code__code--plain">{prettifiedCode}</pre>
       )}
