@@ -51,14 +51,14 @@ type Options = {
   passModifiedRequest?: boolean;
 };
 
-type MiddlewareProps<Init, Request, Props> = Readonly<{
+type MiddlewareProps<Request, Props, Init> = Readonly<{
   init: Init;
   Next: ComponentType<Partial<Props>>;
   request: Request;
 }>;
 
-type MiddlewareComponentProps<Init, Request, Props> = Props &
-  Readonly<{ middleware: MiddlewareProps<Init, Request, Props> }>;
+type MiddlewareComponentProps<Request, Props, Init> = Props &
+  Readonly<{ middleware: MiddlewareProps<Request, Props, Init> }>;
 
 export default function createChainOfResponsibility<
   Request = undefined,
@@ -68,14 +68,14 @@ export default function createChainOfResponsibility<
   options: Options = {}
 ): {
   asMiddleware: (
-    middlewareComponent: ComponentType<MiddlewareComponentProps<Init, Request, Props>>
+    middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
   ) => ComponentMiddleware<Request, Props, Init>;
   Provider: ComponentType<ProviderProps<Request, Props, Init>>;
   Proxy: ComponentType<ProxyProps<Request, Props>>;
   types: {
     init: Init;
     middleware: ComponentMiddleware<Request, Props, Init>;
-    middlewareComponentProps: MiddlewareComponentProps<Init, Request, Props>;
+    middlewareComponentProps: MiddlewareComponentProps<Request, Props, Init>;
     props: Props;
     request: Request;
   };
@@ -186,10 +186,10 @@ export default function createChainOfResponsibility<
 
   // TODO: Add tests.
   const asMiddleware: (
-    middlewareComponent: ComponentType<MiddlewareComponentProps<Init, Request, Props>>
+    middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
   ) => ComponentMiddleware<Request, Props, Init> =
     (
-      MiddlewareComponent: ComponentType<MiddlewareComponentProps<Init, Request, Props>>
+      MiddlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
     ): ComponentMiddleware<Request, Props, Init> =>
     init =>
     next =>
@@ -221,7 +221,7 @@ export default function createChainOfResponsibility<
     Provider: memo<ProviderProps<Request, Props, Init>>(ChainOfResponsibilityProvider),
     Proxy: memo<ProxyProps<Request, Props>>(Proxy),
     types: {
-      middlewareComponentProps: undefined as unknown as MiddlewareComponentProps<Init, Request, Props>,
+      middlewareComponentProps: undefined as unknown as MiddlewareComponentProps<Request, Props, Init>,
       init: undefined as unknown as Init,
       middleware: undefined as unknown as ComponentMiddleware<Request, Props, Init>,
       props: undefined as unknown as Props,
