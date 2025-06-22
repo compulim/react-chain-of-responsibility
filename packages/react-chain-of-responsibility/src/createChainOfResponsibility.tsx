@@ -21,7 +21,7 @@ type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ResultCompo
 type UseBuildComponentCallback<Request, Props> = (
   request: Request,
   options?: UseBuildComponentCallbackOptions<Props>
-) => ResultComponent<Props>;
+) => ComponentType<Props> | undefined;
 
 type ProviderContext<Request, Props> = {
   get enhancer(): Enhancer<[Request], ResultComponent<Props>> | undefined;
@@ -109,42 +109,43 @@ export default function createChainOfResponsibility<
         ? middleware.map(fn => (init: Init) => {
             const enhancer = fn(init);
 
-            return (next: UseBuildComponentCallback<Request, Props>) => (originalRequest: Request) => {
-              // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
-              // eslint-disable-next-line prefer-const
-              let hasReturned: boolean;
+            return (next: (request: Request) => ComponentType<Props> | false | null | undefined) =>
+              (originalRequest: Request) => {
+                // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
+                // eslint-disable-next-line prefer-const
+                let hasReturned: boolean;
 
-              const returnValue = enhancer(nextRequest => {
-                if (hasReturned) {
-                  throw new Error('next() cannot be called after the function had returned synchronously');
+                const returnValue = enhancer(nextRequest => {
+                  if (hasReturned) {
+                    throw new Error('next() cannot be called after the function had returned synchronously');
+                  }
+
+                  !options.passModifiedRequest &&
+                    nextRequest !== originalRequest &&
+                    console.warn(
+                      'react-chain-of-responsibility: "options.passModifiedRequest" must be set to true to pass a different request object to next().'
+                    );
+
+                  return next(options.passModifiedRequest ? nextRequest : originalRequest);
+                })(originalRequest);
+
+                hasReturned = true;
+
+                if (isValidElement(returnValue)) {
+                  throw new Error('middleware must not return React element directly');
+                } else if (
+                  (returnValue as unknown) !== false &&
+                  returnValue !== null &&
+                  typeof returnValue !== 'undefined' &&
+                  !isReactComponent(returnValue)
+                ) {
+                  throw new Error(
+                    'middleware must return false, null, undefined, function component, or class component'
+                  );
                 }
 
-                !options.passModifiedRequest &&
-                  nextRequest !== originalRequest &&
-                  console.warn(
-                    'react-chain-of-responsibility: "options.passModifiedRequest" must be set to true to pass a different request object to next().'
-                  );
-
-                return next(options.passModifiedRequest ? nextRequest : originalRequest);
-              })(originalRequest);
-
-              hasReturned = true;
-
-              if (isValidElement(returnValue)) {
-                throw new Error('middleware must not return React element directly');
-              } else if (
-                returnValue !== false &&
-                returnValue !== null &&
-                typeof returnValue !== 'undefined' &&
-                !isReactComponent(returnValue)
-              ) {
-                throw new Error(
-                  'middleware must return false, null, undefined, function component, or class component'
-                );
-              }
-
-              return returnValue;
-            };
+                return returnValue;
+              };
           })
         : []
     );
@@ -163,7 +164,7 @@ export default function createChainOfResponsibility<
     );
 
     const useBuildComponentCallback = useCallback<UseBuildComponentCallback<Request, Props>>(
-      (request, options = {}) => enhancer(() => options.fallbackComponent)(request),
+      (request, options = {}) => enhancer(() => options.fallbackComponent)(request) || undefined,
       [enhancer]
     );
 

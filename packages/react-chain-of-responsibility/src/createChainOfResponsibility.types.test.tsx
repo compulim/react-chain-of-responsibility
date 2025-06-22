@@ -32,7 +32,7 @@ test('constructing middleware using all typings from "types" should render', () 
 
 test('constructing middleware with minimal typings should render', () => {
   // GIVEN: A chain of responsibility which specify init, props, and request.
-  const { Provider, Proxy, types: _types } = createChainOfResponsibility<void, Record<string, never>, void>();
+  const { Provider, Proxy, types: _types } = createChainOfResponsibility<undefined, Record<string, never>, void>();
 
   const middleware: (typeof _types.middleware)[] = [
     (_init: typeof _types.init) => _next => (_request: typeof _types.request) => (_props: typeof _types.props) => (

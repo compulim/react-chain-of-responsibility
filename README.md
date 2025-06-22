@@ -392,13 +392,15 @@ type MiddlewareComponentProps<Request, Props, Init> = Props &
 ### API of `useBuildComponentCallback`
 
 ```ts
-type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ComponentType<Props> | false | null | undefined };
+type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ComponentType<Props> | undefined };
 
 type UseBuildComponentCallback<Request, Props> = (
   request: Request,
   options?: UseBuildComponentCallbackOptions<Props>
-) => ComponentType<Props> | false | null | undefined;
+) => ComponentType<Props> | undefined;
 ```
+
+For simplicity, instead of returning a component or `false`/`null`/`undefined`, the `useBuildComponentCallback` will only return a component or `undefined`.
 
 The `fallbackComponent` is a component which all unhandled requests will sink into, including calls without ancestral `<Provider>`.
 
