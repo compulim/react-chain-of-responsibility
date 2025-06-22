@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Simplified `useBuildComponentCallback` hook by returning a component or `undefined`, and will no longer return `false` and `null`, by [@compulim](https://github.com/compulim) in PR [#81](https://github.com/compulim/react-chain-of-responsibility/pull/81)
+- Simplified `useBuildComponentCallback` hook by returning a component or `undefined`, and will no longer return `false` and `null`, by [@compulim](https://github.com/compulim) in PR [#82](https://github.com/compulim/react-chain-of-responsibility/pull/82)
 - Bumped dependencies, in PR [#80](https://github.com/compulim/react-chain-of-responsibility/pull/80)
   - Development dependencies
     - [`@babel/preset-env@7.27.2`](https://npmjs.com/package/@babel/preset-env/v/7.27.2)
