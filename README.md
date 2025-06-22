@@ -83,6 +83,8 @@ In this sample, 3 middleware are registered:
 - `<Video>` will render `<video>` if content type is `'video/*'`, otherwise, will pass to next middleware (`<Binary>`)
 - `<Binary>` is a catch-all and will render as a link
 
+Notes: props passed to `<Next>` will override original props, however, `request` cannot be overridden.
+
 ### Make a render request
 
 Before calling any components or hooks, the `<Provider>` component must be set up with the chain.
@@ -175,7 +177,7 @@ For example, in a date picker UI, using the chain of responsibility pattern enab
 
 ### Customizing component
 
-The "what component to render" decision enables 4 key customization scenarios:
+The "which component to render" decision in the middleware enables 4 key customization scenarios:
 
 - Add a new component
   - Register a new `<Audio>` middleware component to handle content type of "audio/\*"
@@ -192,7 +194,7 @@ After lazy-loading a bundle, register the component in the middleware.
 
 When the `<Provider>` is updated, the lazy-loaded component will be rendered.
 
-This recipe can also used for building multiple flavors of bundle and allow bundle to be composited to suit the apps need.
+This recipe can also used to build multiple flavors of bundle and allow bundle to be composited to suit the apps need.
 
 ## Advanced usage
 
@@ -222,7 +224,7 @@ Notes: for performance reason, the return value of the `next(request)` should be
 
 ### Making render request through `useBuildMiddlewareCallback`
 
-Similar the `asMiddleware`, the `<Proxy>` component is a helper component for easier rendering. It shares similar disadvantages as well.
+Similar the `asMiddleware`, the `<Proxy>` component is a helper component for easier rendering. It shares similar disadvantages.
 
 The following code snippet shows the conversion from the `<Proxy>` component into the `useBuildMiddlewareCallback()` hook.
 
@@ -303,15 +305,15 @@ If the `<Provider>` from the same chain appears nested in the tree, the `<Proxy>
 const { Provider, Proxy } = createChainOfResponsibility();
 
 const firstMiddleware = () => next => request => {
-  const NextComponent = next(request);
+  const Next = next(request);
 
-  return () => <Fragment>First {NextComponent && <NextComponent />}</Fragment>;
+  return () => <>First {Next && <Next />}</>;
 };
 
 const secondMiddleware = () => next => request => {
-  const NextComponent = next(request);
+  const Next = next(request);
 
-  return () => <Fragment>Second {NextComponent && <NextComponent />}</Fragment>;
+  return () => <>Second {Next && <Next />}</>;
 };
 
 render(
@@ -330,18 +332,32 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
   options?: Options
 ): {
   asMiddleware: (
-    middlewareComponent: ComponentType<MiddlewareComponentProps<Init, Request, Props>>
+    middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
   ) => ComponentMiddleware<Request, Props, Init>;
   Provider: ComponentType<ProviderProps<Request, Props, Init>>;
   Proxy: ComponentType<ProxyProps<Request, Props>>;
   types: {
     init: Init;
     middleware: ComponentMiddleware<Request, Props, Init>;
+    middlewareComponentProps: MiddlewareComponentProps<Request, Props, Init>;
     props: Props;
     request: Request;
   };
-  useBuildComponentCallback: () => UseBuildComponent<Request, Props>;
+  useBuildComponentCallback(): (
+    request: Request,
+    options?: {
+      fallbackComponent?: ComponentType<Props> | undefined
+    }
+  ) => ComponentType<Props> | undefined;
 };
+
+type MiddlewareComponentProps<Request, Props, Init> = Props & {
+  middleware: {
+    init: Init;
+    Next: ComponentType<Partial<Props>>;
+    request: Request;
+  }
+}
 ```
 
 ### Return value
@@ -482,7 +498,7 @@ Behind the scene, `<Proxy>` call `useBuildComponentCallback()` to build the comp
 
 You can use the following decision tree to know when to use `<Proxy>` vs. `useBuildComponentCallback`
 
-- If you need to know what component will be rendered before actual render happen, use `useBuildComponentCallback()`
+- If you need to know what kind of component will be rendered before actual render happen, use `useBuildComponentCallback()`
   - For example, using `useBuildComponentCallback()` allow you to know if the middleware would skip rendering the request
 - If your component use `request` prop which is conflict with `<Proxy>`, use `useBuildComponentCallback()`
   - Also consider using a wrapping component to rename `request` prop
