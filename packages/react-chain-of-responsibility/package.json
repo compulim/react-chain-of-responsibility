@@ -129,8 +129,5 @@
   },
   "peerDependencies": {
     "react": ">=16.8.0"
-  },
-  "dependencies": {
-    "prop-types": "^15.8.1"
   }
 }
