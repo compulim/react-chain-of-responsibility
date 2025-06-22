@@ -30,7 +30,7 @@ test('when calling next after returned synchronously should throw', () => {
   expect(result.container).toHaveProperty('textContent', 'Hello, World!');
 
   // THEN: It should have called the spy middleware function once.
-  expect(enhancer).toBeCalledTimes(1);
+  expect(enhancer).toHaveBeenCalledTimes(1);
 
   // WHEN: The spied next() function is called.
   // THEN: It should throw an error saying the next() cannot be called after the function had returned synchronously.
