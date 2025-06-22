@@ -111,7 +111,7 @@ The code above will render:
 <a href="https://.../cat.zip">https://.../cat.zip</a>
 ```
 
-For advanced scenario with precise rendering control, use the `useBuildComponentCallback` hook. This can be found in our live demo and latter sections.
+For advanced scenario with precise rendering control, use the `useBuildComponentCallback` hook. This can be found in our live demo and [latter sections](#make-render-request-through-usebuildmiddlewarecallback).
 
 ## How should I use?
 
@@ -222,7 +222,7 @@ The following code snippet shows the conversion from the `<Image>` middleware co
 
 Notes: for performance reason, the return value of the `next(request)` should be a stable value. In the example above, the middleware return `Image`, which is a constant and is stable.
 
-### Making render request through `useBuildMiddlewareCallback`
+### Make render request through `useBuildMiddlewareCallback()`
 
 Similar the `asMiddleware`, the `<Proxy>` component is a helper component for easier rendering. It shares similar disadvantages.
 
