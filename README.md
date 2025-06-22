@@ -113,7 +113,59 @@ Here are some recipes on leveraging the chain of responsibility pattern for UI c
 
 Customer of a component library can "bring your own" component by registering their component in the `<Provider>` component.
 
-For example, in a data grid UI, the app developer can bring a "table cell renderer" component to customize how some/all cells in the table should be rendered.
+For example, in a date picker UI, using the chain of responsibility pattern enables app developer to bring their own "month picker" component.
+
+```diff
+  type MonthPickerProps = Readonly<{
+    onChange: (date: Date) => void;
+    value: Date
+  }>;
+
+  function MonthPicker(props: MonthPickerProps) {
+    return (
+      <div>
+        {props.value.toLocaleDateString(undefined, { month: 'long' })}
+      </div>
+    );
+  };
+
++ const {
++   asMiddleware: asMonthPickerMiddleware,
++   Provider: MonthPickerProvider,
++   Proxy: MonthPickerProxy
++ } = createChainOfResponsibility<undefined, MonthPickerProps>();
+
+  type DatePickerProps = Readonly<{
++   monthPickerComponent?: ComponentType<MonthPickerProps> | undefined;
+    onChange: (date: Date) => void;
+    value: Date;
+  }>;
+
++ const monthPickerMiddleware = asMonthPickerMiddleware(MonthPicker);
+
+  function DatePicker(props: DatePickerProps) {
++   const monthPickerMiddleware = useMemo(
++     () =>
++       props.monthPickerComponent
++         ? [
++             asMonthPickerMiddleware(props.monthPickerComponent),
++             monthPickerMiddleware
++           ]
++         : [monthPickerMiddleware],
++     [props.monthPickerComponent]
++   );
+
+    return (
++     <MonthPickerProvider middleware={monthPickerMiddleware}>
+        <div>
+-         <MonthPicker onChange={onChange} value={value} />
++         <MonthPickerProxy onChange={onChange} value={value} />
+          <Calendar value={value} />
+        </div>
++     </MonthPickerProvider>
+    );
+  }
+```
 
 ### Customizing component
 
@@ -185,6 +237,8 @@ The following code snippet shows the conversion from the `<Proxy>` component int
 ```
 
 ### Using as `IRenderFunction` in Fluent UI v8
+
+> We are considering deprecating the `IRenderFunction` as Fluent UI no longer adopt this pattern.
 
 The chain of responsibility design pattern can be used in Fluent UI v8.
 
@@ -305,7 +359,7 @@ type Options = {
 };
 ```
 
-If `passModifiedRequest` is default or `false`, middleware will not be allowed to pass another reference of `request` object to their `next()` middleware. Instead, the `request` object passed to `next()` will be ignored and the next middleware always receive the original `request` object. This behavior is similar to [ExpressJS](https://expressjs.com/) middleware.
+If `passModifiedRequest` is default or `false`, middleware will not be allowed to pass another reference of `request` object to their `next()` middleware. Instead, the `request` object passed to `next()` will be ignored and the next middleware always receive the original `request` object. This behavior is similar to [Express](https://expressjs.com/) middleware.
 
 Setting to `true` will enable advanced scenarios and allow a middleware to influence their downstreamers.
 
@@ -412,6 +466,7 @@ You can use the following decision tree to know when to use `<Proxy>` vs. `useBu
 - If you need to know what component will be rendered before actual render happen, use `useBuildComponentCallback()`
   - For example, using `useBuildComponentCallback()` allow you to know if the middleware would skip rendering the request
 - If your component use `request` prop which is conflict with `<Proxy>`, use `useBuildComponentCallback()`
+  - Also consider using a wrapping component to rename `request` prop
 - Otherwise, use `<Proxy>`
 
 ### Calling `next()` multiple times
