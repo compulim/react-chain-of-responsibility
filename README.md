@@ -199,7 +199,7 @@ This recipe can also help creating bundles with multiple flavors.
 
 ## Advanced usage
 
-### Registering component using functional pattern
+### Registering component via functional programming
 
 The `asMiddleware()` is a helper function to turn a React component into a middleware for simpler registration. As it operates in render-time, there are disadvantages. For example, a VDOM node is always required.
 
