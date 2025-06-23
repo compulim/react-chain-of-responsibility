@@ -1,2 +1,9 @@
 extends:
   - ./.eslintrc.custom.yml
+ignorePatterns:
+  - test/webDriver/static/**
+overrides:
+  - env:
+      commonjs: true
+    files:
+      - '**/*.js'

@@ -8,6 +8,7 @@ export default defineConfig([
       'react-chain-of-responsibility.fluentUI': './src/index.fluentUI.ts'
     },
     format: ['cjs', 'esm'],
-    sourcemap: true
+    sourcemap: true,
+    target: 'esnext'
   }
 ]);
