@@ -61,6 +61,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-react": "^7.27.1",
+    "@testduet/wait-for": "^0.1.0",
     "@tsconfig/strictest": "^2.0.5",
     "@types/jest": "^30.0.0",
     "@types/react": "^18.3.23",
