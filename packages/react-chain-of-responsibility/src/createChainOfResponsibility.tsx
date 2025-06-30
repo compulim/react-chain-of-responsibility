@@ -11,7 +11,7 @@ import React, {
 
 import isReactComponent from './isReactComponent.ts';
 import applyMiddleware, { type Enhancer } from './private/applyMiddleware.ts';
-import { type ComponentMiddleware, type Optionalable } from './types.ts';
+import { type ComponentMiddleware } from './types.ts';
 
 // TODO: Simplify to ComponentType<Props> | undefined.
 type ResultComponent<Props> = ComponentType<Props> | false | null | undefined;
@@ -90,9 +90,11 @@ type ChainOfResponsibility<Request, InputProps extends object, Init, OutputProps
   readonly useBuildComponentCallback: () => UseBuildComponentCallback<Request, InputProps, OutputProps>;
 };
 
-type ConvertToOutputProps<Request, Props, CopyRequestToProps extends boolean | undefined> = CopyRequestToProps extends true
-  ? Props & Optionalable<{ readonly request: Request }>
-  : Props;
+type ConvertToOutputProps<
+  Request,
+  Props,
+  CopyRequestToProps extends boolean | undefined
+> = CopyRequestToProps extends true ? Props & { readonly request: Request } : Props;
 
 function createChainOfResponsibility<Request = void, Props extends object = { readonly children?: never }, Init = void>(
   options?: (CreateChainOfResponsibilityOptions & { readonly copyRequestToProps?: false | undefined }) | undefined
@@ -104,7 +106,12 @@ function createChainOfResponsibility<Request = void, Props extends object = { re
 
 function createChainOfResponsibility<Request = void, Props extends object = { readonly children?: never }, Init = void>(
   options: CreateChainOfResponsibilityOptions = {}
-): ChainOfResponsibility<Request, Props, Init, ConvertToOutputProps<Request, Props, typeof options.copyRequestToProps>> {
+): ChainOfResponsibility<
+  Request,
+  Props,
+  Init,
+  ConvertToOutputProps<Request, Props, typeof options.copyRequestToProps>
+> {
   type OutputProps = ConvertToOutputProps<Request, Props, typeof options.copyRequestToProps>;
 
   const copyRequestToProps = !!options.copyRequestToProps;

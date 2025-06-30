@@ -6,9 +6,3 @@ export type ComponentMiddleware<Request, Props = { children?: never }, Init = un
   ComponentType<Props> | false | null | undefined,
   [Init]
 >;
-
-export type Optionalable<T> = {
-  [K in keyof T as undefined extends T[K] ? K : never]?: T[K];
-} & {
-  [K in keyof T as undefined extends T[K] ? never : K]: T[K];
-};
