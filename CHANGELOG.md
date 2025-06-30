@@ -9,18 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `copyRequestToProps` option to `createChainOfResponsibility()`. When enabled, the request from build-time will be copied to props in render-time, by [@compulim](https://github.com/compulim) in PR [#XXX](https://github.com/compulim/react-chain-of-responsibility/pull/XXX)
+- Added `copyRequestToProps` option to `createChainOfResponsibility()`. When enabled, the request from build-time will be copied to props in render-time, by [@compulim](https://github.com/compulim) in PR [#90](https://github.com/compulim/react-chain-of-responsibility/pull/90)
 
 ### Changed
 
-- `request` now support type of `void`. Differences between `undefined` and `void` as follows, by [@compulim](https://github.com/compulim) in PR [#XXX](https://github.com/compulim/react-chain-of-responsibility/pull/XXX)
+- `request` now support type of `void`. Differences between `undefined` and `void` as follows, by [@compulim](https://github.com/compulim) in PR [#90](https://github.com/compulim/react-chain-of-responsibility/pull/90)
   - For `request` of type `undefined`, `undefined` need to be passed as request to `<Proxy>`/`useBuildComponentCallback()`
   - For `request` of type `void`, nothing will need to be passed to `<Proxy>`/`useBuildComponentCallback()`
   - It is recommended to use `void` type when no request needs to be passed at build-time
 
 ### Removed
 
-- `createChainOfResponsibilityForFluentUI` is marked as deprecated and will be removed in future releases, by [@compulim](https://github.com/compulim) in PR [#XXX](https://github.com/compulim/react-chain-of-responsibility/pull/XXX)
+- `createChainOfResponsibilityForFluentUI` is marked as deprecated and will be removed in future releases, by [@compulim](https://github.com/compulim) in PR [#90](https://github.com/compulim/react-chain-of-responsibility/pull/90)
    - Fluent UI v9 no longer use `IRenderFunction` for custom render
    - The correctness of `createChainOfResponsibilityForFluentUI` is no longer validated
 
