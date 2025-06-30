@@ -18,7 +18,7 @@ const middleware: (typeof _types.middleware)[] = [
 const App = () => (
   <Provider middleware={middleware}>
     <Proxy request="bold">This is bold.</Proxy> <Proxy request="italic">This is italic.</Proxy>{' '}
-    <Proxy>This is plain.</Proxy>
+    <Proxy request={undefined}>This is plain.</Proxy>
   </Provider>
 );
 
