@@ -10,7 +10,7 @@ type Props = { children?: never };
 
 test('two providers of chain of responsibility nested should render', () => {
   // GIVEN: One chain of responsibility.
-  const { Provider, Proxy, types: _types } = createChainOfResponsibility<undefined, Props, number>();
+  const { Provider, Proxy, types: _types } = createChainOfResponsibility<void, Props, number>();
 
   const middleware1: readonly (typeof _types.middleware)[] = Object.freeze([
     init => next => request => {

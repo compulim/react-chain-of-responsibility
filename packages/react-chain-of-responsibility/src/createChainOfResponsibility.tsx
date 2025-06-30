@@ -11,92 +11,124 @@ import React, {
 
 import isReactComponent from './isReactComponent.ts';
 import applyMiddleware, { type Enhancer } from './private/applyMiddleware.ts';
-import { type ComponentMiddleware } from './types.ts';
+import { type ComponentMiddleware, type Optionalable } from './types.ts';
 
 // TODO: Simplify to ComponentType<Props> | undefined.
 type ResultComponent<Props> = ComponentType<Props> | false | null | undefined;
 
-type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ResultComponent<Props> };
-
-type UseBuildComponentCallback<Request, Props> = (
-  request: Request,
-  options?: UseBuildComponentCallbackOptions<Props>
-) => ComponentType<Props> | undefined;
-
-type ProviderContext<Request, Props> = {
-  get enhancer(): Enhancer<[Request], ResultComponent<Props>> | undefined;
-  useBuildComponentCallback: UseBuildComponentCallback<Request, Props>;
+// TODO: Verify all InputProps/OutputProps.
+type UseBuildComponentCallbackOptions<OutputProps> = {
+  fallbackComponent?: ResultComponent<OutputProps> | undefined;
 };
 
-type ProviderProps<Request, Props, Init> = PropsWithChildren<{
-  middleware: readonly ComponentMiddleware<Request, Props, Init>[];
+interface UseBuildComponentCallback<Request, InputProps, OutputProps> {
+  (
+    request: Request,
+    options?: undefined | UseBuildComponentCallbackOptions<OutputProps>
+  ): ComponentType<InputProps> | undefined;
+}
+
+type ProviderContext<Request, InputProps, OutputProps> = {
+  get enhancer(): Enhancer<[Request], ResultComponent<OutputProps>> | undefined;
+  useBuildComponentCallback: UseBuildComponentCallback<Request, InputProps, OutputProps>;
+};
+
+type ProviderProps<Request, OutputProps, Init> = PropsWithChildren<{
+  middleware: readonly ComponentMiddleware<Request, OutputProps, Init>[];
 }> &
-  (Init extends never | void ? { init?: undefined } : Init extends undefined ? { init?: Init } : { init: Init });
+  (Init extends never | void
+    ? { readonly init?: undefined }
+    : Init extends undefined | void
+      ? { readonly init?: Init }
+      : { readonly init: Init });
 
-type ProxyProps<Request, Props extends object> = PropsWithChildren<
-  Request extends never | void
-    ? Props & { fallbackComponent?: ComponentType<Props>; request?: undefined }
-    : Request extends undefined
-      ? Props & { fallbackComponent?: ComponentType<Props>; request?: Request }
-      : Props & { fallbackComponent?: ComponentType<Props>; request: Request }
->;
+type ProxyProps<Request, InputProps extends object, OutputProps> = InputProps & {
+  readonly fallbackComponent?: ComponentType<OutputProps>;
+} & (void extends Request ? { readonly request?: Request } : { readonly request: Request });
 
-type Options = {
+type CreateChainOfResponsibilityOptions = {
+  /**
+   * Copy request into `request` prop. Default is false.
+   *
+   * When enabled, the rendering component will receive a prop named `request` and it contains the request.
+   */
+  readonly copyRequestToProps?: boolean | undefined;
+
   /**
    * Allows a middleware to pass another request object when calling its next middleware. Default is false.
    *
    * However, middleware could modify the request object before calling its next middleware. It is recommended
    * to use Object.freeze() to prevent middleware from modifying the request object.
    */
-  passModifiedRequest?: boolean;
+  readonly passModifiedRequest?: boolean | undefined;
 };
 
-type MiddlewareProps<Request, Props, Init> = Readonly<{
-  init: Init;
-  Next: ComponentType<Partial<Props>>;
-  request: Request;
-}>;
+type AsMiddlewareProps<Request, InputProps, Init> = {
+  readonly init: Init;
+  readonly Next: ComponentType<Partial<InputProps>>;
+  readonly request: Request;
+};
 
-type MiddlewareComponentProps<Request, Props, Init> = Props &
-  Readonly<{ middleware: MiddlewareProps<Request, Props, Init> }>;
+type AsMiddlewareComponentProps<Request, InputProps, Init> = InputProps & {
+  readonly middleware: AsMiddlewareProps<Request, InputProps, Init>;
+};
 
-export default function createChainOfResponsibility<
-  Request = undefined,
-  Props extends object = Readonly<{ children?: never }>,
-  Init = undefined
->(
-  options: Options = {}
-): {
-  asMiddleware: (
-    middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
-  ) => ComponentMiddleware<Request, Props, Init>;
-  Provider: ComponentType<ProviderProps<Request, Props, Init>>;
-  Proxy: ComponentType<ProxyProps<Request, Props>>;
-  types: {
-    init: Init;
-    middleware: ComponentMiddleware<Request, Props, Init>;
-    middlewareComponentProps: MiddlewareComponentProps<Request, Props, Init>;
-    props: Props;
-    request: Request;
+type ChainOfResponsibility<Request, InputProps extends object, Init, OutputProps extends InputProps> = {
+  readonly asMiddleware: (
+    middlewareComponent: ComponentType<AsMiddlewareComponentProps<Request, InputProps, Init>>
+  ) => ComponentMiddleware<Request, OutputProps, Init>;
+  readonly Provider: ComponentType<ProviderProps<Request, OutputProps, Init>>;
+  readonly Proxy: ComponentType<ProxyProps<Request, InputProps, OutputProps>>;
+  readonly types: {
+    readonly init: Init;
+    readonly middleware: ComponentMiddleware<Request, OutputProps, Init>;
+    readonly middlewareComponentProps: AsMiddlewareComponentProps<Request, InputProps, Init>;
+    readonly props: InputProps;
+    readonly proxyProps: ProxyProps<Request, InputProps, OutputProps>;
+    readonly request: Request;
   };
-  useBuildComponentCallback: () => UseBuildComponentCallback<Request, Props>;
-} {
-  const defaultUseBuildComponentCallback: ProviderContext<Request, Props> = {
+  readonly useBuildComponentCallback: () => UseBuildComponentCallback<Request, InputProps, OutputProps>;
+};
+
+type ConvertToOutputProps<Request, Props, CopyRequestToProps extends boolean | undefined> = CopyRequestToProps extends true
+  ? Props & Optionalable<{ readonly request: Request }>
+  : Props;
+
+function createChainOfResponsibility<Request = void, Props extends object = { readonly children?: never }, Init = void>(
+  options?: (CreateChainOfResponsibilityOptions & { readonly copyRequestToProps?: false | undefined }) | undefined
+): ChainOfResponsibility<Request, Props, Init, ConvertToOutputProps<Request, Props, false>>;
+
+function createChainOfResponsibility<Request = void, Props extends object = { readonly children?: never }, Init = void>(
+  options: CreateChainOfResponsibilityOptions & { readonly copyRequestToProps: true }
+): ChainOfResponsibility<Request, Props, Init, ConvertToOutputProps<Request, Props, true>>;
+
+function createChainOfResponsibility<Request = void, Props extends object = { readonly children?: never }, Init = void>(
+  options: CreateChainOfResponsibilityOptions = {}
+): ChainOfResponsibility<Request, Props, Init, ConvertToOutputProps<Request, Props, typeof options.copyRequestToProps>> {
+  type OutputProps = ConvertToOutputProps<Request, Props, typeof options.copyRequestToProps>;
+
+  const copyRequestToProps = !!options.copyRequestToProps;
+
+  const defaultUseBuildComponentCallback: ProviderContext<Request, Props, OutputProps> = {
     get enhancer() {
       return undefined;
     },
-    useBuildComponentCallback(_, options) {
-      if (options?.fallbackComponent) {
-        return options.fallbackComponent;
+    useBuildComponentCallback(request, options): ComponentType<Props> {
+      if (!options?.fallbackComponent) {
+        throw new Error('This component/hook cannot be used outside of its corresponding <Provider>');
+      } else if (copyRequestToProps) {
+        const FallbackComponent = options.fallbackComponent;
+
+        return memo<Props>((props: Props) => <FallbackComponent {...props} request={request} />);
       }
 
-      throw new Error('This component/hook cannot be used outside of its corresponding <Provider>');
+      return options.fallbackComponent;
     }
   };
 
-  const context = createContext<ProviderContext<Request, Props>>(defaultUseBuildComponentCallback);
+  const context = createContext<ProviderContext<Request, Props, OutputProps>>(defaultUseBuildComponentCallback);
 
-  function ChainOfResponsibilityProvider({ children, init, middleware }: ProviderProps<Request, Props, Init>) {
+  function ChainOfResponsibilityProvider({ children, init, middleware }: ProviderProps<Request, OutputProps, Init>) {
     // TODO: Related to https://github.com/microsoft/TypeScript/issues/17002.
     //       typescript@5.2.2 has a bug, Array.isArray() is a type predicate but only works with mutable array, not readonly array.
     //       After removing "as unknown", `middleware` on the next line become `any[]`.
@@ -115,7 +147,7 @@ export default function createChainOfResponsibility<
                 // eslint-disable-next-line prefer-const
                 let hasReturned: boolean;
 
-                const returnValue = enhancer(nextRequest => {
+                const ReturnComponent = enhancer(nextRequest => {
                   if (hasReturned) {
                     throw new Error('next() cannot be called after the function had returned synchronously');
                   }
@@ -131,20 +163,26 @@ export default function createChainOfResponsibility<
 
                 hasReturned = true;
 
-                if (isValidElement(returnValue)) {
+                if (isValidElement(ReturnComponent)) {
                   throw new Error('middleware must not return React element directly');
                 } else if (
-                  returnValue !== false &&
-                  returnValue !== null &&
-                  typeof returnValue !== 'undefined' &&
-                  !isReactComponent(returnValue)
+                  ReturnComponent !== false &&
+                  ReturnComponent !== null &&
+                  typeof ReturnComponent !== 'undefined' &&
+                  !isReactComponent(ReturnComponent)
                 ) {
                   throw new Error(
                     'middleware must return false, null, undefined, function component, or class component'
                   );
                 }
 
-                return returnValue;
+                if (ReturnComponent && options.copyRequestToProps) {
+                  return memo<Props & { readonly request: Request }>((props: Props) => (
+                    <ReturnComponent {...props} request={originalRequest} />
+                  )) as any; // Need "as any" because TypeScript think we need to return ComponentType<Props>.
+                }
+
+                return ReturnComponent;
               };
           })
         : []
@@ -163,12 +201,12 @@ export default function createChainOfResponsibility<
       [init, middleware, parentEnhancer]
     );
 
-    const useBuildComponentCallback = useCallback<UseBuildComponentCallback<Request, Props>>(
+    const useBuildComponentCallback = useCallback<UseBuildComponentCallback<Request, Props, OutputProps>>(
       (request, options = {}) => enhancer(() => options.fallbackComponent)(request) || undefined,
       [enhancer]
     );
 
-    const contextValue = useMemo<ProviderContext<Request, Props>>(
+    const contextValue = useMemo<ProviderContext<Request, Props, OutputProps>>(
       () => ({ enhancer, useBuildComponentCallback }),
       [enhancer, useBuildComponentCallback]
     );
@@ -178,18 +216,19 @@ export default function createChainOfResponsibility<
 
   const useBuildComponentCallback = () => useContext(context).useBuildComponentCallback;
 
-  function Proxy({ children, fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
+  function Proxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props, OutputProps>) {
     const enhancer = useBuildComponentCallback();
+
     const Component = enhancer(request as Request, { fallbackComponent });
 
-    return Component ? <Component {...(props as Props)}>{children}</Component> : null;
+    return Component ? <Component {...(props as Props)} /> : null;
   }
 
   const asMiddleware: (
-    middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
+    middlewareComponent: ComponentType<AsMiddlewareComponentProps<Request, Props, Init>>
   ) => ComponentMiddleware<Request, Props, Init> =
     (
-      MiddlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
+      MiddlewareComponent: ComponentType<AsMiddlewareComponentProps<Request, Props, Init>>
     ): ComponentMiddleware<Request, Props, Init> =>
     init =>
     next =>
@@ -220,17 +259,21 @@ export default function createChainOfResponsibility<
       return memo<Props>(MiddlewareOf);
     };
 
-  return {
+  return Object.freeze({
     asMiddleware,
-    Provider: memo<ProviderProps<Request, Props, Init>>(ChainOfResponsibilityProvider),
-    Proxy: memo<ProxyProps<Request, Props>>(Proxy),
-    types: {
-      middlewareComponentProps: undefined as unknown as MiddlewareComponentProps<Request, Props, Init>,
+    Provider: memo<ProviderProps<Request, OutputProps, Init>>(ChainOfResponsibilityProvider),
+    Proxy: memo<ProxyProps<Request, Props, OutputProps>>(Proxy),
+    types: Object.freeze({
+      middlewareComponentProps: undefined as unknown as AsMiddlewareComponentProps<Request, Props, Init>,
       init: undefined as unknown as Init,
       middleware: undefined as unknown as ComponentMiddleware<Request, Props, Init>,
       props: undefined as unknown as Props,
+      proxyProps: undefined as unknown as ProxyProps<Request, Props, OutputProps>,
       request: undefined as unknown as Request
-    },
+    }),
     useBuildComponentCallback
-  };
+  });
 }
+
+export default createChainOfResponsibility;
+export { type CreateChainOfResponsibilityOptions };

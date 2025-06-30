@@ -12,7 +12,7 @@ const HelloWorldComponent = ({ text }: Props) => <Fragment>{text}</Fragment>;
 
 test('middleware should render', () => {
   // GIVEN: A middleware return a component that would render "Hello, World!".
-  const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
+  const { Provider, Proxy } = createChainOfResponsibility<void, Props>();
 
   // WHEN: Render <Proxy>.
   const App = ({ text }: Props) => (

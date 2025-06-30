@@ -22,10 +22,10 @@ afterEach(() => {
 
 test('when calling useBuildComponentCallback() outside of its <Provider> should throw', () => {
   // GIVEN: useBuildComponentCallback() from a newly created chain of responsibility.
-  const { useBuildComponentCallback } = createChainOfResponsibility<undefined, Props>();
+  const { useBuildComponentCallback } = createChainOfResponsibility<void, Props>();
 
   const App = () => {
-    const Component = useBuildComponentCallback()(undefined);
+    const Component = useBuildComponentCallback()();
 
     return Component ? <Component /> : null;
   };

@@ -356,12 +356,14 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
 
 ### Options
 
+#### `passModifiedRequest`
+
 > `passModifiedRequest` is not supported by `asMiddleware`.
 
 ```ts
 type Options = {
   /** Allows a middleware to pass another request object to its next middleware. Default is false. */
-  passModifiedRequest?: boolean;
+  passModifiedRequest?: boolean | undefined;
 };
 ```
 
@@ -370,6 +372,25 @@ If `passModifiedRequest` is default or `false`, middleware will not be allowed t
 Setting to `true` will enable advanced scenarios and allow one middleware to pass another instance of `request` object to influence their downstreamers.
 
 When the option is default or `false` but the `request` object is mutable, one middleware could still modify the `request` object and influence their downstreamers. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
+
+#### `copyRequestToProps`
+
+> Enabling this option could introduce small-but-neglible performance penalty. Every time the middleware is being built, it will create a new functional component to keep the request.
+
+```ts
+type Options = {
+  copyRequestToProps?: boolean | undefined;
+};
+```
+
+Default to `false`. When the `copyRequestToProps` is set to `true`, during render-time, the request will be copied to props named as `request`. When combined with `passModifiedRequest`, the modified request can be passed to the rendering component.
+
+Compare to passing the request as a prop to `<Proxy>` or the built component, this option has a few advantages:
+
+- The request passed to build and render must be the same object
+- When combined with `passModifiedRequest` option, a middleware can pass a modified request to the component built by the next middleware
+
+Notes: the `request` props cannot be renamed. The component returned by the middleware must have the prop types of `{ request: Request }`.
 
 ### API of `asMiddleware`
 
@@ -449,6 +470,8 @@ For example:
 - Input
   - Request: text input, number input, password input
   - Props: label, value, instruction
+
+In some cases, you may want to have request copied to props so you can access the request in build-time and render-time. Create the chain by calling `createChainOfResponsibility()` with `options.copyRequestToProps` set to `true`. The option will copy request (including modified request) to props at render-time automatically. The request copy will be named `request` in props.
 
 ### Why the type of request and props can be different?
 
