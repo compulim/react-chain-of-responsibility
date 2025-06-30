@@ -25,7 +25,7 @@ afterEach(() => {
 
 test('middleware return non-component should throw on render', () => {
   // GIVEN: A middleware which return a string.
-  const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
+  const { Provider, Proxy } = createChainOfResponsibility<void, Props>();
 
   const App = wrapWith(
     withProps(Provider, { middleware: [() => () => () => 'Hello, World!' as unknown as ComponentType] })

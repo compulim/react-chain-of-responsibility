@@ -14,7 +14,7 @@ const HelloWorld = () => <Fragment>Hello, World!</Fragment>;
 
 test('when changing middleware on-the-fly should re-render and invalidate useBuildComponent', () => {
   // GIVEN: A middleware.
-  const { Provider, Proxy, useBuildComponentCallback } = createChainOfResponsibility<undefined, Props>();
+  const { Provider, Proxy, useBuildComponentCallback } = createChainOfResponsibility<void, Props>();
 
   const useBuildComponentCallbackReturnValues: ReturnType<typeof useBuildComponentCallback>[] = [];
 

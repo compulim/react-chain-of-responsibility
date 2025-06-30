@@ -25,7 +25,7 @@ afterEach(() => {
 
 test('middleware return a React element should throw on render', () => {
   // GIVEN: A middleware which return a React element.
-  const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
+  const { Provider, Proxy } = createChainOfResponsibility<void, Props>();
 
   const App = wrapWith(
     withProps(Provider, {

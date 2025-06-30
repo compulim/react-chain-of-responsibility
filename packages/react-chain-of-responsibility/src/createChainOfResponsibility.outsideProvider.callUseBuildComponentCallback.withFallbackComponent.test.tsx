@@ -22,7 +22,7 @@ afterEach(() => {
 
 test('when calling useBuildComponentCallback() outside of its <Provider> with fallbackComponent should render', () => {
   // GIVEN: useBuildComponentCallback() from a newly created chain of responsibility.
-  const { useBuildComponentCallback } = createChainOfResponsibility<undefined, Props>();
+  const { useBuildComponentCallback } = createChainOfResponsibility<void, Props>();
 
   const Fallback = () => <div>Hello, World!</div>;
 

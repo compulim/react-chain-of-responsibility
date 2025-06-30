@@ -22,7 +22,7 @@ afterEach(() => {
 
 test('when rendering <Proxy> outside of its <Provider> without fallbackComponent should throw', () => {
   // GIVEN: A <Proxy> of a newly created chain of responsibility.
-  const { Proxy } = createChainOfResponsibility<undefined, Props>();
+  const { Proxy } = createChainOfResponsibility<void, Props>();
 
   // WHEN: Render.
   // THEN: It should throw an error saying "This component/hook cannot be used outside of its corresponding <Provider>".

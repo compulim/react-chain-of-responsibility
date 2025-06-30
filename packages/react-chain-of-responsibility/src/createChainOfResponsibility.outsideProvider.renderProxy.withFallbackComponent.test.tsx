@@ -22,7 +22,7 @@ afterEach(() => {
 
 test('when rendering <Proxy> outside of its <Provider> with fallbackComponent should render', () => {
   // GIVEN: A <Proxy> of a newly created chain of responsibility.
-  const { Proxy } = createChainOfResponsibility<undefined, Props>();
+  const { Proxy } = createChainOfResponsibility<void, Props>();
 
   const Fallback = () => <div>Hello, World!</div>;
 
