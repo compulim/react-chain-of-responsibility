@@ -11,13 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added `withBuildProps` higher-order helper function to extends chain-of-responsibility with props transformation capability, by [@compulim](https://github.com/compulim) in PR [#90](https://github.com/compulim/react-chain-of-responsibility/pull/90)
 
-### Changed
-
-- `request` now support type of `void`. Differences between `undefined` and `void` as follows, by [@compulim](https://github.com/compulim) in PR [#90](https://github.com/compulim/react-chain-of-responsibility/pull/90)
-  - For `request` of type `undefined`, `undefined` need to be passed as request to `<Proxy>`/`useBuildComponentCallback()`
-  - For `request` of type `void`, either nothing or `undefined` will need to be passed to `<Proxy>`/`useBuildComponentCallback()`
-  - It is recommended to use `void` type when no request needs to be passed at build-time
-
 ### Removed
 
 - `createChainOfResponsibilityForFluentUI` is marked as deprecated and will be removed in future releases, by [@compulim](https://github.com/compulim) in PR [#90](https://github.com/compulim/react-chain-of-responsibility/pull/90)
