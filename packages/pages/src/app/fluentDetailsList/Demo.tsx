@@ -39,7 +39,7 @@ const decorateFieldWithLink: typeof _types.middleware = () => next => request =>
 
   if (request?.column.fieldName === 'name' && request?.item.canClick) {
     const FieldWithLink = (props: IDetailsColumnFieldProps) => (
-      <Link>{NextComponent && <NextComponent {...props} request={undefined} />}</Link>
+      <Link>{NextComponent && <NextComponent {...props} />}</Link>
     );
 
     FieldWithLink.displayName = 'FieldWithLink';
