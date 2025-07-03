@@ -57,7 +57,7 @@ scenario('withBuildProps', bdd => {
               ({ suffix, text }: { readonly suffix: string; readonly text: Request }) => {
                 const Component = chainOfResponsibility.useBuildComponentCallback()(text);
 
-                return Component && <Component suffix={suffix} />;
+                return Component ? <Component suffix={suffix} /> : null;
               }
             )
           ] as const

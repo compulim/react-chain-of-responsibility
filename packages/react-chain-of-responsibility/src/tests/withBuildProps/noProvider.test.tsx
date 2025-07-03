@@ -44,7 +44,7 @@ scenario('withBuildProps', bdd => {
               fallbackComponent: RenderText
             });
 
-            return Component && <Component suffix="1" />;
+            return Component ? <Component suffix="1" /> : null;
           })
       ]
     ])

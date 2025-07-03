@@ -55,7 +55,7 @@ scenario('withBuildProps', bdd => {
               const buildComponent = chainOfResponsibility.useBuildComponentCallback();
               const Component = useMemo(() => buildComponent(text), [buildComponent, text]);
 
-              return Component && <Component />;
+              return Component ? <Component /> : null;
             })
           ] as const
       ]

@@ -51,7 +51,7 @@ scenario('withBuildProps', bdd => {
             memo<{ readonly text: string }>(({ text }: { readonly text: string }) => {
               const Component = chainOfResponsibility.useBuildComponentCallback()();
 
-              return Component && <Component text={text} />;
+              return Component ? <Component text={text} /> : null;
             })
           ] as const
       ]
