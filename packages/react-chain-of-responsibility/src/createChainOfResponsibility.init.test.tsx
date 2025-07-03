@@ -11,7 +11,7 @@ type Props = { children?: never };
 
 test('middleware return a component with content of init should render', () => {
   // GIVEN: A middleware return component with content of init object.
-  const { Provider, Proxy } = createChainOfResponsibility<undefined, Props, string>();
+  const { Provider, Proxy } = createChainOfResponsibility<void, Props, string>();
 
   // WHEN: Render <Provider> with the init of "Hello, World!".
   const App = wrapWith(
@@ -21,7 +21,7 @@ test('middleware return a component with content of init should render', () => {
     })
   )(Proxy);
 
-  const result = render(<App />);
+  const result = render(<App request={undefined} />);
 
   // THEN: It should render "Hello, World!".
   expect(result.container).toHaveProperty('textContent', 'Hello, World!');

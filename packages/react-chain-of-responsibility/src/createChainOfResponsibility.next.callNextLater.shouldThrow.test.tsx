@@ -15,16 +15,16 @@ const HelloWorldComponent = () => <Fragment>Hello, World!</Fragment>;
 
 test('when calling next after returned synchronously should throw', () => {
   // GIVEN: A spied middleware which returns <Fragment>Hello, World!</Fragment>.
-  const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
+  const { Provider, Proxy } = createChainOfResponsibility<void, Props>();
   const enhancer = jest.fn<
     () => ComponentType<Props>,
-    [(request: undefined) => ComponentType<Props> | false | null | undefined]
+    [(request: void) => ComponentType<Props> | false | null | undefined]
   >(() => () => HelloWorldComponent);
 
   const App = wrapWith(withProps(Provider, { middleware: [() => enhancer] }))(Proxy);
 
   // WHEN: Render.
-  const result = render(<App />);
+  const result = render(<App request={undefined} />);
 
   // THEN: It should render "Hello, World!".
   expect(result.container).toHaveProperty('textContent', 'Hello, World!');

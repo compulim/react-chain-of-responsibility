@@ -356,12 +356,14 @@ function createChainOfResponsibility<Request = undefined, Props = { children?: n
 
 ### Options
 
+#### `passModifiedRequest`
+
 > `passModifiedRequest` is not supported by `asMiddleware`.
 
 ```ts
 type Options = {
   /** Allows a middleware to pass another request object to its next middleware. Default is false. */
-  passModifiedRequest?: boolean;
+  passModifiedRequest?: boolean | undefined;
 };
 ```
 
@@ -431,6 +433,14 @@ type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Pr
 
 When rendering the element, `getKey` is called to compute the `key` attribute. This is required for some `onRenderXXX` props. These props are usually used to render more than one elements, such as [`DetailsList.onRenderField`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist#implementation), which renders every field (a.k.a. cell) in the [`<DetailsList>`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist).
 
+### `withBuildProps` higher-order helper function
+
+`withBuildProps` is a higher-order function that extends the chain-of-responsibility with props transformation capability. It modified the `<Proxy>` and `useBuildComponentCallback` hook so that request can be hoisted and accessible in props.
+
+However, this should be used with care. Given an identical request, the returning component from the `useBuildComponentCallback()` hook will never be stable. Explicit memoization is required for stabilizing the result.
+
+For `<Proxy>`, memoization is provided automatically through React `memo()` function. No explicity memoization is required.
+
 ## Designs
 
 ### How can I choose between request and props?
@@ -449,6 +459,8 @@ For example:
 - Input
   - Request: text input, number input, password input
   - Props: label, value, instruction
+
+In some cases, you may want to have request accessible via props. The `withBuildProps` higher-order helper function can be used to hoist the request object in props. However, currently, `withBuildProps` does not honor the `passModifiedRequest` option.
 
 ### Why the type of request and props can be different?
 

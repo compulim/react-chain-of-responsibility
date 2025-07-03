@@ -37,7 +37,7 @@ const App = () => (
     <Proxy request={new Set(['bold'])}>This is bold.</Proxy>
     <Proxy request={new Set(['italic'])}>This is italic.</Proxy>
     <Proxy request={new Set(['bold', 'italic'])}>This is bold and italic.</Proxy>
-    <Proxy>This is plain.</Proxy>
+    <Proxy request={undefined}>This is plain.</Proxy>
   </Provider>
 );
 

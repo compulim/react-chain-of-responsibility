@@ -11,8 +11,8 @@ type Props = { children?: never };
 
 test('two providers of chain of responsibility nested should render', () => {
   // GIVEN: Two chain of responsibility each responsible for "Hello" and "World".
-  const { Provider: HelloProvider, Proxy: HelloProxy } = createChainOfResponsibility<undefined, Props>();
-  const { Provider: WorldProvider, Proxy: WorldProxy } = createChainOfResponsibility<undefined, Props>();
+  const { Provider: HelloProvider, Proxy: HelloProxy } = createChainOfResponsibility<void, Props>();
+  const { Provider: WorldProvider, Proxy: WorldProxy } = createChainOfResponsibility<void, Props>();
 
   // WHEN: Render <HelloProxy> and "WorldProxy".
   const App = wrapWith(
@@ -26,7 +26,7 @@ test('two providers of chain of responsibility nested should render', () => {
       })
     )(() => (
       <Fragment>
-        <HelloProxy /> <WorldProxy />
+        <HelloProxy request={undefined} /> <WorldProxy request={undefined} />
       </Fragment>
     ))
   );

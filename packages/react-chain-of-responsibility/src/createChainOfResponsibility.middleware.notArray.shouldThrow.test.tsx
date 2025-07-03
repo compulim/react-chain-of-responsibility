@@ -27,15 +27,15 @@ test('initiating a provider with a non-array middleware should throw', () => {
   const App = wrapWith(Provider, { init: Extract, middleware: Extract })(Proxy);
 
   // THEN: It should not throw on empty array.
-  expect(() => render(<App middleware={[]} />)).not.toThrow();
+  expect(() => render(<App middleware={[]} request={undefined} />)).not.toThrow();
 
   // THEN: It should throw an error saying middleware prop must be an array of functions.
-  expect(() => render(<App middleware={123 as unknown as []} />)).toThrow(
+  expect(() => render(<App middleware={123 as unknown as []} request={undefined} />)).toThrow(
     'middleware prop must be an array of functions'
   );
 
   // THEN: It should throw an error saying middleware prop must be an array of functions.
-  expect(() => render(<App middleware={['hello'] as unknown as []} />)).toThrow(
+  expect(() => render(<App middleware={['hello'] as unknown as []} request={undefined} />)).toThrow(
     'middleware prop must be an array of functions'
   );
 });

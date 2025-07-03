@@ -16,12 +16,13 @@ import { type ComponentMiddleware } from './types.ts';
 // TODO: Simplify to ComponentType<Props> | undefined.
 type ResultComponent<Props> = ComponentType<Props> | false | null | undefined;
 
-type UseBuildComponentCallbackOptions<Props> = { fallbackComponent?: ResultComponent<Props> };
+type UseBuildComponentCallbackOptions<Props> = {
+  fallbackComponent?: ResultComponent<Props> | undefined;
+};
 
-type UseBuildComponentCallback<Request, Props> = (
-  request: Request,
-  options?: UseBuildComponentCallbackOptions<Props>
-) => ComponentType<Props> | undefined;
+interface UseBuildComponentCallback<Request, Props> {
+  (request: Request, options?: undefined | UseBuildComponentCallbackOptions<Props>): ComponentType<Props> | undefined;
+}
 
 type ProviderContext<Request, Props> = {
   get enhancer(): Enhancer<[Request], ResultComponent<Props>> | undefined;
@@ -31,66 +32,67 @@ type ProviderContext<Request, Props> = {
 type ProviderProps<Request, Props, Init> = PropsWithChildren<{
   middleware: readonly ComponentMiddleware<Request, Props, Init>[];
 }> &
-  (Init extends never | void ? { init?: undefined } : Init extends undefined ? { init?: Init } : { init: Init });
+  (Init extends never | void
+    ? { readonly init?: undefined }
+    : Init extends undefined | void
+      ? { readonly init?: Init }
+      : { readonly init: Init });
 
-type ProxyProps<Request, Props extends object> = PropsWithChildren<
-  Request extends never | void
-    ? Props & { fallbackComponent?: ComponentType<Props>; request?: undefined }
-    : Request extends undefined
-      ? Props & { fallbackComponent?: ComponentType<Props>; request?: Request }
-      : Props & { fallbackComponent?: ComponentType<Props>; request: Request }
->;
+type ProxyProps<Request, Props extends object> = Props & {
+  readonly fallbackComponent?: ComponentType<Props> | undefined;
+  readonly request: Request;
+};
 
-type Options = {
+type CreateChainOfResponsibilityOptions = {
   /**
    * Allows a middleware to pass another request object when calling its next middleware. Default is false.
    *
    * However, middleware could modify the request object before calling its next middleware. It is recommended
    * to use Object.freeze() to prevent middleware from modifying the request object.
    */
-  passModifiedRequest?: boolean;
+  readonly passModifiedRequest?: boolean | undefined;
 };
 
-type MiddlewareProps<Request, Props, Init> = Readonly<{
-  init: Init;
-  Next: ComponentType<Partial<Props>>;
-  request: Request;
-}>;
+type AsMiddlewareProps<Request, Props, Init> = {
+  readonly init: Init;
+  readonly Next: ComponentType<Partial<Props>>;
+  readonly request: Request;
+};
 
-type MiddlewareComponentProps<Request, Props, Init> = Props &
-  Readonly<{ middleware: MiddlewareProps<Request, Props, Init> }>;
+type AsMiddlewareComponentProps<Request, Props, Init> = Props & {
+  readonly middleware: AsMiddlewareProps<Request, Props, Init>;
+};
 
-export default function createChainOfResponsibility<
-  Request = undefined,
-  Props extends object = Readonly<{ children?: never }>,
-  Init = undefined
->(
-  options: Options = {}
-): {
-  asMiddleware: (
-    middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
+type ChainOfResponsibility<Request, Props extends object, Init> = {
+  readonly asMiddleware: (
+    middlewareComponent: ComponentType<AsMiddlewareComponentProps<Request, Props, Init>>
   ) => ComponentMiddleware<Request, Props, Init>;
-  Provider: ComponentType<ProviderProps<Request, Props, Init>>;
-  Proxy: ComponentType<ProxyProps<Request, Props>>;
-  types: {
-    init: Init;
-    middleware: ComponentMiddleware<Request, Props, Init>;
-    middlewareComponentProps: MiddlewareComponentProps<Request, Props, Init>;
-    props: Props;
-    request: Request;
+  readonly Provider: ComponentType<ProviderProps<Request, Props, Init>>;
+  readonly Proxy: ComponentType<ProxyProps<Request, Props>>;
+  readonly types: {
+    readonly init: Init;
+    readonly middleware: ComponentMiddleware<Request, Props, Init>;
+    readonly middlewareComponentProps: AsMiddlewareComponentProps<Request, Props, Init>;
+    readonly props: Props;
+    readonly proxyProps: ProxyProps<Request, Props>;
+    readonly request: Request;
   };
-  useBuildComponentCallback: () => UseBuildComponentCallback<Request, Props>;
-} {
+  readonly useBuildComponentCallback: () => UseBuildComponentCallback<Request, Props>;
+};
+
+function createChainOfResponsibility<Request = void, Props extends object = { readonly children?: never }, Init = void>(
+  options: CreateChainOfResponsibilityOptions = {}
+): ChainOfResponsibility<Request, Props, Init> {
   const defaultUseBuildComponentCallback: ProviderContext<Request, Props> = {
     get enhancer() {
       return undefined;
     },
-    useBuildComponentCallback(_, options) {
-      if (options?.fallbackComponent) {
-        return options.fallbackComponent;
+    useBuildComponentCallback(_request, options): ComponentType<Props> {
+      if (!options?.fallbackComponent) {
+        throw new Error('This component/hook cannot be used outside of its corresponding <Provider>');
       }
 
-      throw new Error('This component/hook cannot be used outside of its corresponding <Provider>');
+      return options.fallbackComponent;
     }
   };
 
@@ -178,18 +180,19 @@ export default function createChainOfResponsibility<
 
   const useBuildComponentCallback = () => useContext(context).useBuildComponentCallback;
 
-  function Proxy({ children, fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
+  function Proxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
     const enhancer = useBuildComponentCallback();
+
     const Component = enhancer(request as Request, { fallbackComponent });
 
-    return Component ? <Component {...(props as Props)}>{children}</Component> : null;
+    return Component ? <Component {...(props as Props)} /> : null;
   }
 
   const asMiddleware: (
-    middlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
+    middlewareComponent: ComponentType<AsMiddlewareComponentProps<Request, Props, Init>>
   ) => ComponentMiddleware<Request, Props, Init> =
     (
-      MiddlewareComponent: ComponentType<MiddlewareComponentProps<Request, Props, Init>>
+      MiddlewareComponent: ComponentType<AsMiddlewareComponentProps<Request, Props, Init>>
     ): ComponentMiddleware<Request, Props, Init> =>
     init =>
     next =>
@@ -220,17 +223,26 @@ export default function createChainOfResponsibility<
       return memo<Props>(MiddlewareOf);
     };
 
-  return {
+  return Object.freeze({
     asMiddleware,
     Provider: memo<ProviderProps<Request, Props, Init>>(ChainOfResponsibilityProvider),
     Proxy: memo<ProxyProps<Request, Props>>(Proxy),
-    types: {
-      middlewareComponentProps: undefined as unknown as MiddlewareComponentProps<Request, Props, Init>,
+    types: Object.freeze({
+      middlewareComponentProps: undefined as unknown as AsMiddlewareComponentProps<Request, Props, Init>,
       init: undefined as unknown as Init,
       middleware: undefined as unknown as ComponentMiddleware<Request, Props, Init>,
       props: undefined as unknown as Props,
+      proxyProps: undefined as unknown as ProxyProps<Request, Props>,
       request: undefined as unknown as Request
-    },
+    }),
     useBuildComponentCallback
-  };
+  });
 }
+
+export default createChainOfResponsibility;
+export {
+  type ChainOfResponsibility,
+  type CreateChainOfResponsibilityOptions,
+  type ProxyProps,
+  type UseBuildComponentCallback
+};

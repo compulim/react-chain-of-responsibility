@@ -25,7 +25,7 @@ afterEach(() => {
 
 test('middleware return a React element should throw on render', () => {
   // GIVEN: A middleware which return a React element.
-  const { Provider, Proxy } = createChainOfResponsibility<undefined, Props>();
+  const { Provider, Proxy } = createChainOfResponsibility<void, Props>();
 
   const App = wrapWith(
     withProps(Provider, {
@@ -35,5 +35,5 @@ test('middleware return a React element should throw on render', () => {
 
   // WHEN: Render.
   // THEN: It should throw an error saying middleware must not return React element directly.
-  expect(() => render(<App />)).toThrow('middleware must not return React element directly');
+  expect(() => render(<App request={undefined} />)).toThrow('middleware must not return React element directly');
 });

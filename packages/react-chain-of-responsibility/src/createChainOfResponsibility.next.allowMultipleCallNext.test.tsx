@@ -28,6 +28,8 @@ test('when calling multiple next in a middleware', () => {
               </Fragment>
             );
           }
+
+          return;
         },
         () => next => (request: string) => (request === 'hello' ? HelloComponent : next(request)),
         () => next => (request: string) => (request === 'world' ? WorldComponent : next(request))

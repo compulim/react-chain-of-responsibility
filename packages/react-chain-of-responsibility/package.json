@@ -106,7 +106,7 @@
     "@babel/preset-react": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
     "@fluentui/react": "^8.123.0",
-    "@testduet/given-when-then": "^0.1.0-main.5e524dc",
+    "@testduet/given-when-then": "^0.1.0-main.334801c",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",
     "@tsconfig/recommended": "^1.0.10",
@@ -115,7 +115,7 @@
     "@types/node": "^24.0.3",
     "@types/react": "^18.3.23",
     "esbuild": "^0.25.5",
-    "escape-string-regexp": "^5.0.0",
+    "escape-string-regexp": "^4.0.0",
     "jest": "^30.0.2",
     "jest-environment-jsdom": "^30.0.2",
     "prettier": "^3.5.3",
@@ -125,6 +125,7 @@
     "react-test-renderer": "^18.3.1",
     "react-wrap-with": "^0.1.0",
     "tsup": "^8.5.0",
+    "type-fest": "^4.41.0",
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
