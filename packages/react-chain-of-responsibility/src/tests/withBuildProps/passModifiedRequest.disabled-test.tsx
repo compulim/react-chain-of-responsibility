@@ -5,8 +5,8 @@ import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import React, { Fragment, memo } from 'react';
 
-import createChainOfResponsibility from '../../createChainOfResponsibility';
-import withBuildProps from '../../withBuildProps';
+import createChainOfResponsibility from '../../createChainOfResponsibility.tsx';
+import withBuildProps from '../../withBuildProps.tsx';
 
 type Props = {
   children?: never;
@@ -42,9 +42,9 @@ scenario('withBuildProps', bdd => {
           [
             chainOfResponsibility,
             middleware,
-            memo<{ readonly value: Request }>(({ value }: { readonly value: Request }) => (
-              <chainOfResponsibility.Proxy request={value} />
-            ))
+            memo<{ readonly value: Request }>(function TestContainer({ value }: { readonly value: Request }) {
+              return <chainOfResponsibility.Proxy request={value} />;
+            })
           ] as const
       ],
       [
@@ -53,7 +53,7 @@ scenario('withBuildProps', bdd => {
           [
             chainOfResponsibility,
             middleware,
-            memo<{ readonly value: Request }>(({ value }: { readonly value: Request }) => {
+            memo<{ readonly value: Request }>(function TestContainer({ value }: { readonly value: Request }) {
               const Component = chainOfResponsibility.useBuildComponentCallback()(value);
 
               return Component && <Component />;
@@ -64,11 +64,13 @@ scenario('withBuildProps', bdd => {
     .and(
       'as a React component',
       ([{ Provider }, middleware, TestContainer]) =>
-        ({ value }: { readonly value: Request }) => (
-          <Provider middleware={middleware}>
-            <TestContainer value={value} />
-          </Provider>
-        )
+        function App({ value }: { readonly value: Request }) {
+          return (
+            <Provider middleware={middleware}>
+              <TestContainer value={value} />
+            </Provider>
+          );
+        }
     )
 
     .when('request rendering of 1', App => render(<App value={1} />))
