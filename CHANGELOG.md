@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `copyRequestToProps` option to `createChainOfResponsibility()`. When enabled, the request from build-time will be copied to props in render-time, by [@compulim](https://github.com/compulim) in PR [#90](https://github.com/compulim/react-chain-of-responsibility/pull/90)
+- Added `withBuildProps` higher-order helper function to extends chain-of-responsibility with props transformation capability, by [@compulim](https://github.com/compulim) in PR [#90](https://github.com/compulim/react-chain-of-responsibility/pull/90)
 
 ### Changed
 
