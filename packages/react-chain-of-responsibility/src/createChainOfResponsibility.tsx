@@ -117,7 +117,7 @@ function createChainOfResponsibility<Request = void, Props extends object = { re
                 // eslint-disable-next-line prefer-const
                 let hasReturned: boolean;
 
-                const ReturnComponent = enhancer(nextRequest => {
+                const returnValue = enhancer(nextRequest => {
                   if (hasReturned) {
                     throw new Error('next() cannot be called after the function had returned synchronously');
                   }
@@ -133,20 +133,20 @@ function createChainOfResponsibility<Request = void, Props extends object = { re
 
                 hasReturned = true;
 
-                if (isValidElement(ReturnComponent)) {
+                if (isValidElement(returnValue)) {
                   throw new Error('middleware must not return React element directly');
                 } else if (
-                  ReturnComponent !== false &&
-                  ReturnComponent !== null &&
-                  typeof ReturnComponent !== 'undefined' &&
-                  !isReactComponent(ReturnComponent)
+                  returnValue !== false &&
+                  returnValue !== null &&
+                  typeof returnValue !== 'undefined' &&
+                  !isReactComponent(returnValue)
                 ) {
                   throw new Error(
                     'middleware must return false, null, undefined, function component, or class component'
                   );
                 }
 
-                return ReturnComponent;
+                return returnValue;
               };
           })
         : []
