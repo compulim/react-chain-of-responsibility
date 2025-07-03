@@ -48,7 +48,9 @@ scenario('withBuildProps', bdd => {
           })
       ]
     ])
-    .and('as a React component without provider', TestContainer => ({ text }: { text: Request }) => <TestContainer text={text} />)
+    .and('as a React component without provider', TestContainer => ({ text }: { text: Request }) => (
+      <TestContainer text={text} />
+    ))
 
     .when('request rendering of "Hello, World!"', App => render(<App text="Hello, World!" />))
     .then(`should render "Hello, World! (1)"`, (_, result) =>

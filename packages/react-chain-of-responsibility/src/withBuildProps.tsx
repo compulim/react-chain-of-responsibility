@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { type ChainOfResponsibility, type ProxyProps } from './createChainOfResponsibility';
+import { type ChainOfResponsibility, type ProxyProps } from './createChainOfResponsibility.tsx';
 
 /**
  * Enhances a chain-of-responsibility with prop transformation capabilities by modifying

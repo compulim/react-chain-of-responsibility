@@ -21,6 +21,8 @@ export default function createChainOfResponsibilityForFluentUI<Props extends obj
 ): ReturnType<typeof createChainOfResponsibility<Props | undefined, Props, Init>> & {
   useBuildRenderFunction: UseBuildRenderFunction<Props>;
 } {
+  // We no longer validate the correctness of this function.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const returnValue = createChainOfResponsibility<Props | undefined, Props, Init>(options as any);
 
   const { Proxy } = returnValue;
@@ -30,11 +32,15 @@ export default function createChainOfResponsibilityForFluentUI<Props extends obj
 
     return useCallback<IRenderFunction<Props>>(
       (props, defaultRender) => (
+        // We no longer validate the correctness of this function.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         <Proxy {...(props as Props)} fallbackComponent={defaultRender as any} key={getKey?.(props)} request={props} />
       ),
       [getKey]
     );
   };
 
+  // We no longer validate the correctness of this function.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return { ...returnValue, useBuildRenderFunction } as any;
 }
