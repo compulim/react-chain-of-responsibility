@@ -37,8 +37,7 @@ scenario('withBuildProps', bdd => {
             chainOfResponsibility,
             middleware,
             memo<{ readonly text: string }>(({ text }: { readonly text: string }) => (
-              // TODO: Can we not have to set "request" props.
-              <chainOfResponsibility.Proxy request={undefined} text={text} />
+              <chainOfResponsibility.Proxy text={text} />
             ))
           ] as const
       ],

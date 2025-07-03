@@ -40,7 +40,7 @@ type ProviderProps<Request, Props, Init> = PropsWithChildren<{
 
 type ProxyProps<Request, Props extends object> = Props & {
   readonly fallbackComponent?: ComponentType<Props> | undefined;
-} & { readonly request: Request };
+} & (void extends Request ? { readonly request?: undefined } : { readonly request: Request });
 
 type CreateChainOfResponsibilityOptions = {
   /**
