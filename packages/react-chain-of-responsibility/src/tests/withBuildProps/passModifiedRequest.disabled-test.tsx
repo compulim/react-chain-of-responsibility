@@ -56,7 +56,7 @@ scenario('withBuildProps', bdd => {
             memo<{ readonly value: Request }>(function TestContainer({ value }: { readonly value: Request }) {
               const Component = chainOfResponsibility.useBuildComponentCallback()(value);
 
-              return Component && <Component />;
+              return Component ? <Component /> : null;
             })
           ] as const
       ]
