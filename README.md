@@ -373,25 +373,6 @@ Setting to `true` will enable advanced scenarios and allow one middleware to pas
 
 When the option is default or `false` but the `request` object is mutable, one middleware could still modify the `request` object and influence their downstreamers. It is recommended to follow immutable pattern when handling the `request` object, or use deep [`Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) to guarantee immutability.
 
-#### `copyRequestToProps`
-
-> Enabling this option could introduce small-but-neglible performance penalty. Every time the middleware is being built, it will create a new functional component to keep the request.
-
-```ts
-type Options = {
-  copyRequestToProps?: boolean | undefined;
-};
-```
-
-Default to `false`. When the `copyRequestToProps` is set to `true`, during render-time, the request will be copied to props named as `request`. When combined with `passModifiedRequest`, the modified request can be passed to the rendering component.
-
-Compare to passing the request as a prop to `<Proxy>` or the built component, this option has a few advantages:
-
-- The request passed to build and render must be the same object
-- When combined with `passModifiedRequest` option, a middleware can pass a modified request to the component built by the next middleware
-
-Notes: the `request` props cannot be renamed. The component returned by the middleware must have the prop types of `{ request: Request }`.
-
 ### API of `asMiddleware`
 
 `asMiddleware` wraps a React component into a middleware. Build will be done through additional `middleware` prop.
@@ -451,6 +432,14 @@ type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Pr
 ```
 
 When rendering the element, `getKey` is called to compute the `key` attribute. This is required for some `onRenderXXX` props. These props are usually used to render more than one elements, such as [`DetailsList.onRenderField`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist#implementation), which renders every field (a.k.a. cell) in the [`<DetailsList>`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist).
+
+### `withBuildProps` higher-order helper function
+
+`withBuildProps` is a higher-order function that extends the chain-of-responsibility with props transformation capability. It modified the `<Proxy>` and `useBuildComponentCallback` hook so that request can be hoisted and accessible in props.
+
+However, this should be used with care. Given an identical request, the returning component from the `useBuildComponentCallback()` hook will never be stable. Explicit memoization is required for stabilizing the result.
+
+For `<Proxy>`, memoization is provided automatically through React `memo()` function. No explicity memoization is required.
 
 ## Designs
 
