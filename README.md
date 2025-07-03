@@ -460,7 +460,7 @@ For example:
   - Request: text input, number input, password input
   - Props: label, value, instruction
 
-In some cases, you may want to have request accessible via props. The `withBuildProps` higher-order helper function can be used to hoist the request object in props, including modified request object.
+In some cases, you may want to have request accessible via props. The `withBuildProps` higher-order helper function can be used to hoist the request object in props. However, currently, `withBuildProps` does not honor the `passModifiedRequest` option.
 
 ### Why the type of request and props can be different?
 

@@ -10,6 +10,8 @@ import { type ChainOfResponsibility, type ProxyProps } from './createChainOfResp
  * When using `useBuildComponentCallback()`, implement proper memoization to avoid
  * unnecessary component regeneration with identical requests.
  *
+ * Notes: currently, `buildProps` is called at the beginning of the build. Thus, it does not honor `passModifiedRequest` option.
+ *
  * @param chainOfResponsibility - The chain-of-responsibility to extends with prop transformation
  * @param buildProps - Function to transform props
  * @returns Enhanced chain-of-responsibility with prop transformation applied
