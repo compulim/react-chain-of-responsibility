@@ -22,7 +22,7 @@ test('middleware return a class component should render', () => {
   const App = wrapWith(withProps(Provider, { middleware: [() => () => () => HelloWorld] }))(Proxy);
 
   // WHEN: Render.
-  const result = render(<App />);
+  const result = render(<App request={undefined} />);
 
   // THEN: It should render "Hello, World!".
   expect(result.container).toHaveProperty('textContent', 'Hello, World!');

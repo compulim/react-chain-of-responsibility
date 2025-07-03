@@ -26,5 +26,7 @@ test('when rendering <Proxy> outside of its <Provider> without fallbackComponent
 
   // WHEN: Render.
   // THEN: It should throw an error saying "This component/hook cannot be used outside of its corresponding <Provider>".
-  expect(() => render(<Proxy />)).toThrow('This component/hook cannot be used outside of its corresponding <Provider>');
+  expect(() => render(<Proxy request={undefined} />)).toThrow(
+    'This component/hook cannot be used outside of its corresponding <Provider>'
+  );
 });

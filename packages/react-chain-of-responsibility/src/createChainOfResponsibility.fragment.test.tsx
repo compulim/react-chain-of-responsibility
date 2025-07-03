@@ -15,7 +15,7 @@ test('middleware using <Fragment> should render', () => {
   // WHEN: Render <Proxy>.
   const App = () => (
     <Provider middleware={[() => () => () => Fragment]}>
-      <Proxy>Hello, World!</Proxy>
+      <Proxy request={undefined}>Hello, World!</Proxy>
     </Provider>
   );
 

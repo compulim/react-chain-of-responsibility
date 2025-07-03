@@ -21,7 +21,7 @@ test('middleware return a component with content of init should render', () => {
     })
   )(Proxy);
 
-  const result = render(<App />);
+  const result = render(<App request={undefined} />);
 
   // THEN: It should render "Hello, World!".
   expect(result.container).toHaveProperty('textContent', 'Hello, World!');

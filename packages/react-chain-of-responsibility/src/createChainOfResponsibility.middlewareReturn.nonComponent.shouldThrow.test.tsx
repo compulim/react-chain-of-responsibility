@@ -33,7 +33,7 @@ test('middleware return non-component should throw on render', () => {
 
   // WHEN: Render.
   // THEN: It should throw an error saying middleware must return false, null, undefined, function component, or class component.
-  expect(() => render(<App />)).toThrow(
+  expect(() => render(<App request={undefined} />)).toThrow(
     'middleware must return false, null, undefined, function component, or class component'
   );
 });

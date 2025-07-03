@@ -17,7 +17,7 @@ test('middleware should render', () => {
   // WHEN: Render <Proxy>.
   const App = ({ text }: Props) => (
     <Provider middleware={[() => () => () => HelloWorldComponent]}>
-      <Proxy text={text} />
+      <Proxy request={undefined} text={text} />
     </Provider>
   );
 

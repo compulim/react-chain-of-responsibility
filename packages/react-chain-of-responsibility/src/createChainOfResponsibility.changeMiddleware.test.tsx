@@ -21,7 +21,7 @@ test('when changing middleware on-the-fly should re-render and invalidate useBui
   const Inner = () => {
     useBuildComponentCallbackReturnValues.push(useBuildComponentCallback());
 
-    return <Proxy />;
+    return <Proxy request={undefined} />;
   };
 
   const App = wrapWith(Provider, { init: Extract, middleware: Extract })(Inner);

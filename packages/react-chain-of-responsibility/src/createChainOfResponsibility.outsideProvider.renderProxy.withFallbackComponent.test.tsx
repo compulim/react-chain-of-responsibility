@@ -27,7 +27,7 @@ test('when rendering <Proxy> outside of its <Provider> with fallbackComponent sh
   const Fallback = () => <div>Hello, World!</div>;
 
   // WHEN: Render.
-  const result = render(<Proxy fallbackComponent={Fallback} />);
+  const result = render(<Proxy fallbackComponent={Fallback} request={undefined} />);
 
   // THEN: It should throw an error saying <Proxy> cannot be used outside of its corresponding <Provider>.
   expect(result.container).toHaveProperty('textContent', 'Hello, World!');

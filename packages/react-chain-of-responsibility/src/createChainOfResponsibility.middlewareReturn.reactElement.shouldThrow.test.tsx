@@ -35,5 +35,5 @@ test('middleware return a React element should throw on render', () => {
 
   // WHEN: Render.
   // THEN: It should throw an error saying middleware must not return React element directly.
-  expect(() => render(<App />)).toThrow('middleware must not return React element directly');
+  expect(() => render(<App request={undefined} />)).toThrow('middleware must not return React element directly');
 });

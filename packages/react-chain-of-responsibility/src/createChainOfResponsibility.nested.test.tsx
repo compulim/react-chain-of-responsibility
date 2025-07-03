@@ -26,7 +26,7 @@ test('two providers of chain of responsibility nested should render', () => {
       })
     )(() => (
       <Fragment>
-        <HelloProxy /> <WorldProxy />
+        <HelloProxy request={undefined} /> <WorldProxy request={undefined} />
       </Fragment>
     ))
   );

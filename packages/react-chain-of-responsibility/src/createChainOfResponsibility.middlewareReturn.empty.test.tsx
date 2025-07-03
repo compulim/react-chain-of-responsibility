@@ -16,7 +16,7 @@ test('middleware return a class component should render', () => {
   const App = wrapWith(withProps(Provider, { middleware: [] }))(Proxy);
 
   // WHEN: Render.
-  const result = render(<App />);
+  const result = render(<App request={undefined} />);
 
   // THEN: It should render nothing.
   expect(result.container).toHaveProperty('childElementCount', 0);

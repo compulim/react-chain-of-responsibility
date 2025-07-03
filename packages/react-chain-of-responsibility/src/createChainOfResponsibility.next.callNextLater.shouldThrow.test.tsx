@@ -24,7 +24,7 @@ test('when calling next after returned synchronously should throw', () => {
   const App = wrapWith(withProps(Provider, { middleware: [() => enhancer] }))(Proxy);
 
   // WHEN: Render.
-  const result = render(<App />);
+  const result = render(<App request={undefined} />);
 
   // THEN: It should render "Hello, World!".
   expect(result.container).toHaveProperty('textContent', 'Hello, World!');

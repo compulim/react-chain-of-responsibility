@@ -15,7 +15,7 @@ test('middleware should render readonly middleware array', () => {
   // WHEN: Render <Proxy>.
   const App = () => (
     <Provider middleware={Object.freeze([() => () => () => () => <Fragment>Hello, World!</Fragment>])}>
-      <Proxy />
+      <Proxy request={undefined} />
     </Provider>
   );
 

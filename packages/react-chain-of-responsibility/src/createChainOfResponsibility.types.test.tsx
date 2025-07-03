@@ -4,6 +4,7 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 import { withProps, wrapWith } from 'react-wrap-with';
+import { type EmptyObject } from 'type-fest';
 
 import createChainOfResponsibility from './createChainOfResponsibility';
 
@@ -32,7 +33,7 @@ test('constructing middleware using all typings from "types" should render', () 
 
 test('constructing middleware with minimal typings should render', () => {
   // GIVEN: A chain of responsibility which specify init, props, and request.
-  const { Provider, Proxy, types: _types } = createChainOfResponsibility<void, Record<string, never>, void>();
+  const { Provider, Proxy, types: _types } = createChainOfResponsibility<void, EmptyObject, void>();
 
   const middleware: (typeof _types.middleware)[] = [
     (_init: typeof _types.init) => _next => (_request: typeof _types.request) => (_props: typeof _types.props) => (
@@ -43,7 +44,7 @@ test('constructing middleware with minimal typings should render', () => {
   const App = () => (
     // Allows <Provider> without "init" prop and <Proxy> without "request" prop.
     <Provider middleware={middleware}>
-      <Proxy />
+      <Proxy request={undefined} />
     </Provider>
   );
 

@@ -57,10 +57,10 @@ test('two providers of chain of responsibility nested should render', () => {
     <Provider init={1} middleware={middleware1}>
       {middleware2 ? (
         <Provider init={2} middleware={middleware2}>
-          <Proxy fallbackComponent={FallbackComponent} />
+          <Proxy fallbackComponent={FallbackComponent} request={undefined} />
         </Provider>
       ) : (
-        <Proxy fallbackComponent={FallbackComponent} />
+        <Proxy fallbackComponent={FallbackComponent} request={undefined} />
       )}
     </Provider>
   );
