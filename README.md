@@ -460,7 +460,7 @@ For example:
   - Request: text input, number input, password input
   - Props: label, value, instruction
 
-In some cases, you may want to have request copied to props so you can access the request in build-time and render-time. Create the chain by calling `createChainOfResponsibility()` with `options.copyRequestToProps` set to `true`. The option will copy request (including modified request) to props at render-time automatically. The request copy will be named `request` in props.
+In some cases, you may want to have request accessible via props. The `withBuildProps` higher-order helper function can be used to hoist the request object in props, including modified request object.
 
 ### Why the type of request and props can be different?
 
