@@ -37,7 +37,8 @@ scenario('withBuildProps', bdd => {
             chainOfResponsibility,
             middleware,
             memo<{ readonly text: string }>(({ text }: { readonly text: string }) => (
-              <chainOfResponsibility.Proxy text={text} />
+              // TODO: For request of type void, can we not require setting `request` props to undefined?
+              <chainOfResponsibility.Proxy request={undefined} text={text} />
             ))
           ] as const
       ],
