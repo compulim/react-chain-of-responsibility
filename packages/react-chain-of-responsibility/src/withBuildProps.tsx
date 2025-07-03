@@ -1,12 +1,20 @@
 import React, { memo } from 'react';
 import { type ChainOfResponsibility, type ProxyProps } from './createChainOfResponsibility';
 
-export default function withBuildProps<
-  Request,
-  Props extends object & RequestProps,
-  Init,
-  RequestProps extends object | void
->(
+/**
+ * Enhances a chain-of-responsibility with prop transformation capabilities by modifying
+ * the `<Proxy>` component and the `useBuildComponentCallback` hook.
+ *
+ * Each request will generate a new component instance with transformed props.
+ *
+ * When using `useBuildComponentCallback()`, implement proper memoization to avoid
+ * unnecessary component regeneration with identical requests.
+ *
+ * @param chainOfResponsibility - The chain-of-responsibility to extends with prop transformation
+ * @param buildProps - Function to transform props
+ * @returns Enhanced chain-of-responsibility with prop transformation applied
+ */
+export default function withBuildProps<Request, Props extends object, Init>(
   chainOfResponsibility: ChainOfResponsibility<Request, Props, Init>,
   buildProps: (props: Props, request: Request) => Props
 ): typeof chainOfResponsibility {
