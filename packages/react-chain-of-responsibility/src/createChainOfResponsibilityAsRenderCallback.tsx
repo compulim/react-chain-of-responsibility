@@ -8,7 +8,7 @@ import React, {
   type PropsWithChildren,
   type ReactNode
 } from 'react';
-import { custom, object, parse, pipe, readonly, safeParse, tuple, undefined_, union, type InferOutput } from 'valibot';
+import { custom, object, parse, pipe, readonly, safeParse, strictTuple, undefined_, union } from 'valibot';
 
 import { reactComponent } from './isReactComponent.ts';
 import applyMiddleware from './private/applyMiddleware.ts';
@@ -20,13 +20,18 @@ type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode | fal
 const componentEnhancerReturnValueSchema = <Props extends BaseProps>() =>
   union([
     undefined_(),
-    pipe(tuple([reactComponent()]), readonly()),
-    pipe(tuple([reactComponent(), custom<Props>(value => safeParse(object({}), value).success)]), readonly())
+    pipe(strictTuple([reactComponent(), custom<Props>(value => safeParse(object({}), value).success)]), readonly()),
+    pipe(strictTuple([reactComponent()]), readonly())
   ]);
 
-type ComponentEnhancerReturnValue<Props extends BaseProps> = InferOutput<
-  ReturnType<typeof componentEnhancerReturnValueSchema<Props>>
->;
+// type ComponentEnhancerReturnValue<Props extends BaseProps> = InferOutput<
+//   ReturnType<typeof componentEnhancerReturnValueSchema<Props>>
+// >;
+
+type ComponentEnhancerReturnValue<Props extends BaseProps> =
+  | readonly [ComponentType<Props>]
+  | readonly [ComponentType<Props>, Props]
+  | undefined;
 
 type ComponentEnhancer<Request, Props extends BaseProps> = (
   next: (request: Request) => RenderCallback<Props>
@@ -250,6 +255,7 @@ function createChainOfResponsibility<
   return Object.freeze({
     Provider: memo<ProviderProps<Request, Props, Init>>(ChainOfResponsibilityProvider),
     Proxy: memo<ProxyProps<Request, Props>>(Proxy),
+    // TODO: Should it be `types: undefined as any`?
     types: Object.freeze({
       init: undefined as unknown as Init,
       middleware: undefined as unknown as ComponentMiddleware<Request, Props, Init>,
