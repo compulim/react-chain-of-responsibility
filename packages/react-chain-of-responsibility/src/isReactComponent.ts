@@ -6,6 +6,7 @@ import {
   type FunctionComponent,
   type Provider
 } from 'react';
+import { custom } from 'valibot';
 
 function isConsumer(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,3 +69,8 @@ export default function isReactComponent(
     isProvider(component)
   );
 }
+
+// TODO: Add a check for isValidElement for better error message.
+const reactComponent = () => custom<ComponentType<unknown>>(value => isReactComponent(value));
+
+export { reactComponent };
