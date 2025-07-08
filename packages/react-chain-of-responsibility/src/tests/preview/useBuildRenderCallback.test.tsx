@@ -3,7 +3,7 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment, type ReactNode } from 'react';
+import React, { Fragment } from 'react';
 
 import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
 
@@ -17,12 +17,6 @@ function MyComponent({ text, value }: MyComponentProps) {
       {text} ({value})
     </Fragment>
   );
-}
-
-type PassthroughProps = Props & { readonly renderNext?: (() => ReactNode) | undefined };
-
-function Passthrough({ renderNext }: PassthroughProps) {
-  return renderNext && <Fragment>{renderNext()}</Fragment>;
 }
 
 scenario('useBuildRenderCallback', bdd => {
@@ -41,7 +35,7 @@ scenario('useBuildRenderCallback', bdd => {
             return reactComponent(MyComponent, { text: request });
           }
 
-          return reactComponent(Passthrough, { renderNext: next(request) });
+          return next(request);
         }
       ];
 

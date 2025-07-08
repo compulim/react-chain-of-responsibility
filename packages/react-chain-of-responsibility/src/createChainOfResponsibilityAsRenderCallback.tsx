@@ -17,9 +17,6 @@ import useMemoValueWithEquality from './private/useMemoValueWithEquality.ts';
 type BaseProps = object;
 
 type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode;
-type RenderCallbackWithOptionalProps<Props extends BaseProps> = (
-  overridingProps?: Partial<Props> | undefined
-) => ReactNode;
 
 const INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY = Symbol();
 
@@ -33,20 +30,12 @@ interface FunctorReturnValue<Props extends BaseProps> {
 }
 
 type ComponentEnhancer<Request, Props extends BaseProps> = (
-  next: (request: Request) => RenderCallbackWithOptionalProps<Props> | undefined
+  next: (request: Request) => FunctorReturnValue<Props> | undefined
 ) => (request: Request) => FunctorReturnValue<Props> | undefined;
 
 type ComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
   init: Init
 ) => ComponentEnhancer<Request, Props>;
-
-type SymmetricComponentEnhancer<Request, Props extends BaseProps> = (
-  next: (request: Request) => RenderCallbackWithOptionalProps<Props> | undefined
-) => (request: Request) => RenderCallbackWithOptionalProps<Props> | undefined;
-
-type SymmetricComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
-  init: Init
-) => SymmetricComponentEnhancer<Request, Props>;
 
 type UseBuildRenderCallbackOptions<Props> = {
   fallbackComponent?: ComponentType<Props> | undefined;
@@ -57,7 +46,7 @@ interface UseBuildRenderCallback<Request, Props extends BaseProps> {
 }
 
 type ProviderContext<Request, Props extends BaseProps> = {
-  get enhancer(): SymmetricComponentEnhancer<Request, Props> | undefined;
+  get enhancer(): ComponentEnhancer<Request, Props> | undefined;
   useBuildRenderCallback: UseBuildRenderCallback<Request, Props>;
 };
 
@@ -147,12 +136,12 @@ function createChainOfResponsibility<
     }
 
     // Remap the middleware, so all inputs/outputs are validated.
-    const fortifiedMiddleware: readonly SymmetricComponentMiddleware<Request, Props, Init>[] = Object.freeze(
+    const fortifiedMiddleware: readonly ComponentMiddleware<Request, Props, Init>[] = Object.freeze(
       middleware
         ? middleware.map(fn => (init: Init) => {
             const enhancer = fn(init);
 
-            return (next: (request: Request) => RenderCallbackWithOptionalProps<Props> | undefined) =>
+            return (next: (request: Request) => FunctorReturnValue<Props> | undefined) =>
               (originalRequest: Request) => {
                 // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
                 // eslint-disable-next-line prefer-const
@@ -169,8 +158,15 @@ function createChainOfResponsibility<
                       'react-chain-of-responsibility: "options.passModifiedRequest" must be set to true to pass a different request object to next().'
                     );
 
-                  return next(options.passModifiedRequest ? nextRequest : originalRequest);
+                  const result = next(options.passModifiedRequest ? nextRequest : originalRequest);
+
+                  return result;
                 })(originalRequest);
+
+                if (returnValue) {
+                  // Mark the `next(request)` as a functor for easier passthrough.
+                  returnValue[INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY] = undefined;
+                }
 
                 hasReturned = true;
 
@@ -183,11 +179,11 @@ function createChainOfResponsibility<
 
     const { enhancer: parentEnhancer } = useContext(context);
 
-    const enhancer = useMemo<SymmetricComponentEnhancer<Request, Props>>(() => {
+    const enhancer = useMemo<ComponentEnhancer<Request, Props>>(() => {
       // We are reversing because it is easier to read:
       // - With reverse, [a, b, c] will become a(b(c(fn)))
       // - Without reverse, [a, b, c] will become c(b(a(fn)))
-      return applyMiddleware<[Request], RenderCallbackWithOptionalProps<Props> | undefined, [Init]>(
+      return applyMiddleware<[Request], FunctorReturnValue<Props> | undefined, [Init]>(
         ...[...fortifiedMiddleware, ...(parentEnhancer ? [() => parentEnhancer] : [])].reverse()
       )(init as Init);
     }, [init, middleware, parentEnhancer]);
@@ -203,9 +199,14 @@ function createChainOfResponsibility<
               return;
             }
 
-            return (overridingProps?: Partial<Props> | undefined) => (
+            // TODO: Can we simplify this?
+            const result = (overridingProps?: Partial<Props> | undefined) => (
               <RenderComponent bindProps={undefined} component={Component} overridingProps={overridingProps} />
             );
+
+            result[INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY] = undefined;
+
+            return result;
           })(request);
 
         return (

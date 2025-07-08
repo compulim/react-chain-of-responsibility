@@ -3,7 +3,7 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment, useEffect, useState, type ReactNode } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
 import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
 
@@ -23,12 +23,6 @@ function Video() {
   return <Fragment>Video</Fragment>;
 }
 
-type PassthroughProps = Props & { readonly renderNext?: (() => ReactNode) | undefined };
-
-function Passthrough({ renderNext }: PassthroughProps) {
-  return renderNext && <Fragment>{renderNext()}</Fragment>;
-}
-
 scenario('hoisting request to props', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
@@ -40,14 +34,14 @@ scenario('hoisting request to props', bdd => {
             return reactComponent(Audio);
           }
 
-          return reactComponent(Passthrough, { renderNext: next(request) });
+          return next(request);
         },
         () => next => request => {
           if (request.startsWith('video/')) {
             return reactComponent(Video);
           }
 
-          return reactComponent(Passthrough, { renderNext: next(request) });
+          return next(request);
         }
       ];
 
