@@ -3,7 +3,7 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment, type ComponentType, type ReactNode } from 'react';
+import React, { Fragment, type ReactNode } from 'react';
 
 import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
 
@@ -14,25 +14,21 @@ function Downstream({ value }: Props) {
 }
 
 type UpstreamProps = Props & {
-  readonly renderNext: (overridingProps: Props) => ReactNode;
+  readonly renderNext?: ((overridingProps: Props) => ReactNode) | undefined;
 };
 
 function Upstream({ renderNext, value }: UpstreamProps) {
-  return renderNext({ value: value.toUpperCase() });
+  return renderNext?.({ value: value.toUpperCase() });
 }
 
 scenario('props can be overridden in renderNext()', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, types: _types } = createChainOfResponsibility<void, Props>();
+      const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<void, Props>();
 
       const middleware: readonly (typeof _types.middleware)[] = [
-        () => next => request => {
-          const renderNext = next(request);
-
-          return [Upstream as ComponentType<Props>, () => ({ renderNext })];
-        },
-        () => () => () => [Downstream]
+        () => next => request => reactComponent(Upstream, { renderNext: next(request) }),
+        () => () => () => reactComponent(Downstream)
       ];
 
       return function TestComponent({ value }: { value: string }) {

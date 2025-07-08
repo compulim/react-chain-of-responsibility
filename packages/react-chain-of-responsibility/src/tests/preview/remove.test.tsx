@@ -12,13 +12,20 @@ type Props = { readonly children?: never };
 scenario('hoisting request to props', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, types: _types } = createChainOfResponsibility<void, Props>();
+      const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<void, Props>();
 
-      const fail = jest.fn(() => {
-        throw new Error('must not be called');
-      });
+      const failCall = jest.fn();
 
-      const middleware: readonly (typeof _types.middleware)[] = [() => () => () => undefined, () => () => fail];
+      function Fail() {
+        failCall();
+
+        return undefined;
+      }
+
+      const middleware: readonly (typeof _types.middleware)[] = [
+        () => () => () => undefined,
+        () => () => () => reactComponent(Fail)
+      ];
 
       return [
         function TestComponent() {
@@ -28,7 +35,7 @@ scenario('hoisting request to props', bdd => {
             </Provider>
           );
         },
-        fail
+        failCall
       ] as const;
     })
     .when('the component is rendered', ([TestComponent]) => render(<TestComponent />))

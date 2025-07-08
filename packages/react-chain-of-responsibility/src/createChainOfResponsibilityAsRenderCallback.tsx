@@ -8,36 +8,33 @@ import React, {
   type PropsWithChildren,
   type ReactNode
 } from 'react';
-import { custom, function_, parse, pipe, readonly, safeParse, strictTuple, undefined_, union } from 'valibot';
+import { custom, parse } from 'valibot';
 
-import { reactComponent } from './isReactComponent.ts';
 import applyMiddleware from './private/applyMiddleware.ts';
 import arePropsEqual from './private/arePropsEqual.ts';
 import useMemoValueWithEquality from './private/useMemoValueWithEquality.ts';
 
 type BaseProps = object;
 
-type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode | false | null | undefined;
+type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode;
 type RenderCallbackWithOptionalProps<Props extends BaseProps> = (
   overridingProps?: Partial<Props> | undefined
-) => ReactNode | false | null | undefined;
+) => ReactNode;
 
-const componentEnhancerReturnValueSchema = () =>
-  union([
-    undefined_(),
-    pipe(strictTuple([reactComponent(), function_()]), readonly()),
-    pipe(strictTuple([reactComponent()]), readonly())
-  ]);
+const INTERNAL_SYMBOL = Symbol();
 
-type ComponentEnhancerReturnValue<Props extends BaseProps> =
-  | readonly [ComponentType<Props>]
-  // TODO: Should it be `(props: Props) => Record<string, any> & Props` instead?
-  | readonly [ComponentType<Props>, (props: Props) => object & Partial<Props>]
-  | undefined;
+const functorReturnValueSchema = custom<FunctorReturnValue<any>>(
+  value => typeof value === 'function' && INTERNAL_SYMBOL in value
+);
+
+interface FunctorReturnValue<Props extends BaseProps> {
+  [INTERNAL_SYMBOL]: undefined;
+  (overridingProps?: Partial<Props> | undefined): ReactNode;
+}
 
 type ComponentEnhancer<Request, Props extends BaseProps> = (
   next: (request: Request) => RenderCallbackWithOptionalProps<Props> | undefined
-) => (request: Request) => ComponentEnhancerReturnValue<Props> | undefined;
+) => (request: Request) => FunctorReturnValue<Props> | undefined;
 
 type ComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
   init: Init
@@ -94,6 +91,14 @@ type CreateChainOfResponsibilityOptions = {
 type ChainOfResponsibility<Request, Props extends object, Init> = {
   readonly Provider: ComponentType<ProviderProps<Request, Props, Init>>;
   readonly Proxy: ComponentType<ProxyProps<Request, Props>>;
+  readonly reactComponent: <P extends Props>(
+    component: ComponentType<P>,
+    bindProps?:
+      | (Partial<Props> & Omit<P, keyof Props>)
+      | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
+      | undefined
+    // bindProps?: (P) | undefined
+  ) => FunctorReturnValue<Props>;
   readonly types: {
     readonly component: ComponentType<Props>;
     readonly init: Init;
@@ -129,6 +134,10 @@ function createChainOfResponsibility<
 
   const context = createContext<ProviderContext<Request, Props>>(defaultUseBuildComponentCallback);
 
+  const BuildRenderCallbackContext = createContext<{ props: Props }>({} as any);
+
+  const useRenderCallbackProps = () => useContext(BuildRenderCallbackContext).props;
+
   function ChainOfResponsibilityProvider({ children, init, middleware }: ProviderProps<Request, Props, Init>) {
     // TODO: Related to https://github.com/microsoft/TypeScript/issues/17002.
     //       typescript@5.2.2 has a bug, Array.isArray() is a type predicate but only works with mutable array, not readonly array.
@@ -136,12 +145,6 @@ function createChainOfResponsibility<
     if (!Array.isArray(middleware as unknown) || middleware.some(middleware => typeof middleware !== 'function')) {
       throw new Error('middleware prop must be an array of functions');
     }
-
-    const PropsContext = createContext<{ props: Props }>({} as any);
-
-    const useProps = () => {
-      return useContext(PropsContext).props;
-    };
 
     // Remap the middleware, so all inputs/outputs are validated.
     const fortifiedMiddleware: readonly SymmetricComponentMiddleware<Request, Props, Init>[] = Object.freeze(
@@ -171,43 +174,27 @@ function createChainOfResponsibility<
 
                 hasReturned = true;
 
-                const result = parse(
-                  custom<ComponentEnhancerReturnValue<Props>>(
-                    value => safeParse(componentEnhancerReturnValueSchema(), value).success
-                  ),
-                  returnValue
-                );
+                // const result = parse(
+                //   custom<ComponentEnhancerReturnValue<Props>>(
+                //     value => safeParse(componentEnhancerReturnValueSchema(), value).success
+                //   ),
+                //   returnValue
+                // );
 
-                if (!result) {
-                  return undefined;
-                }
+                return returnValue && parse(functorReturnValueSchema, returnValue);
 
-                // TODO: Add "passModifiedProps".
-                return (overridingProps?: Partial<Props> | undefined) => {
-                  const [Component, bindProps] = result;
+                // // TODO: Add "passModifiedProps".
+                // return (overridingProps?: Partial<Props> | undefined) => {
+                //   const [Component, bindProps] = result;
 
-                  return (
-                    <RenderComponent bindProps={bindProps} component={Component} overridingProps={overridingProps} />
-                  );
-                };
+                //   return (
+                //     <RenderComponent bindProps={bindProps} component={Component} overridingProps={overridingProps} />
+                //   );
+                // };
               };
           })
         : []
     );
-
-    const RenderComponent = memo(function RenderComponent({
-      bindProps,
-      component: Component,
-      overridingProps
-    }: {
-      bindProps: ((props: Props) => Partial<Props>) | undefined;
-      component: ComponentType<Props>;
-      overridingProps: Partial<Props> | undefined;
-    }) {
-      const props = { ...useProps(), ...overridingProps };
-
-      return <Component {...props} {...bindProps?.(props)} />;
-    });
 
     const { enhancer: parentEnhancer } = useContext(context);
 
@@ -243,7 +230,9 @@ function createChainOfResponsibility<
 
             const context = useMemo<{ props: Props }>(() => ({ props: memoizedProps }), [memoizedProps]);
 
-            return <PropsContext.Provider value={context}>{result()}</PropsContext.Provider>;
+            return (
+              <BuildRenderCallbackContext.Provider value={context}>{result()}</BuildRenderCallbackContext.Provider>
+            );
           })
         );
       },
@@ -258,6 +247,39 @@ function createChainOfResponsibility<
     return <context.Provider value={contextValue}>{children}</context.Provider>;
   }
 
+  function reactComponent<P extends Props>(
+    component: ComponentType<P>,
+    bindProps?: (Partial<Props> & P) | ((props: Props) => Partial<Props> & P) | undefined
+  ): FunctorReturnValue<Props> {
+    const result = (overridingProps?: Partial<Props> | undefined) => {
+      return (
+        <RenderComponent
+          bindProps={bindProps}
+          component={component as ComponentType<Props>}
+          overridingProps={overridingProps}
+        />
+      );
+    };
+
+    result[INTERNAL_SYMBOL] = undefined;
+
+    return result;
+  }
+
+  const RenderComponent = memo(function RenderComponent({
+    bindProps,
+    component: Component,
+    overridingProps
+  }: {
+    bindProps: Partial<Props> | ((props: Props) => Partial<Props>) | undefined;
+    component: ComponentType<Props>;
+    overridingProps: Partial<Props> | undefined;
+  }) {
+    const props = { ...useRenderCallbackProps(), ...overridingProps };
+
+    return <Component {...props} {...(typeof bindProps === 'function' ? bindProps?.(props) : bindProps)} />;
+  });
+
   const useBuildRenderCallback = () => useContext(context).useBuildRenderCallback;
 
   function Proxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
@@ -267,6 +289,7 @@ function createChainOfResponsibility<
   return Object.freeze({
     Provider: memo<ProviderProps<Request, Props, Init>>(ChainOfResponsibilityProvider),
     Proxy: memo<ProxyProps<Request, Props>>(Proxy),
+    reactComponent,
     // TODO: Should it be `types: undefined as any`?
     types: Object.freeze({
       component: undefined as unknown as ComponentType<Props>,

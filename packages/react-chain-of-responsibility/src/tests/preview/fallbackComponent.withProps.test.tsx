@@ -3,7 +3,7 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment, type ComponentType, type ReactNode } from 'react';
+import React, { Fragment, type ReactNode } from 'react';
 
 import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
 
@@ -17,24 +17,20 @@ function Fallback({ value }: Props) {
 }
 
 type MyComponentProps = Props & {
-  readonly renderNext: () => ReactNode;
+  readonly renderNext?: (() => ReactNode) | undefined;
 };
 
 function MyComponent({ renderNext }: MyComponentProps) {
-  return renderNext();
+  return renderNext?.();
 }
 
 scenario('rendering fallback component with props', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, types: _types } = createChainOfResponsibility<void, Props>();
+      const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<void, Props>();
 
       const middleware: readonly (typeof _types.middleware)[] = [
-        () => next => request => {
-          const renderNext = next(request);
-
-          return [MyComponent as ComponentType<Props>, () => ({ renderNext })];
-        }
+        () => next => request => reactComponent(MyComponent, { renderNext: next(request) })
       ];
 
       return function TestComponent() {

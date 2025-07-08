@@ -3,7 +3,7 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment, memo, type ComponentType, type ReactNode } from 'react';
+import React, { Fragment, memo, type ReactNode } from 'react';
 
 import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
 
@@ -19,7 +19,7 @@ type UpstreamProps = Props & {
 scenario('for wasted rendering', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, types: _types } = createChainOfResponsibility<number, Props>();
+      const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<number, Props>();
 
       const downstreamCall = jest.fn();
       const upstreamCall = jest.fn();
@@ -41,19 +41,12 @@ scenario('for wasted rendering', bdd => {
       });
 
       const middleware: readonly (typeof _types.middleware)[] = [
-        () => next => request => {
-          const renderNext = next(request);
-
-          return [
-            // TODO: Fix this.
-            Upstream as unknown as ComponentType<Props>,
-            () => ({
-              children: renderNext(),
-              suffix: request
-            })
-          ];
-        },
-        () => () => () => [Downstream]
+        () => next => request =>
+          reactComponent(Upstream, {
+            children: next(request)?.(),
+            suffix: request
+          }),
+        () => () => () => reactComponent(Downstream)
       ];
 
       return [

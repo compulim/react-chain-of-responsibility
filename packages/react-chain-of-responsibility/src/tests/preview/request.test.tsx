@@ -21,38 +21,38 @@ function Binary() {
   return <Fragment>Binary</Fragment>;
 }
 
-type PassthroughProps = Props & { readonly renderNext: () => ReactNode };
+type PassthroughProps = Props & { readonly renderNext?: (() => ReactNode) | undefined };
 
 function Passthrough({ renderNext }: PassthroughProps) {
-  return <Fragment>{renderNext()}</Fragment>;
+  return <Fragment>{renderNext?.()}</Fragment>;
 }
 
 scenario('hoisting request to props', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, types: _types } = createChainOfResponsibility<string, Props>();
+      const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<string, Props>();
 
       const middleware: readonly (typeof _types.middleware)[] = [
         () => next => request => {
           if (request.startsWith('audio/')) {
-            return [Audio];
+            return reactComponent(Audio);
           }
 
           const renderNext = next(request);
 
-          return [Passthrough as typeof _types.component, () => ({ renderNext })];
+          return reactComponent(Passthrough, { renderNext });
         },
         () => next => request => {
           if (request.startsWith('video/')) {
-            return [Video];
+            return reactComponent(Video);
           }
 
           const renderNext = next(request);
 
-          return [Passthrough as typeof _types.component, () => ({ renderNext })];
+          return reactComponent(Passthrough, { renderNext });
         },
         () => () => () => {
-          return [Binary];
+          return reactComponent(Binary);
         }
       ];
 

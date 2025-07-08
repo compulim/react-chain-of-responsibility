@@ -19,33 +19,36 @@ function MyComponent({ text, value }: MyComponentProps) {
   );
 }
 
-type PassthroughProps = Props & { readonly renderNext: () => ReactNode };
+type PassthroughProps = Props & { readonly renderNext?: (() => ReactNode) | undefined };
 
 function Passthrough({ renderNext }: PassthroughProps) {
-  return <Fragment>{renderNext()}</Fragment>;
+  return renderNext && <Fragment>{renderNext()}</Fragment>;
 }
 
 scenario('useBuildRenderCallback', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, types: _types, useBuildRenderCallback } = createChainOfResponsibility<string, Props>();
+      const {
+        Provider,
+        reactComponent,
+        types: _types,
+        useBuildRenderCallback
+      } = createChainOfResponsibility<string, Props>();
 
       const middleware: readonly (typeof _types.middleware)[] = [
         () => next => request => {
           if (request) {
-            return [MyComponent as typeof _types.component, () => ({ text: request })];
+            return reactComponent(MyComponent, { text: request });
           }
 
-          const renderNext = next(request);
-
-          return [Passthrough as typeof _types.component, () => ({ renderNext })];
+          return reactComponent(Passthrough, { renderNext: next(request) });
         }
       ];
 
       function MyProxy() {
         const render = useBuildRenderCallback();
 
-        return render('Hello, World!')({ value: 1 });
+        return render('Hello, World!')?.({ value: 1 });
       }
 
       return function TestComponent() {

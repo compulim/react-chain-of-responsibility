@@ -3,13 +3,13 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment, type ComponentType } from 'react';
+import React, { Fragment } from 'react';
 
 import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never };
 
-type MyComponentProps = Props & { readonly value: string };
+type MyComponentProps = Props & { readonly value: number };
 
 function MyComponent({ value }: MyComponentProps) {
   return <Fragment>Hello, World! ({value})</Fragment>;
@@ -18,15 +18,13 @@ function MyComponent({ value }: MyComponentProps) {
 scenario('hoisting request to props', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, types: _types } = createChainOfResponsibility<number, Props>();
+      const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<number, Props>();
 
       const middleware: readonly (typeof _types.middleware)[] = [
-        () => () => request => [
-          MyComponent as ComponentType<Props>,
-          () => ({
+        () => () => request =>
+          reactComponent(MyComponent, {
             value: request // Request is hoisted as "value" prop.
           })
-        ]
       ];
 
       return function TestComponent() {
