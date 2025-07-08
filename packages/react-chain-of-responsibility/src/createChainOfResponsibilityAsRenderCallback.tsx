@@ -8,33 +8,35 @@ import React, {
   type PropsWithChildren,
   type ReactNode
 } from 'react';
-import { custom, object, parse, pipe, readonly, safeParse, strictTuple, undefined_, union } from 'valibot';
+import { custom, function_, parse, pipe, readonly, safeParse, strictTuple, undefined_, union } from 'valibot';
 
 import { reactComponent } from './isReactComponent.ts';
 import applyMiddleware from './private/applyMiddleware.ts';
+import arePropsEqual from './private/arePropsEqual.ts';
+import useMemoValueWithEquality from './private/useMemoValueWithEquality.ts';
 
 type BaseProps = object;
 
 type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode | false | null | undefined;
+type RenderCallbackWithOptionalProps<Props extends BaseProps> = (
+  overridingProps?: Partial<Props> | undefined
+) => ReactNode | false | null | undefined;
 
-const componentEnhancerReturnValueSchema = <Props extends BaseProps>() =>
+const componentEnhancerReturnValueSchema = () =>
   union([
     undefined_(),
-    pipe(strictTuple([reactComponent(), custom<Props>(value => safeParse(object({}), value).success)]), readonly()),
+    pipe(strictTuple([reactComponent(), function_()]), readonly()),
     pipe(strictTuple([reactComponent()]), readonly())
   ]);
 
-// type ComponentEnhancerReturnValue<Props extends BaseProps> = InferOutput<
-//   ReturnType<typeof componentEnhancerReturnValueSchema<Props>>
-// >;
-
 type ComponentEnhancerReturnValue<Props extends BaseProps> =
   | readonly [ComponentType<Props>]
-  | readonly [ComponentType<Props>, Props]
+  // TODO: Should it be `(props: Props) => Record<string, any> & Props` instead?
+  | readonly [ComponentType<Props>, (props: Props) => object & Partial<Props>]
   | undefined;
 
 type ComponentEnhancer<Request, Props extends BaseProps> = (
-  next: (request: Request) => RenderCallback<Props>
+  next: (request: Request) => RenderCallbackWithOptionalProps<Props>
 ) => (request: Request) => ComponentEnhancerReturnValue<Props>;
 
 type ComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
@@ -42,8 +44,8 @@ type ComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
 ) => ComponentEnhancer<Request, Props>;
 
 type SymmetricComponentEnhancer<Request, Props extends BaseProps> = (
-  next: (request: Request) => RenderCallback<Props>
-) => (request: Request) => RenderCallback<Props>;
+  next: (request: Request) => RenderCallbackWithOptionalProps<Props>
+) => (request: Request) => RenderCallbackWithOptionalProps<Props>;
 
 type SymmetricComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
   init: Init
@@ -93,6 +95,7 @@ type ChainOfResponsibility<Request, Props extends object, Init> = {
   readonly Provider: ComponentType<ProviderProps<Request, Props, Init>>;
   readonly Proxy: ComponentType<ProxyProps<Request, Props>>;
   readonly types: {
+    readonly component: ComponentType<Props>;
     readonly init: Init;
     readonly middleware: ComponentMiddleware<Request, Props, Init>;
     readonly props: Props;
@@ -109,7 +112,8 @@ function createChainOfResponsibility<
 >(options: CreateChainOfResponsibilityOptions = {}): ChainOfResponsibility<Request, Props, Init> {
   const defaultUseBuildComponentCallback: ProviderContext<Request, Props> = {
     get enhancer() {
-      return () => () => () => undefined;
+      return undefined;
+      // return () => () => () => undefined;
     },
     useBuildRenderCallback(_request, options): RenderCallback<Props> {
       const FallbackComponent = options?.fallbackComponent;
@@ -133,38 +137,11 @@ function createChainOfResponsibility<
       throw new Error('middleware prop must be an array of functions');
     }
 
-    // // Remap the middleware, so all inputs/outputs are validated.
-    // const fortifiedMiddleware: readonly ComponentMiddleware<Request, Props, Init>[] = Object.freeze(
-    //   middleware
-    //     ? middleware.map(fn => (init: Init) => {
-    //         const enhancer = fn(init);
+    const PropsContext = createContext<{ props: Props }>({} as any);
 
-    //         return (next: (request: Request) => RenderCallback<Props>) => (originalRequest: Request) => {
-    //           // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
-    //           // eslint-disable-next-line prefer-const
-    //           let hasReturned: boolean;
-
-    //           const returnValue = enhancer((nextRequest: Request) => {
-    //             if (hasReturned) {
-    //               throw new Error('next() cannot be called after the function had returned synchronously');
-    //             }
-
-    //             !options.passModifiedRequest &&
-    //               nextRequest !== originalRequest &&
-    //               console.warn(
-    //                 'react-chain-of-responsibility: "options.passModifiedRequest" must be set to true to pass a different request object to next().'
-    //               );
-
-    //             return next(options.passModifiedRequest ? nextRequest : originalRequest);
-    //           })(originalRequest);
-
-    //           hasReturned = true;
-
-    //           return parse(componentEnhancerReturnValueSchema<Props>(), returnValue);
-    //         };
-    //       })
-    //     : []
-    // );
+    const useProps = () => {
+      return useContext(PropsContext).props;
+    };
 
     // Remap the middleware, so all inputs/outputs are validated.
     const fortifiedMiddleware: readonly SymmetricComponentMiddleware<Request, Props, Init>[] = Object.freeze(
@@ -172,65 +149,98 @@ function createChainOfResponsibility<
         ? middleware.map(fn => (init: Init) => {
             const enhancer = fn(init);
 
-            return (next: (request: Request) => RenderCallback<Props>) => (originalRequest: Request) => {
-              // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
-              // eslint-disable-next-line prefer-const
-              let hasReturned: boolean;
+            return (next: (request: Request) => RenderCallbackWithOptionalProps<Props>) =>
+              (originalRequest: Request) => {
+                // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
+                // eslint-disable-next-line prefer-const
+                let hasReturned: boolean;
 
-              const returnValue = enhancer((nextRequest: Request) => {
-                if (hasReturned) {
-                  throw new Error('next() cannot be called after the function had returned synchronously');
-                }
+                const returnValue = enhancer((nextRequest: Request) => {
+                  if (hasReturned) {
+                    throw new Error('next() cannot be called after the function had returned synchronously');
+                  }
 
-                !options.passModifiedRequest &&
-                  nextRequest !== originalRequest &&
-                  console.warn(
-                    'react-chain-of-responsibility: "options.passModifiedRequest" must be set to true to pass a different request object to next().'
-                  );
+                  !options.passModifiedRequest &&
+                    nextRequest !== originalRequest &&
+                    console.warn(
+                      'react-chain-of-responsibility: "options.passModifiedRequest" must be set to true to pass a different request object to next().'
+                    );
 
-                return next(options.passModifiedRequest ? nextRequest : originalRequest);
-              })(originalRequest);
+                  return next(options.passModifiedRequest ? nextRequest : originalRequest);
+                })(originalRequest);
 
-              hasReturned = true;
+                hasReturned = true;
 
-              const result = parse(componentEnhancerReturnValueSchema<Props>(), returnValue);
+                const result = parse(
+                  custom<ComponentEnhancerReturnValue<Props>>(
+                    value => safeParse(componentEnhancerReturnValueSchema(), value).success
+                  ),
+                  returnValue
+                );
 
-              // TODO: Should it return an undefined render callback instead?
-              return ((props: Props) => {
                 if (!result) {
-                  return;
+                  return () => undefined;
                 }
-
-                const [Component, boundProps] = result;
 
                 // TODO: Add "passModifiedProps".
-                return <Component {...props} {...boundProps} />;
-              }) satisfies RenderCallback<Props>;
-            };
+                return (overridingProps?: Partial<Props> | undefined) => {
+                  const [Component, bindProps] = result;
+
+                  return (
+                    <RenderComponent bindProps={bindProps} component={Component} overridingProps={overridingProps} />
+                  );
+                };
+              };
           })
         : []
     );
 
+    const RenderComponent = memo(function RenderComponent({
+      bindProps,
+      component: Component,
+      overridingProps
+    }: {
+      bindProps: ((props: Props) => Partial<Props>) | undefined;
+      component: ComponentType<Props>;
+      overridingProps: Partial<Props> | undefined;
+    }) {
+      const props = { ...useProps(), ...overridingProps };
+
+      return <Component {...props} {...bindProps?.(props)} />;
+    });
+
     const { enhancer: parentEnhancer } = useContext(context);
 
-    const enhancer = useMemo<SymmetricComponentEnhancer<Request, Props>>(
-      () =>
-        // We are reversing because it is easier to read:
-        // - With reverse, [a, b, c] will become a(b(c(fn)))
-        // - Without reverse, [a, b, c] will become c(b(a(fn)))
-        applyMiddleware<[Request], RenderCallback<Props>, [Init]>(
-          ...[...fortifiedMiddleware, ...(parentEnhancer ? [() => parentEnhancer] : [])].reverse()
-        )(init as Init),
-      [init, middleware, parentEnhancer]
-    );
+    const enhancer = useMemo<SymmetricComponentEnhancer<Request, Props>>(() => {
+      // We are reversing because it is easier to read:
+      // - With reverse, [a, b, c] will become a(b(c(fn)))
+      // - Without reverse, [a, b, c] will become c(b(a(fn)))
+      return applyMiddleware<[Request], RenderCallbackWithOptionalProps<Props>, [Init]>(
+        ...[...fortifiedMiddleware, ...(parentEnhancer ? [() => parentEnhancer] : [])].reverse()
+      )(init as Init);
+    }, [init, middleware, parentEnhancer]);
 
     const useBuildRenderCallback = useCallback<UseBuildRenderCallback<Request, Props>>(
-      (request, options = {}) =>
-        enhancer(() => {
-          const Component = options.fallbackComponent;
+      (request, options = {}) => {
+        const result =
+          // Put the "fallbackComponent" as the last one in the chain.
+          enhancer(() => {
+            const Component = options.fallbackComponent;
 
-          return (props: Props) => Component && <Component {...props} />;
-        })(request) || undefined,
+            return (overridingProps?: Partial<Props> | undefined) =>
+              Component && (
+                <RenderComponent bindProps={undefined} component={Component} overridingProps={overridingProps} />
+              );
+          })(request) || undefined;
+
+        return (props: Props) => {
+          const memoizedProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
+
+          const context = useMemo<{ props: Props }>(() => ({ props: memoizedProps }), [memoizedProps]);
+
+          return <PropsContext.Provider value={context}>{result()}</PropsContext.Provider>;
+        };
+      },
       [enhancer]
     );
 
@@ -257,6 +267,7 @@ function createChainOfResponsibility<
     Proxy: memo<ProxyProps<Request, Props>>(Proxy),
     // TODO: Should it be `types: undefined as any`?
     types: Object.freeze({
+      component: undefined as unknown as ComponentType<Props>,
       init: undefined as unknown as Init,
       middleware: undefined as unknown as ComponentMiddleware<Request, Props, Init>,
       props: undefined as unknown as Props,
@@ -274,3 +285,17 @@ export {
   type ProxyProps,
   type UseBuildRenderCallback
 };
+
+/*
+
+### Why enhancer() need to return a component but not render function?
+
+If web developers return a render function, they could mistaken they can call hooks inside the render function.
+
+Hooks are not supported in render function, they can be executed in random order.
+
+### Why next() is returning a render function?
+
+We want "bind props" for stable output.
+
+*/
