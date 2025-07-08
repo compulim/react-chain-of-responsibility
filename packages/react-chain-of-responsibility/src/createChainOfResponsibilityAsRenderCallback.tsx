@@ -122,7 +122,18 @@ function createChainOfResponsibility<
 
   const context = createContext<ProviderContext<Request, Props>>(defaultUseBuildComponentCallback);
 
-  const BuildRenderCallbackContext = createContext<{ props: Props; requestState: readonly [Request] }>({} as any);
+  type BuildRenderCallbackContextType = {
+    readonly props: Props;
+    readonly requestState: readonly [Request];
+  };
+
+  const BuildRenderCallbackContext = createContext<BuildRenderCallbackContextType>(
+    new Proxy({} as any, {
+      get() {
+        throw new Error('This hook cannot be used outside of <Proxy> and useBuildRenderCallback');
+      }
+    })
+  );
 
   const useRenderCallbackProps = () => useContext(BuildRenderCallbackContext).props;
   const useRequest = () => useContext(BuildRenderCallbackContext).requestState;
@@ -200,13 +211,14 @@ function createChainOfResponsibility<
             }
 
             // TODO: Can we simplify this?
-            const result = (overridingProps?: Partial<Props> | undefined) => (
+            const renderFn = (overridingProps?: Partial<Props> | undefined) => (
               <RenderComponent bindProps={undefined} component={Component} overridingProps={overridingProps} />
             );
 
-            result[INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY] = undefined;
+            // Mark fallback render callback as functor return value.
+            renderFn[INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY] = undefined;
 
-            return result;
+            return renderFn;
           })(request);
 
         return (
@@ -214,8 +226,12 @@ function createChainOfResponsibility<
           ((props: Props) => {
             const memoizedProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
 
-            const context = useMemo<{ props: Props; requestState: readonly [Request] }>(
-              () => ({ props: memoizedProps, requestState: Object.freeze([request]) }),
+            const context = useMemo<BuildRenderCallbackContextType>(
+              () =>
+                Object.freeze({
+                  props: memoizedProps,
+                  requestState: Object.freeze([request] as const)
+                }),
               [memoizedProps, request]
             );
 
@@ -243,15 +259,13 @@ function createChainOfResponsibility<
       | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
       | undefined
   ): FunctorReturnValue<Props> {
-    const result = (overridingProps?: Partial<Props> | undefined) => {
-      return (
-        <RenderComponent
-          bindProps={bindProps}
-          component={component as ComponentType<Props>}
-          overridingProps={overridingProps}
-        />
-      );
-    };
+    const result = (overridingProps?: Partial<Props> | undefined) => (
+      <RenderComponent
+        bindProps={bindProps}
+        component={component as ComponentType<Props>}
+        overridingProps={overridingProps}
+      />
+    );
 
     result[INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY] = undefined;
 
@@ -274,13 +288,13 @@ function createChainOfResponsibility<
 
   const useBuildRenderCallback = () => useContext(context).useBuildRenderCallback;
 
-  function Proxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
+  function MiddlewareProxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
     return useBuildRenderCallback()(request as Request, { fallbackComponent })?.(props as Props);
   }
 
   return Object.freeze({
     Provider: memo<ProviderProps<Request, Props, Init>>(ChainOfResponsibilityProvider),
-    Proxy: memo<ProxyProps<Request, Props>>(Proxy),
+    Proxy: memo<ProxyProps<Request, Props>>(MiddlewareProxy),
     reactComponent,
     // TODO: Should it be `types: undefined as any`?
     types: Object.freeze({
