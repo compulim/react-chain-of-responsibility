@@ -36,16 +36,16 @@ type ComponentEnhancerReturnValue<Props extends BaseProps> =
   | undefined;
 
 type ComponentEnhancer<Request, Props extends BaseProps> = (
-  next: (request: Request) => RenderCallbackWithOptionalProps<Props>
-) => (request: Request) => ComponentEnhancerReturnValue<Props>;
+  next: (request: Request) => RenderCallbackWithOptionalProps<Props> | undefined
+) => (request: Request) => ComponentEnhancerReturnValue<Props> | undefined;
 
 type ComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
   init: Init
 ) => ComponentEnhancer<Request, Props>;
 
 type SymmetricComponentEnhancer<Request, Props extends BaseProps> = (
-  next: (request: Request) => RenderCallbackWithOptionalProps<Props>
-) => (request: Request) => RenderCallbackWithOptionalProps<Props>;
+  next: (request: Request) => RenderCallbackWithOptionalProps<Props> | undefined
+) => (request: Request) => RenderCallbackWithOptionalProps<Props> | undefined;
 
 type SymmetricComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
   init: Init
@@ -56,7 +56,7 @@ type UseBuildRenderCallbackOptions<Props> = {
 };
 
 interface UseBuildRenderCallback<Request, Props extends BaseProps> {
-  (request: Request, options?: undefined | UseBuildRenderCallbackOptions<Props>): RenderCallback<Props>;
+  (request: Request, options?: undefined | UseBuildRenderCallbackOptions<Props>): RenderCallback<Props> | undefined;
 }
 
 type ProviderContext<Request, Props extends BaseProps> = {
@@ -149,7 +149,7 @@ function createChainOfResponsibility<
         ? middleware.map(fn => (init: Init) => {
             const enhancer = fn(init);
 
-            return (next: (request: Request) => RenderCallbackWithOptionalProps<Props>) =>
+            return (next: (request: Request) => RenderCallbackWithOptionalProps<Props> | undefined) =>
               (originalRequest: Request) => {
                 // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
                 // eslint-disable-next-line prefer-const
@@ -179,7 +179,7 @@ function createChainOfResponsibility<
                 );
 
                 if (!result) {
-                  return () => undefined;
+                  return undefined;
                 }
 
                 // TODO: Add "passModifiedProps".
@@ -215,7 +215,7 @@ function createChainOfResponsibility<
       // We are reversing because it is easier to read:
       // - With reverse, [a, b, c] will become a(b(c(fn)))
       // - Without reverse, [a, b, c] will become c(b(a(fn)))
-      return applyMiddleware<[Request], RenderCallbackWithOptionalProps<Props>, [Init]>(
+      return applyMiddleware<[Request], RenderCallbackWithOptionalProps<Props> | undefined, [Init]>(
         ...[...fortifiedMiddleware, ...(parentEnhancer ? [() => parentEnhancer] : [])].reverse()
       )(init as Init);
     }, [init, middleware, parentEnhancer]);
@@ -227,19 +227,25 @@ function createChainOfResponsibility<
           enhancer(() => {
             const Component = options.fallbackComponent;
 
-            return (overridingProps?: Partial<Props> | undefined) =>
-              Component && (
-                <RenderComponent bindProps={undefined} component={Component} overridingProps={overridingProps} />
-              );
-          })(request) || undefined;
+            if (!Component) {
+              return;
+            }
 
-        return (props: Props) => {
-          const memoizedProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
+            return (overridingProps?: Partial<Props> | undefined) => (
+              <RenderComponent bindProps={undefined} component={Component} overridingProps={overridingProps} />
+            );
+          })(request);
 
-          const context = useMemo<{ props: Props }>(() => ({ props: memoizedProps }), [memoizedProps]);
+        return (
+          result &&
+          ((props: Props) => {
+            const memoizedProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
 
-          return <PropsContext.Provider value={context}>{result()}</PropsContext.Provider>;
-        };
+            const context = useMemo<{ props: Props }>(() => ({ props: memoizedProps }), [memoizedProps]);
+
+            return <PropsContext.Provider value={context}>{result()}</PropsContext.Provider>;
+          })
+        );
       },
       [enhancer]
     );
@@ -255,11 +261,7 @@ function createChainOfResponsibility<
   const useBuildRenderCallback = () => useContext(context).useBuildRenderCallback;
 
   function Proxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
-    const enhancer = useBuildRenderCallback();
-
-    const render = enhancer(request as Request, { fallbackComponent });
-
-    return render(props as Props);
+    return useBuildRenderCallback()(request as Request, { fallbackComponent })?.(props as Props);
   }
 
   return Object.freeze({
