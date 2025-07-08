@@ -21,14 +21,14 @@ type RenderCallbackWithOptionalProps<Props extends BaseProps> = (
   overridingProps?: Partial<Props> | undefined
 ) => ReactNode;
 
-const INTERNAL_SYMBOL = Symbol();
+const INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY = Symbol();
 
 const functorReturnValueSchema = custom<FunctorReturnValue<any>>(
-  value => typeof value === 'function' && INTERNAL_SYMBOL in value
+  value => typeof value === 'function' && INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY in value
 );
 
 interface FunctorReturnValue<Props extends BaseProps> {
-  [INTERNAL_SYMBOL]: undefined;
+  [INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY]: undefined;
   (overridingProps?: Partial<Props> | undefined): ReactNode;
 }
 
@@ -84,7 +84,7 @@ type CreateChainOfResponsibilityOptions = {
    */
   readonly passModifiedRequest?: boolean | undefined;
 
-  // TODO: Support this.
+  // TODO: Add support.
   // readonly passModifiedProps?: boolean | undefined;
 };
 
@@ -97,7 +97,6 @@ type ChainOfResponsibility<Request, Props extends object, Init> = {
       | (Partial<Props> & Omit<P, keyof Props>)
       | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
       | undefined
-    // bindProps?: (P) | undefined
   ) => FunctorReturnValue<Props>;
   readonly types: {
     readonly component: ComponentType<Props>;
@@ -108,6 +107,7 @@ type ChainOfResponsibility<Request, Props extends object, Init> = {
     readonly request: Request;
   };
   readonly useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props>;
+  readonly useRequest: () => readonly [Request];
 };
 
 function createChainOfResponsibility<
@@ -118,7 +118,6 @@ function createChainOfResponsibility<
   const defaultUseBuildComponentCallback: ProviderContext<Request, Props> = {
     get enhancer() {
       return undefined;
-      // return () => () => () => undefined;
     },
     useBuildRenderCallback(_request, options): RenderCallback<Props> {
       const FallbackComponent = options?.fallbackComponent;
@@ -134,9 +133,10 @@ function createChainOfResponsibility<
 
   const context = createContext<ProviderContext<Request, Props>>(defaultUseBuildComponentCallback);
 
-  const BuildRenderCallbackContext = createContext<{ props: Props }>({} as any);
+  const BuildRenderCallbackContext = createContext<{ props: Props; requestState: readonly [Request] }>({} as any);
 
   const useRenderCallbackProps = () => useContext(BuildRenderCallbackContext).props;
+  const useRequest = () => useContext(BuildRenderCallbackContext).requestState;
 
   function ChainOfResponsibilityProvider({ children, init, middleware }: ProviderProps<Request, Props, Init>) {
     // TODO: Related to https://github.com/microsoft/TypeScript/issues/17002.
@@ -174,23 +174,8 @@ function createChainOfResponsibility<
 
                 hasReturned = true;
 
-                // const result = parse(
-                //   custom<ComponentEnhancerReturnValue<Props>>(
-                //     value => safeParse(componentEnhancerReturnValueSchema(), value).success
-                //   ),
-                //   returnValue
-                // );
-
+                // Make sure the return value is built using our helper function for forward-compatibility reason.
                 return returnValue && parse(functorReturnValueSchema, returnValue);
-
-                // // TODO: Add "passModifiedProps".
-                // return (overridingProps?: Partial<Props> | undefined) => {
-                //   const [Component, bindProps] = result;
-
-                //   return (
-                //     <RenderComponent bindProps={bindProps} component={Component} overridingProps={overridingProps} />
-                //   );
-                // };
               };
           })
         : []
@@ -228,7 +213,10 @@ function createChainOfResponsibility<
           ((props: Props) => {
             const memoizedProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
 
-            const context = useMemo<{ props: Props }>(() => ({ props: memoizedProps }), [memoizedProps]);
+            const context = useMemo<{ props: Props; requestState: readonly [Request] }>(
+              () => ({ props: memoizedProps, requestState: Object.freeze([request]) }),
+              [memoizedProps, request]
+            );
 
             return (
               <BuildRenderCallbackContext.Provider value={context}>{result()}</BuildRenderCallbackContext.Provider>
@@ -249,7 +237,10 @@ function createChainOfResponsibility<
 
   function reactComponent<P extends Props>(
     component: ComponentType<P>,
-    bindProps?: (Partial<Props> & P) | ((props: Props) => Partial<Props> & P) | undefined
+    bindProps?:
+      | (Partial<Props> & Omit<P, keyof Props>)
+      | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
+      | undefined
   ): FunctorReturnValue<Props> {
     const result = (overridingProps?: Partial<Props> | undefined) => {
       return (
@@ -261,7 +252,7 @@ function createChainOfResponsibility<
       );
     };
 
-    result[INTERNAL_SYMBOL] = undefined;
+    result[INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY] = undefined;
 
     return result;
   }
@@ -299,7 +290,8 @@ function createChainOfResponsibility<
       proxyProps: undefined as unknown as ProxyProps<Request, Props>,
       request: undefined as unknown as Request
     }),
-    useBuildRenderCallback
+    useBuildRenderCallback,
+    useRequest
   });
 }
 
