@@ -320,14 +320,30 @@ export {
 
 /*
 
+### Why we are changing the signature?
+
+Component is great until we need to "bind props" (pass a fixed set of props to a component.) Output must be destabilize to enable "bind props." This hurts performance.
+
+Render function is great until we need to call hooks inside the render function. Middleware can conditionally call render function and it would break hooks.
+
+If we wrap component into render function, we can enable hooks while keeping the output stable. Thus, render function is a better solution and we are changing the signature to use render function.
+
 ### Why enhancer() need to return a component but not render function?
 
-If web developers return a render function, they could mistaken they can call hooks inside the render function.
+Render function call be executed at random order, thus, hooks are not supported. Web devs could be mistaken that they can call hooks inside the render function.
 
-Hooks are not supported in render function, they can be executed in random order.
+### Why I must use `reactComponent()` but not returning render function?
+
+`reactComponent()` is designed for smoother forward compatibility. In case we are required to change some infrastructure work in the future, we can tweak `reactComponent()` to make your code today to work with tomorrow's infrastructure.
+
+`reactComponent()` allows web devs to pass props to the component without breaking stability of the returned render function.
+
+Rendering stability is guaranteed as long as both component type and props are not changed. Changing request will not trigger re-rendering as long as the request is not hoisted to props, which would change the props.
 
 ### Why next() is returning a render function?
 
-We want "bind props" for stable output.
+We want to allow middleware devs to pass props to their component with stable output.
+
+Without render function, we will need to create a new component with specific props (a.k.a. bind props). This is similar to `Function.prototype.bind` which always return a new instance. Every props change will be bound to a new instance of the component. And React will always re-render and the output will become unstable.
 
 */
