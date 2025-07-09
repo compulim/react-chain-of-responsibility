@@ -8,7 +8,7 @@ import React, {
   type PropsWithChildren,
   type ReactNode
 } from 'react';
-import { custom, parse } from 'valibot';
+import { custom, function_, object, parse, safeParse } from 'valibot';
 
 import applyMiddleware from './private/applyMiddleware.ts';
 import arePropsEqual from './private/arePropsEqual.ts';
@@ -21,12 +21,16 @@ type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode;
 const INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY = Symbol();
 
 const functorReturnValueSchema = custom<FunctorReturnValue<any>>(
-  value => typeof value === 'function' && INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY in value
+  value =>
+    safeParse(object({ render: function_() }), value).success &&
+    !!value &&
+    typeof value === 'object' &&
+    INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY in value
 );
 
 interface FunctorReturnValue<Props extends BaseProps> {
-  [INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY]: undefined;
-  (overridingProps?: Partial<Props> | undefined): ReactNode;
+  readonly [INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY]: undefined;
+  readonly render: (overridingProps?: Partial<Props> | undefined) => ReactNode;
 }
 
 type ComponentEnhancer<Request, Props extends BaseProps> = (
@@ -174,10 +178,10 @@ function createChainOfResponsibility<
                   return result;
                 })(originalRequest);
 
-                if (returnValue) {
-                  // Mark the `next(request)` as a functor for easier passthrough.
-                  returnValue[INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY] = undefined;
-                }
+                // if (returnValue) {
+                //   // Mark the `next(request)` as a functor for easier passthrough.
+                //   returnValue[INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY] = undefined;
+                // }
 
                 hasReturned = true;
 
@@ -211,14 +215,15 @@ function createChainOfResponsibility<
             }
 
             // TODO: Can we simplify this?
-            const renderFn = (overridingProps?: Partial<Props> | undefined) => (
+            const render = (overridingProps?: Partial<Props> | undefined) => (
               <RenderComponent bindProps={undefined} component={Component} overridingProps={overridingProps} />
             );
 
-            // Mark fallback render callback as functor return value.
-            renderFn[INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY] = undefined;
-
-            return renderFn;
+            return Object.freeze({
+              // Mark fallback render callback as functor return value.
+              [INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY]: undefined,
+              render
+            });
           })(request);
 
         return (
@@ -236,7 +241,9 @@ function createChainOfResponsibility<
             );
 
             return (
-              <BuildRenderCallbackContext.Provider value={context}>{result()}</BuildRenderCallbackContext.Provider>
+              <BuildRenderCallbackContext.Provider value={context}>
+                {result.render()}
+              </BuildRenderCallbackContext.Provider>
             );
           })
         );
@@ -259,17 +266,16 @@ function createChainOfResponsibility<
       | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
       | undefined
   ): FunctorReturnValue<Props> {
-    const result = (overridingProps?: Partial<Props> | undefined) => (
-      <RenderComponent
-        bindProps={bindProps}
-        component={component as ComponentType<Props>}
-        overridingProps={overridingProps}
-      />
-    );
-
-    result[INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY] = undefined;
-
-    return result;
+    return Object.freeze({
+      render: (overridingProps?: Partial<Props> | undefined) => (
+        <RenderComponent
+          bindProps={bindProps}
+          component={component as ComponentType<Props>}
+          overridingProps={overridingProps}
+        />
+      ),
+      [INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY]: undefined
+    });
   }
 
   const RenderComponent = memo(function RenderComponent({

@@ -43,7 +43,7 @@ scenario('for wasted rendering', bdd => {
       const middleware: readonly (typeof _types.middleware)[] = [
         () => next => request =>
           reactComponent(Upstream, {
-            children: next(request)?.(),
+            children: next(request)?.render(),
             suffix: request
           }),
         () => () => () => reactComponent(Downstream)

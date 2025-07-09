@@ -27,7 +27,7 @@ scenario('props can be overridden in renderNext()', bdd => {
       const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<void, Props>();
 
       const middleware: readonly (typeof _types.middleware)[] = [
-        () => next => request => reactComponent(Upstream, { renderNext: next(request) }),
+        () => next => request => reactComponent(Upstream, { renderNext: next(request)?.render }),
         () => () => () => reactComponent(Downstream)
       ];
 

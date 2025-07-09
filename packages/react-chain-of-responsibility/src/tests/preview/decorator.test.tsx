@@ -33,7 +33,7 @@ scenario('decorating downstreamer', bdd => {
           const renderNext = next(request);
 
           if (request.has('bold')) {
-            return reactComponent(Bold, props => ({ children: renderNext?.(props) }));
+            return reactComponent(Bold, props => ({ children: renderNext?.render(props) }));
           }
 
           return renderNext;
@@ -42,7 +42,7 @@ scenario('decorating downstreamer', bdd => {
           const renderNext = next(request);
 
           if (request.has('italic')) {
-            return reactComponent(Italic, props => ({ children: renderNext?.(props) }));
+            return reactComponent(Italic, props => ({ children: renderNext?.render(props) }));
           }
 
           return renderNext;
