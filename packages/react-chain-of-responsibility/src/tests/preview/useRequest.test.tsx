@@ -9,7 +9,7 @@ import createChainOfResponsibility from '../../createChainOfResponsibilityAsRend
 
 type Props = { readonly children?: never };
 
-scenario('stability test with changing request', bdd => {
+scenario('useRequest', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
       const {

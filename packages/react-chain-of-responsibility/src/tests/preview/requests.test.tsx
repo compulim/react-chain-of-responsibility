@@ -21,7 +21,7 @@ function Binary() {
   return <Fragment>Binary</Fragment>;
 }
 
-scenario('hoisting request to props', bdd => {
+scenario('multiple requests', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
       const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<string, Props>();

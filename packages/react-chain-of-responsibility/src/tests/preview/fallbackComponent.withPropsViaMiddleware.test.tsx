@@ -3,7 +3,7 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment } from 'react';
+import React, { Fragment, type ReactNode } from 'react';
 
 import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
 
@@ -16,12 +16,26 @@ function Fallback({ value }: Props) {
   return <Fragment>Fallback ({value})</Fragment>;
 }
 
-scenario('rendering fallback component with props', bdd => {
+type MyComponentProps = Props & {
+  readonly children?: ReactNode | undefined;
+};
+
+function MyComponent({ children }: MyComponentProps) {
+  return children;
+}
+
+scenario('rendering fallback component with props pass from a middleware component', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, types: _types } = createChainOfResponsibility<void, Props>();
+      const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<void, Props>();
 
-      const middleware: readonly (typeof _types.middleware)[] = [() => next => request => next(request)];
+      const middleware: readonly (typeof _types.middleware)[] = [
+        () => next => request => {
+          const renderNext = next(request);
+
+          return reactComponent(MyComponent, props => ({ children: renderNext?.render(props) }));
+        }
+      ];
 
       return function TestComponent() {
         return (
@@ -32,7 +46,7 @@ scenario('rendering fallback component with props', bdd => {
       };
     })
     .when('the component is rendered', TestComponent => render(<TestComponent />))
-    .then('textContent should match', (_, { container }) =>
+    .then('textContent should match and props should be rendered', (_, { container }) =>
       expect(container).toHaveProperty('textContent', 'Fallback (1)')
     );
 });

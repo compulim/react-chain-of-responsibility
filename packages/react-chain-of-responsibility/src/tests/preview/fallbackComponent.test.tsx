@@ -19,7 +19,6 @@ scenario('rendering fallback component', bdd => {
       const { Provider, Proxy, types: _types } = createChainOfResponsibility<void, Props>();
 
       const middleware: readonly (typeof _types.middleware)[] = [
-        // () => next => request => reactComponent(Passthrough, { renderNext: next(request) })
         () => next => request => next(request)
       ];
 

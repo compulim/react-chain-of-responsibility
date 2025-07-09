@@ -23,7 +23,7 @@ function Video() {
   return <Fragment>Video</Fragment>;
 }
 
-scenario('hoisting request to props', bdd => {
+scenario('middleware use hooks while changing request', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
       const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<string, Props>();

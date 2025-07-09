@@ -9,7 +9,7 @@ import createChainOfResponsibility from '../../createChainOfResponsibilityAsRend
 
 type Props = { readonly children?: never };
 
-scenario('hoisting request to props', bdd => {
+scenario('removing a middleware by returning undefined', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
       const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<void, Props>();
