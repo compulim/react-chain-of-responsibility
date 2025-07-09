@@ -75,9 +75,11 @@ type CreateChainOfResponsibilityOptions = {
    * However, middleware could modify the request object before calling its next middleware. It is recommended
    * to use Object.freeze() to prevent middleware from modifying the request object.
    */
+  // If not enabled, web devs can pass void. If it's not void, give warnings.
   readonly passModifiedRequest?: boolean | undefined;
 
   // TODO: Add support.
+  // If not enabled, web devs can pass void. If it's not void, give warnings.
   // readonly passModifiedProps?: boolean | undefined;
 };
 
