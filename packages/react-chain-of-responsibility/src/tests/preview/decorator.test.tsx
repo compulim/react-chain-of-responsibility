@@ -30,22 +30,22 @@ scenario('decorating downstreamer', bdd => {
 
       const middleware: readonly (typeof _types.middleware)[] = [
         () => next => request => {
-          const renderNext = next(request);
+          const result = next(request);
 
           if (request.has('bold')) {
-            return reactComponent(Bold, props => ({ children: renderNext?.render(props) }));
+            return reactComponent(Bold, props => ({ children: result?.render(props) }));
           }
 
-          return renderNext;
+          return result;
         },
         () => next => request => {
-          const renderNext = next(request);
+          const result = next(request);
 
           if (request.has('italic')) {
-            return reactComponent(Italic, props => ({ children: renderNext?.render(props) }));
+            return reactComponent(Italic, props => ({ children: result?.render(props) }));
           }
 
-          return renderNext;
+          return result;
         },
         () => () => () => {
           return reactComponent(Text);
@@ -72,10 +72,6 @@ scenario('decorating downstreamer', bdd => {
     .then('should be bold and italic', (_, { container }) =>
       expect(container).toHaveProperty('innerHTML', '<strong><i>Hello, World!</i></strong>')
     )
-    .when('the component is rendered with nothing', TestComponent =>
-      render(<TestComponent request={new Set()} />)
-    )
-    .then('should be plain text', (_, { container }) =>
-      expect(container).toHaveProperty('innerHTML', 'Hello, World!')
-    );
+    .when('the component is rendered with nothing', TestComponent => render(<TestComponent request={new Set()} />))
+    .then('should be plain text', (_, { container }) => expect(container).toHaveProperty('innerHTML', 'Hello, World!'));
 });

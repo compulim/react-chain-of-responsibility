@@ -178,11 +178,6 @@ function createChainOfResponsibility<
                   return result;
                 })(originalRequest);
 
-                // if (returnValue) {
-                //   // Mark the `next(request)` as a functor for easier passthrough.
-                //   returnValue[INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY] = undefined;
-                // }
-
                 hasReturned = true;
 
                 // Make sure the return value is built using our helper function for forward-compatibility reason.
