@@ -13,18 +13,14 @@ import './index.css';
 // eslint-disable-next-line react/no-deprecated
 import { render } from 'react-dom';
 
-// import App from './App.tsx';
-import Test from './Test.tsx';
+import App from './App.tsx';
 
 const rootElement = document.getElementById('root');
 
-// render(<App />, rootElement);
-render(<Test />, rootElement);
+render(<App />, rootElement);
 
 declare const IS_DEVELOPMENT: boolean;
 
 if (typeof IS_DEVELOPMENT !== 'undefined' && IS_DEVELOPMENT) {
   new EventSource('/esbuild').addEventListener('change', () => location.reload());
 }
-
-console.log('123');
