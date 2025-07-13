@@ -21,7 +21,7 @@ function Upstream({ renderNext, value }: UpstreamProps) {
   return renderNext?.({ value: value.toUpperCase() });
 }
 
-scenario('allowOverrideProps is disabled or default', bdd => {
+scenario('allowOverrideProps is disabled or undefined', bdd => {
   bdd.given
     .oneOf([
       ['disabled', () => false],
@@ -60,7 +60,7 @@ scenario('allowOverrideProps is disabled or default', bdd => {
       expect(container).toHaveProperty('textContent', '(Hello, World!)')
     )
     .and('console.warn should have been called once', ({ warn }) => expect(warn).toHaveBeenCalledTimes(1))
-    .and('console.warn should have been called with the error message', ({ warn }) =>
+    .and('console.warn should have been called with message', ({ warn }) =>
       expect(warn).toHaveBeenLastCalledWith(
         expect.stringContaining('"allowOverrideProps" must be set to override props')
       )

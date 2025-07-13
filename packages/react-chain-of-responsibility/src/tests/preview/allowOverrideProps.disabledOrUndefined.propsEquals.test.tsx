@@ -22,7 +22,7 @@ function Upstream({ renderNext, value }: UpstreamProps) {
   return renderNext?.({ value });
 }
 
-scenario('allowOverrideProps is disabled or default', bdd => {
+scenario('allowOverrideProps is disabled or undefined with content-equals props being recreated', bdd => {
   bdd.given
     .oneOf([
       ['disabled', () => false],
