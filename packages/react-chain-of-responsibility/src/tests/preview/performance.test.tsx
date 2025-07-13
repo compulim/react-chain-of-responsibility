@@ -5,7 +5,7 @@ import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import React, { Fragment, memo, type ReactNode } from 'react';
 
-import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
+import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = {
   readonly children?: ReactNode | undefined;
@@ -19,7 +19,7 @@ type UpstreamProps = Props & {
 scenario('for wasted rendering', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<number, Props>();
+      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<number, Props>();
 
       const downstreamCall = jest.fn();
       const upstreamCall = jest.fn();
@@ -40,7 +40,7 @@ scenario('for wasted rendering', bdd => {
         );
       });
 
-      const middleware: readonly (typeof _types.middleware)[] = [
+      const middleware: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request =>
           reactComponent(Upstream, {
             children: next(request)?.render(),

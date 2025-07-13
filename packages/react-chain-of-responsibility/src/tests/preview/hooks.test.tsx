@@ -5,7 +5,7 @@ import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import React, { Fragment, useEffect, useState } from 'react';
 
-import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
+import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never };
 
@@ -26,9 +26,9 @@ function Video() {
 scenario('middleware use hooks while changing request', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<string, Props>();
+      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<string, Props>();
 
-      const middleware: readonly (typeof _types.middleware)[] = [
+      const middleware: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request => {
           if (request.startsWith('audio/')) {
             return reactComponent(Audio);

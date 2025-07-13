@@ -5,20 +5,14 @@ import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import React, { Fragment, memo } from 'react';
 
-import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
+import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never };
 
 scenario('useRequest', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const {
-        Provider,
-        Proxy,
-        reactComponent,
-        types: _types,
-        useRequest
-      } = createChainOfResponsibility<string, Props>();
+      const { Provider, Proxy, reactComponent, useRequest } = createChainOfResponsibility<string, Props>();
 
       const MyComponent = memo(function MyComponent() {
         const [request] = useRequest();
@@ -26,7 +20,7 @@ scenario('useRequest', bdd => {
         return <Fragment>{request}</Fragment>;
       });
 
-      const middleware: readonly (typeof _types.middleware)[] = [
+      const middleware: readonly InferMiddleware<typeof Provider>[] = [
         // With a fixed props, the <MyComponent> should be stable.
         () => () => () => reactComponent(MyComponent)
       ];

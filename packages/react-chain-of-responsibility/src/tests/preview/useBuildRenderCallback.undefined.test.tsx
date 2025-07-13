@@ -5,16 +5,16 @@ import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import React, { Fragment } from 'react';
 
-import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
+import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never; value: number };
 
 scenario('useBuildRenderCallback without middleware', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, types: _types, useBuildRenderCallback } = createChainOfResponsibility<void, Props>();
+      const { Provider, useBuildRenderCallback } = createChainOfResponsibility<void, Props>();
 
-      const middleware: readonly (typeof _types.middleware)[] = [];
+      const middleware: readonly InferMiddleware<typeof Provider>[] = [];
 
       function MyProxy() {
         const render = useBuildRenderCallback();

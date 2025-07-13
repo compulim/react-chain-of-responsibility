@@ -5,7 +5,9 @@ import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import React, { type ReactNode } from 'react';
 
-import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback.tsx';
+import createChainOfResponsibility, {
+  type InferMiddleware
+} from '../../createChainOfResponsibilityAsRenderCallback.tsx';
 
 type Props = { readonly children?: never };
 type Request = string;
@@ -23,9 +25,9 @@ function MyComponent({ next, request }: MyComponentProps) {
 scenario('call next() after the function call ended should throw', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<Request, Props>();
+      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>();
 
-      const middleware: readonly (typeof _types.middleware)[] = [
+      const middleware: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request => reactComponent(MyComponent, { next, request })
       ];
 

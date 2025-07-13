@@ -5,7 +5,7 @@ import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import React, { Fragment, type ReactNode } from 'react';
 
-import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
+import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly value: string };
 
@@ -24,14 +24,11 @@ function Upstream({ renderNext, value }: UpstreamProps) {
 scenario('allowOverrideProps is enabled', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const {
-        Provider,
-        Proxy,
-        reactComponent,
-        types: _types
-      } = createChainOfResponsibility<void, Props>({ allowOverrideProps: true });
+      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<void, Props>({
+        allowOverrideProps: true
+      });
 
-      const middleware: readonly (typeof _types.middleware)[] = [
+      const middleware: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request => reactComponent(Upstream, { renderNext: next(request)?.render }),
         () => () => () => reactComponent(Downstream)
       ];

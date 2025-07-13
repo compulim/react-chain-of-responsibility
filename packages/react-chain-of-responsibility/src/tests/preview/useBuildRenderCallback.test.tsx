@@ -5,7 +5,7 @@ import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import React, { Fragment } from 'react';
 
-import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
+import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never; value: number };
 
@@ -22,14 +22,9 @@ function MyComponent({ text, value }: MyComponentProps) {
 scenario('useBuildRenderCallback', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const {
-        Provider,
-        reactComponent,
-        types: _types,
-        useBuildRenderCallback
-      } = createChainOfResponsibility<string, Props>();
+      const { Provider, reactComponent, useBuildRenderCallback } = createChainOfResponsibility<string, Props>();
 
-      const middleware: readonly (typeof _types.middleware)[] = [
+      const middleware: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request => {
           if (request) {
             return reactComponent(MyComponent, { text: request });

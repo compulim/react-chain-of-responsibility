@@ -86,8 +86,27 @@ type CreateChainOfResponsibilityOptions = {
   readonly allowOverrideProps?: boolean | undefined;
 };
 
+type ProviderComponentType<Request, Props extends object, Init> = ComponentType<ProviderProps<Request, Props, Init>> & {
+  readonly '~types': {
+    readonly component: ComponentType<Props>;
+    readonly init: Init;
+    readonly middleware: ComponentMiddleware<Request, Props, Init>;
+    readonly props: Props;
+    readonly proxyProps: ProxyProps<Request, Props>;
+    readonly request: Request;
+  };
+};
+
+type InferComponent<T extends ProviderComponentType<any, any, any>> = T['~types']['component'];
+type InferInit<T extends ProviderComponentType<any, any, any>> = T['~types']['init'];
+type InferMiddleware<T extends ProviderComponentType<any, any, any>> = T['~types']['middleware'];
+type InferProps<T extends ProviderComponentType<any, any, any>> = T['~types']['props'];
+type InferProxyProps<T extends ProviderComponentType<any, any, any>> = T['~types']['proxyProps'];
+type InferRequest<T extends ProviderComponentType<any, any, any>> = T['~types']['request'];
+
 type ChainOfResponsibility<Request, Props extends object, Init> = {
-  readonly Provider: ComponentType<ProviderProps<Request, Props, Init>>;
+  // readonly Provider: ComponentType<ProviderProps<Request, Props, Init>>;
+  readonly Provider: ProviderComponentType<Request, Props, Init>;
   readonly Proxy: ComponentType<ProxyProps<Request, Props>>;
   readonly reactComponent: <P extends Props>(
     component: ComponentType<P>,
@@ -96,14 +115,14 @@ type ChainOfResponsibility<Request, Props extends object, Init> = {
       | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
       | undefined
   ) => FunctorReturnValue<Props>;
-  readonly types: {
-    readonly component: ComponentType<Props>;
-    readonly init: Init;
-    readonly middleware: ComponentMiddleware<Request, Props, Init>;
-    readonly props: Props;
-    readonly proxyProps: ProxyProps<Request, Props>;
-    readonly request: Request;
-  };
+  // readonly types: {
+  //   readonly component: ComponentType<Props>;
+  //   readonly init: Init;
+  //   readonly middleware: ComponentMiddleware<Request, Props, Init>;
+  //   readonly props: Props;
+  //   readonly proxyProps: ProxyProps<Request, Props>;
+  //   readonly request: Request;
+  // };
   readonly useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props>;
   readonly useRequest: () => readonly [Request];
 };
@@ -247,11 +266,7 @@ function createChainOfResponsibility<
               [memoizedProps, request]
             );
 
-            return (
-              <RenderContext.Provider value={context}>
-                {result.render()}
-              </RenderContext.Provider>
-            );
+            return <RenderContext.Provider value={context}>{result.render()}</RenderContext.Provider>;
           })
         );
       },
@@ -317,19 +332,21 @@ function createChainOfResponsibility<
   }
 
   return Object.freeze({
-    Provider: memo<ProviderProps<Request, Props, Init>>(ChainOfResponsibilityProvider),
+    Provider: memo<ProviderProps<Request, Props, Init>>(
+      ChainOfResponsibilityProvider
+    ) as unknown as ProviderComponentType<Request, Props, Init>,
     Proxy: memo<ProxyProps<Request, Props>>(MiddlewareProxy),
     reactComponent,
     // TODO: Should it be `types: undefined as any`?
     // TODO: Maybe inferring from <Provider>?
-    types: Object.freeze({
-      component: undefined as unknown as ComponentType<Props>,
-      init: undefined as unknown as Init,
-      middleware: undefined as unknown as ComponentMiddleware<Request, Props, Init>,
-      props: undefined as unknown as Props,
-      proxyProps: undefined as unknown as ProxyProps<Request, Props>,
-      request: undefined as unknown as Request
-    }),
+    // types: Object.freeze({
+    //   component: undefined as unknown as ComponentType<Props>,
+    //   init: undefined as unknown as Init,
+    //   middleware: undefined as unknown as ComponentMiddleware<Request, Props, Init>,
+    //   props: undefined as unknown as Props,
+    //   proxyProps: undefined as unknown as ProxyProps<Request, Props>,
+    //   request: undefined as unknown as Request
+    // }),
     useBuildRenderCallback,
     useRequest
   });
@@ -339,6 +356,12 @@ export default createChainOfResponsibility;
 export {
   type ChainOfResponsibility,
   type CreateChainOfResponsibilityOptions,
+  type InferComponent,
+  type InferInit,
+  type InferMiddleware,
+  type InferProps,
+  type InferProxyProps,
+  type InferRequest,
   type ProxyProps,
   type UseBuildRenderCallback
 };

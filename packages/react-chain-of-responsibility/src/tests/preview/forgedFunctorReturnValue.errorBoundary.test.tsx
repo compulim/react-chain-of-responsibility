@@ -5,7 +5,9 @@ import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import React, { Component, type ReactNode } from 'react';
 
-import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback.tsx';
+import createChainOfResponsibility, {
+  type InferMiddleware
+} from '../../createChainOfResponsibilityAsRenderCallback.tsx';
 
 type Props = { readonly children?: never };
 type Request = void;
@@ -38,10 +40,10 @@ class ErrorBoundary extends Component<{ children?: ReactNode | undefined }, { er
 scenario('call next() after the function call ended should throw', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, types: _types } = createChainOfResponsibility<Request, Props>();
+      const { Provider, Proxy } = createChainOfResponsibility<Request, Props>();
       const render = jest.fn();
 
-      const middleware: readonly (typeof _types.middleware)[] = [() => () => () => ({ render }) as any];
+      const middleware: readonly InferMiddleware<typeof Provider>[] = [() => () => () => ({ render }) as any];
 
       return {
         render,
