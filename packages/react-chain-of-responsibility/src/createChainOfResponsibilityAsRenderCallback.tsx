@@ -166,13 +166,17 @@ function createChainOfResponsibility<
 
                 const returnValue = enhancer((nextRequest: Request) => {
                   if (hasReturned) {
-                    throw new Error('next() cannot be called after the function had returned synchronously');
+                    // TODO: Add test.
+                    throw new Error(
+                      'react-chain-of-responsibility: next() cannot be called after the function had returned synchronously'
+                    );
                   }
 
+                  // We do not allow passing void/undefined to next() because it would be confusing whether to keep the original request or pass an undefined.
                   !options.passModifiedRequest &&
                     nextRequest !== originalRequest &&
                     console.warn(
-                      'react-chain-of-responsibility: "options.passModifiedRequest" must be set to true to pass a different request object to next().'
+                      'react-chain-of-responsibility: next() must be called with the original request, otherwise, set "options.passModifiedRequest" to true to pass a different request object downstream'
                     );
 
                   return next(options.passModifiedRequest ? nextRequest : originalRequest);
@@ -205,15 +209,18 @@ function createChainOfResponsibility<
         const result =
           // Put the "fallbackComponent" as the last one in the chain.
           enhancer(() => {
-            const Component = buildOptions.fallbackComponent;
+            const FallbackComponent = buildOptions.fallbackComponent;
 
-            if (!Component) {
+            if (!FallbackComponent) {
+              // TODO: Should we show a red box here?
               return;
             }
 
-            // TODO: Can we simplify this?
-            const render = (overridingProps?: Partial<Props> | undefined) => (
-              <RenderComponent bindProps={undefined} component={Component} overridingProps={overridingProps} />
+            // TODO: Can we simplify `undefined`?
+            const render = () => (
+              // Currently, no way to set `bindProps` to `fallbackComponent`.
+              // `fallbackComponent` should not set `overridingProps` because it is the last one in the chain, it would not have the next() function.
+              <RenderComponent component={FallbackComponent} />
             );
 
             return Object.freeze({
@@ -281,9 +288,9 @@ function createChainOfResponsibility<
     component: Component,
     overridingProps
   }: {
-    bindProps: Partial<Props> | ((props: Props) => Partial<Props>) | undefined;
+    bindProps?: Partial<Props> | ((props: Props) => Partial<Props>) | undefined;
     component: ComponentType<Props>;
-    overridingProps: Partial<Props> | undefined;
+    overridingProps?: Partial<Props> | undefined;
   }) {
     const {
       props: renderCallbackProps,
