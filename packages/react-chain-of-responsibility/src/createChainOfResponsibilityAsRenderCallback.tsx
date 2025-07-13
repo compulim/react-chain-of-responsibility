@@ -342,7 +342,7 @@ export {
 
 /*
 
-### Why we are changing the signature?
+### Why are we changing the signature?
 
 Component is great until we need to "bind props" (pass a fixed set of props to a component.) Output must be destabilize to enable "bind props." This hurts performance.
 
