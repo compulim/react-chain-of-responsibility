@@ -165,7 +165,7 @@ function createChainOfResponsibility<
     //       typescript@5.2.2 has a bug, Array.isArray() is a type predicate but only works with mutable array, not readonly array.
     //       After removing "as unknown", `middleware` on the next line become `any[]`.
     if (!Array.isArray(middleware as unknown) || middleware.some(middleware => typeof middleware !== 'function')) {
-      throw new Error('middleware prop must be an array of functions');
+      throw new Error('react-chain-of-responsibility: "middleware" prop must be an array of functions');
     }
 
     // Remap the middleware, so all inputs/outputs are validated.
