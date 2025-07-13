@@ -80,7 +80,7 @@ type CreateChainOfResponsibilityOptions = {
 
   // TODO: Add support.
   // If not enabled, web devs can pass void. If it's not void, give warnings.
-  // readonly passModifiedProps?: boolean | undefined;
+  readonly allowOverrideProps?: boolean | undefined;
 };
 
 type ChainOfResponsibility<Request, Props extends object, Init> = {
@@ -129,6 +129,7 @@ function createChainOfResponsibility<
   const context = createContext<ProviderContext<Request, Props>>(defaultUseBuildComponentCallback);
 
   type BuildRenderCallbackContextType = {
+    readonly optionsState: readonly [CreateChainOfResponsibilityOptions];
     readonly props: Props;
     readonly requestState: readonly [Request];
   };
@@ -141,7 +142,6 @@ function createChainOfResponsibility<
     })
   );
 
-  const useRenderCallbackProps = () => useContext(BuildRenderCallbackContext).props;
   const useRequest = () => useContext(BuildRenderCallbackContext).requestState;
 
   function ChainOfResponsibilityProvider({ children, init, middleware }: ProviderProps<Request, Props, Init>) {
@@ -175,9 +175,7 @@ function createChainOfResponsibility<
                       'react-chain-of-responsibility: "options.passModifiedRequest" must be set to true to pass a different request object to next().'
                     );
 
-                  const result = next(options.passModifiedRequest ? nextRequest : originalRequest);
-
-                  return result;
+                  return next(options.passModifiedRequest ? nextRequest : originalRequest);
                 })(originalRequest);
 
                 hasReturned = true;
@@ -191,21 +189,23 @@ function createChainOfResponsibility<
 
     const { enhancer: parentEnhancer } = useContext(context);
 
-    const enhancer = useMemo<ComponentEnhancer<Request, Props>>(() => {
-      // We are reversing because it is easier to read:
-      // - With reverse, [a, b, c] will become a(b(c(fn)))
-      // - Without reverse, [a, b, c] will become c(b(a(fn)))
-      return applyMiddleware<[Request], FunctorReturnValue<Props> | undefined, [Init]>(
-        ...[...fortifiedMiddleware, ...(parentEnhancer ? [() => parentEnhancer] : [])].reverse()
-      )(init as Init);
-    }, [init, middleware, parentEnhancer]);
+    const enhancer = useMemo<ComponentEnhancer<Request, Props>>(
+      () =>
+        // We are reversing because it is easier to read:
+        // - With reverse, [a, b, c] will become a(b(c(fn)))
+        // - Without reverse, [a, b, c] will become c(b(a(fn)))
+        applyMiddleware<[Request], FunctorReturnValue<Props> | undefined, [Init]>(
+          ...[...fortifiedMiddleware, ...(parentEnhancer ? [() => parentEnhancer] : [])].reverse()
+        )(init as Init),
+      [init, middleware, parentEnhancer]
+    );
 
     const useBuildRenderCallback = useCallback<UseBuildRenderCallback<Request, Props>>(
-      (request, options = {}) => {
+      (request, buildOptions = {}) => {
         const result =
           // Put the "fallbackComponent" as the last one in the chain.
           enhancer(() => {
-            const Component = options.fallbackComponent;
+            const Component = buildOptions.fallbackComponent;
 
             if (!Component) {
               return;
@@ -231,6 +231,7 @@ function createChainOfResponsibility<
             const context = useMemo<BuildRenderCallbackContextType>(
               () =>
                 Object.freeze({
+                  optionsState: Object.freeze([options] as const),
                   props: memoizedProps,
                   requestState: Object.freeze([request] as const)
                 }),
@@ -284,7 +285,18 @@ function createChainOfResponsibility<
     component: ComponentType<Props>;
     overridingProps: Partial<Props> | undefined;
   }) {
-    const props = { ...useRenderCallbackProps(), ...overridingProps };
+    const {
+      props: renderCallbackProps,
+      optionsState: [{ allowOverrideProps }]
+    } = useContext(BuildRenderCallbackContext);
+
+    if (overridingProps && !arePropsEqual(overridingProps, renderCallbackProps) && !allowOverrideProps) {
+      console.warn('react-chain-of-responsibility: "allowOverrideProps" must be set to override props');
+    }
+
+    const props = allowOverrideProps
+      ? Object.freeze({ ...renderCallbackProps, ...overridingProps })
+      : Object.freeze({ ...renderCallbackProps });
 
     return <Component {...props} {...(typeof bindProps === 'function' ? bindProps?.(props) : bindProps)} />;
   });

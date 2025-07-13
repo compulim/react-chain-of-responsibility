@@ -21,26 +21,39 @@ function Upstream({ renderNext, value }: UpstreamProps) {
   return renderNext?.({ value: value.toUpperCase() });
 }
 
-scenario('props can be overridden in renderNext()', bdd => {
+scenario('allowOverrideProps is enabled', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent, types: _types } = createChainOfResponsibility<void, Props>();
+      const {
+        Provider,
+        Proxy,
+        reactComponent,
+        types: _types
+      } = createChainOfResponsibility<void, Props>({ allowOverrideProps: true });
 
       const middleware: readonly (typeof _types.middleware)[] = [
         () => next => request => reactComponent(Upstream, { renderNext: next(request)?.render }),
         () => () => () => reactComponent(Downstream)
       ];
 
-      return function TestComponent({ value }: { value: string }) {
-        return (
-          <Provider middleware={middleware}>
-            <Proxy request={undefined} value={value} />
-          </Provider>
-        );
+      return {
+        TestComponent: function TestComponent({ value }: { value: string }) {
+          return (
+            <Provider middleware={middleware}>
+              <Proxy request={undefined} value={value} />
+            </Provider>
+          );
+        }
       };
     })
-    .when('the component is rendered', TestComponent => render(<TestComponent value="Hello, World!" />))
-    .then('textContent should match', (_, { container }) =>
+    .and(
+      'a console.warn spy',
+      ({ TestComponent }) => ({ TestComponent, warn: jest.spyOn(console, 'warn').mockImplementation(() => {}) }),
+      ({ warn }) => warn.mockRestore()
+    )
+    .when('the component is rendered', ({ TestComponent }) => render(<TestComponent value="Hello, World!" />))
+    .then('textContent should be overridden by <Upstream>', (_, { container }) =>
       expect(container).toHaveProperty('textContent', '(HELLO, WORLD!)')
-    );
+    )
+    .and('no console.warn should have been called', ({ warn }) => expect(warn).toHaveBeenCalledTimes(0));
 });
