@@ -71,7 +71,7 @@ type ProxyProps<Request, Props extends BaseProps> = Props & {
 
 type CreateChainOfResponsibilityOptions = {
   /**
-   * Allows a component to pass contentfully different props to its downstream component. Default is false.
+   * Allows one component to pass different set of props to its downstream component. Default is false.
    *
    * It is recommended to keep this settings as default to prevent newly added component from unexpectedly changing behavior of downstream components.
    */
@@ -80,8 +80,9 @@ type CreateChainOfResponsibilityOptions = {
   /**
    * Allows a middleware to pass another request object when calling its next middleware. Default is false.
    *
-   * However, middleware could modify the request object before calling its next middleware. It is recommended
-   * to use Object.freeze() to prevent middleware from modifying the request object.
+   * It is recommended to keep this settings as default ot prevent newly added middleware from unexpectedly changing behavior of downstream middleware.
+   *
+   * To prevent upstream middleware from modifying the request, the request object should be set to be immutable through `Object.freeze`.
    */
   readonly passModifiedRequest?: boolean | undefined;
 };
