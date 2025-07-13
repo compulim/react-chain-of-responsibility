@@ -250,7 +250,7 @@ function createChainOfResponsibility<
     } = useContext(RenderContext);
 
     if (overridingProps && !arePropsEqual(overridingProps, renderCallbackProps) && !allowOverrideProps) {
-      console.warn('react-chain-of-responsibility: "allowOverrideProps" must be set to override props');
+      console.warn('react-chain-of-responsibility: "allowOverrideProps" must be set to true to override props');
     }
 
     const props = allowOverrideProps

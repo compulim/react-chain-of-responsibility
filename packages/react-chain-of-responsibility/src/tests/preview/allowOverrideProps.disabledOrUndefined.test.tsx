@@ -58,7 +58,7 @@ scenario('allowOverrideProps is disabled or undefined', bdd => {
     .and('console.warn should have been called once', ({ warn }) => expect(warn).toHaveBeenCalledTimes(1))
     .and('console.warn should have been called with message', ({ warn }) =>
       expect(warn).toHaveBeenLastCalledWith(
-        expect.stringContaining('"allowOverrideProps" must be set to override props')
+        expect.stringContaining('"allowOverrideProps" must be set to true to override props')
       )
     );
 });
