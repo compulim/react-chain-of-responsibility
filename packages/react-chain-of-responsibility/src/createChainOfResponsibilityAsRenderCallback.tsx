@@ -154,8 +154,6 @@ function createChainOfResponsibility<
     })
   );
 
-  const useRequest = () => useContext(RenderContext).requestState;
-
   function ChainOfResponsibilityProvider({ children, init, middleware }: ProviderProps<Request, Props, Init>) {
     // TODO: Related to https://github.com/microsoft/TypeScript/issues/17002.
     //       typescript@5.2.2 has a bug, Array.isArray() is a type predicate but only works with mutable array, not readonly array.
@@ -228,14 +226,14 @@ function createChainOfResponsibility<
       | undefined
   ): FunctorReturnValue<Props> {
     return Object.freeze({
+      [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined,
       render: (overridingProps?: Partial<Props> | undefined) => (
         <RenderComponent
           bindProps={bindProps}
           component={component as ComponentType<Props>}
           overridingProps={overridingProps}
         />
-      ),
-      [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined
+      )
     });
   }
 
@@ -284,16 +282,14 @@ function createChainOfResponsibility<
               return;
             }
 
-            const render = () => (
-              // Currently, there are no ways to set `boundProps` to `fallbackComponent`.
-              // `fallbackComponent` do not need `overridingProps` because it is the last one in the chain, it would not have the next() function.
-              <RenderComponent component={FallbackComponent} />
-            );
-
             return Object.freeze({
               // Mark fallback render callback as functor return value.
               [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined,
-              render
+              render: () => (
+                // Currently, there are no ways to set `boundProps` to `fallbackComponent`.
+                // `fallbackComponent` do not need `overridingProps` because it is the last one in the chain, it would not have the next() function.
+                <RenderComponent component={FallbackComponent} />
+              )
             });
           })(request);
 
@@ -320,7 +316,9 @@ function createChainOfResponsibility<
     );
   };
 
-  function MiddlewareProxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
+  const useRequest = () => useContext(RenderContext).requestState;
+
+  function ChainOfResponsibilityProxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
     return useBuildRenderCallback()(request as Request, { fallbackComponent })?.(props as Props);
   }
 
@@ -330,7 +328,7 @@ function createChainOfResponsibility<
   return Object.freeze({
     Provider: MemoizedChainOfResponsibilityProvider as typeof MemoizedChainOfResponsibilityProvider &
       InferenceHelper<Request, Props, Init>,
-    Proxy: memo<ProxyProps<Request, Props>>(MiddlewareProxy),
+    Proxy: memo<ProxyProps<Request, Props>>(ChainOfResponsibilityProxy),
     reactComponent,
     useBuildRenderCallback,
     useRequest
