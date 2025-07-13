@@ -29,18 +29,18 @@ scenario('multiple requests', bdd => {
     .given('a TestComponent using chain of responsiblity', () => {
       const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>();
 
-      const middleware1: readonly InferMiddleware<typeof Provider>[] = [
+      const strongChain: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request => reactComponent(Strong, { renderNext: next(request)?.render })
       ];
 
-      const middleware2: readonly InferMiddleware<typeof Provider>[] = [
+      const parenthesisChain: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request => reactComponent(Parenthesis, { renderNext: next(request)?.render })
       ];
 
       return function TestComponent() {
         return (
-          <Provider middleware={middleware1}>
-            <Provider middleware={middleware2}>
+          <Provider middleware={strongChain}>
+            <Provider middleware={parenthesisChain}>
               <Proxy fallbackComponent={PlainText} request={undefined}>
                 Hello, World!
               </Proxy>
