@@ -1,6 +1,6 @@
-import arePropsEqual from '../../private/arePropsEqual';
-
 import { scenario } from '@testduet/given-when-then';
+
+import arePropsEqual from './arePropsEqual';
 
 scenario('arePropsEqual()', bdd =>
   bdd
