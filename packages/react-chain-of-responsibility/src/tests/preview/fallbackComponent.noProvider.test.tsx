@@ -19,7 +19,7 @@ function Fallback({ value }: Props) {
 scenario('rendering fallback component without <Provider>', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Proxy, types: _types } = createChainOfResponsibility<void, Props>();
+      const { Proxy } = createChainOfResponsibility<void, Props>();
 
       return function TestComponent() {
         return <Proxy fallbackComponent={Fallback} request={undefined} value={1} />;
