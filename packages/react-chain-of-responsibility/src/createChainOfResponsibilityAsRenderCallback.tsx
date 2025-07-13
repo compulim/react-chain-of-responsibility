@@ -70,19 +70,19 @@ type ProxyProps<Request, Props extends BaseProps> = Props & {
 
 type CreateChainOfResponsibilityOptions = {
   /**
+   * Allows a component to pass contentfully different props to its downstream component. Default is false.
+   *
+   * It is recommended to keep this settings as default to prevent newly added component from unexpectedly changing behavior of downstream components.
+   */
+  readonly allowOverrideProps?: boolean | undefined;
+
+  /**
    * Allows a middleware to pass another request object when calling its next middleware. Default is false.
    *
    * However, middleware could modify the request object before calling its next middleware. It is recommended
    * to use Object.freeze() to prevent middleware from modifying the request object.
    */
   readonly passModifiedRequest?: boolean | undefined;
-
-  /**
-   * Allows a component to pass contentfully different props to its downstream component. Default is false.
-   *
-   * It is recommended to keep this settings as default to prevent newly added component from unexpectedly changing behavior of downstream components.
-   */
-  readonly allowOverrideProps?: boolean | undefined;
 };
 
 type InferenceHelper<Request, Props extends object, Init> = {
@@ -131,8 +131,8 @@ function createChainOfResponsibility<
   const BuildContext = createContext<ProviderContext<Request, Props>>(defaultUseBuildComponentCallback);
 
   type RenderContextType = {
-    readonly optionsState: readonly [CreateChainOfResponsibilityOptions];
-    readonly props: Props;
+    readonly options: CreateChainOfResponsibilityOptions;
+    readonly renderCallbackProps: Props;
     readonly requestState: readonly [Request];
   };
 
@@ -241,8 +241,8 @@ function createChainOfResponsibility<
     overridingProps?: Partial<Props> | undefined;
   }) {
     const {
-      props: renderCallbackProps,
-      optionsState: [{ allowOverrideProps }]
+      options: { allowOverrideProps },
+      renderCallbackProps
     } = useContext(RenderContext);
 
     if (overridingProps && !arePropsEqual(overridingProps, renderCallbackProps) && !allowOverrideProps) {
@@ -297,8 +297,8 @@ function createChainOfResponsibility<
             const context = useMemo<RenderContextType>(
               () =>
                 Object.freeze({
-                  optionsState: Object.freeze([options] as const),
-                  props: memoizedProps,
+                  options: Object.freeze({ ...options }),
+                  renderCallbackProps: memoizedProps,
                   requestState: Object.freeze([request] as const)
                 }),
               [memoizedProps, request]
