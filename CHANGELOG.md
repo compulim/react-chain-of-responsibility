@@ -11,9 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added `withBuildProps` higher-order helper function to extends chain-of-responsibility with props transformation capability, by [@compulim](https://github.com/compulim) in PR [#90](https://github.com/compulim/react-chain-of-responsibility/pull/90)
 
+### Changed
+
+- (Preview) 💢 Changed signature to return wrapped return value, instead of plain `ComponentType`, by [@compulim](https://github.com/compulim) in PR [#91](https://github.com/compulim/react-chain-of-responsibility/pull/91)
+
 ### Removed
 
-- `createChainOfResponsibilityForFluentUI` is marked as deprecated and will be removed in future releases, by [@compulim](https://github.com/compulim) in PR [#90](https://github.com/compulim/react-chain-of-responsibility/pull/90)
+- 💢 `createChainOfResponsibilityForFluentUI` is marked as deprecated and will be removed in future releases, by [@compulim](https://github.com/compulim) in PR [#90](https://github.com/compulim/react-chain-of-responsibility/pull/90)
    - Fluent UI v9 no longer use `IRenderFunction` for custom render
    - The correctness of `createChainOfResponsibilityForFluentUI` is no longer validated
 
