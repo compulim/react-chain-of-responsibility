@@ -51,8 +51,7 @@ interface UseBuildRenderCallback<Request, Props extends BaseProps> {
 }
 
 type ProviderContext<Request, Props extends BaseProps> = {
-  get enhancer(): ComponentEnhancer<Request, Props> | undefined;
-  useBuildRenderCallback: UseBuildRenderCallback<Request, Props>;
+  get enhancer(): ComponentEnhancer<Request, Props>;
 };
 
 type ProviderProps<Request, Props extends BaseProps, Init> = PropsWithChildren<{
@@ -124,23 +123,8 @@ function createChainOfResponsibility<
   Init = void
 >(options: CreateChainOfResponsibilityOptions = {}): ChainOfResponsibility<Request, Props, Init> {
   const defaultUseBuildComponentCallback: ProviderContext<Request, Props> = {
-    get enhancer() {
-      return undefined;
-    },
-    useBuildRenderCallback(request, options): ReturnType<UseBuildRenderCallback<Request, Props>> {
-      const FallbackComponent = options?.fallbackComponent;
-
-      if (!FallbackComponent) {
-        console.warn(
-          'react-chain-of-responsibility: the request has fall through all middleware, set "fallbackComponent" as a catchall',
-          request
-        );
-
-        // For clarity, we are returning `undefined` instead of `() => undefined`.
-        return;
-      }
-
-      return props => <FallbackComponent {...props} />;
+    get enhancer(): ComponentEnhancer<Request, Props> {
+      return next => request => next(request);
     }
   };
 
@@ -215,61 +199,9 @@ function createChainOfResponsibility<
         // - With reverse, [a, b, c] will become a(b(c(fn)))
         // - Without reverse, [a, b, c] will become c(b(a(fn)))
         applyMiddleware<[Request], FunctorReturnValue<Props> | undefined, [Init]>(
-          ...[...fortifiedMiddleware, ...(parentEnhancer ? [() => parentEnhancer] : [])].reverse()
+          ...[...fortifiedMiddleware, ...[() => parentEnhancer]].reverse()
         )(init as Init),
       [init, middleware, parentEnhancer]
-    );
-
-    const useBuildRenderCallback = useCallback<UseBuildRenderCallback<Request, Props>>(
-      (request, buildOptions = {}) => {
-        const result =
-          // Put the "fallbackComponent" as the last one in the chain.
-          enhancer(() => {
-            const FallbackComponent = buildOptions.fallbackComponent;
-
-            if (!FallbackComponent) {
-              console.warn(
-                'react-chain-of-responsibility: the request has fall through all middleware, set "fallbackComponent" as a catchall',
-                request
-              );
-
-              // For clarity, we are returning `undefined` instead of `() => undefined`.
-              return;
-            }
-
-            const render = () => (
-              // Currently, there are no ways to set `boundProps` to `fallbackComponent`.
-              // `fallbackComponent` should not set `overridingProps` because it is the last one in the chain, it would not have the next() function.
-              <RenderComponent component={FallbackComponent} />
-            );
-
-            return Object.freeze({
-              // Mark fallback render callback as functor return value.
-              [INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY]: undefined,
-              render
-            });
-          })(request);
-
-        return (
-          result &&
-          ((props: Props) => {
-            const memoizedProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
-
-            const context = useMemo<RenderContextType>(
-              () =>
-                Object.freeze({
-                  optionsState: Object.freeze([options] as const),
-                  props: memoizedProps,
-                  requestState: Object.freeze([request] as const)
-                }),
-              [memoizedProps, request]
-            );
-
-            return <RenderContext.Provider value={context}>{result.render()}</RenderContext.Provider>;
-          })
-        );
-      },
-      [enhancer]
     );
 
     const contextValue = useMemo<ProviderContext<Request, Props>>(
@@ -324,7 +256,61 @@ function createChainOfResponsibility<
     return <Component {...props} {...(typeof bindProps === 'function' ? bindProps?.(props) : bindProps)} />;
   });
 
-  const useBuildRenderCallback = () => useContext(BuildContext).useBuildRenderCallback;
+  const useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props> = () => {
+    const { enhancer } = useContext(BuildContext);
+
+    return useCallback(
+      (request, buildOptions = {}) => {
+        const result =
+          // Put the "fallbackComponent" as the last one in the chain.
+          enhancer(() => {
+            const FallbackComponent = buildOptions.fallbackComponent;
+
+            if (!FallbackComponent) {
+              console.warn(
+                'react-chain-of-responsibility: the request has fall through all middleware, set "fallbackComponent" as a catchall',
+                request
+              );
+
+              // For clarity, we are returning `undefined` instead of `() => undefined`.
+              return;
+            }
+
+            const render = () => (
+              // Currently, there are no ways to set `boundProps` to `fallbackComponent`.
+              // `fallbackComponent` do not need `overridingProps` because it is the last one in the chain, it would not have the next() function.
+              <RenderComponent component={FallbackComponent} />
+            );
+
+            return Object.freeze({
+              // Mark fallback render callback as functor return value.
+              [INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY]: undefined,
+              render
+            });
+          })(request);
+
+        return (
+          result &&
+          ((props: Props) => {
+            const memoizedProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
+
+            const context = useMemo<RenderContextType>(
+              () =>
+                Object.freeze({
+                  optionsState: Object.freeze([options] as const),
+                  props: memoizedProps,
+                  requestState: Object.freeze([request] as const)
+                }),
+              [memoizedProps, request]
+            );
+
+            return <RenderContext.Provider value={context}>{result.render()}</RenderContext.Provider>;
+          })
+        );
+      },
+      [enhancer]
+    );
+  };
 
   function MiddlewareProxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
     return useBuildRenderCallback()(request as Request, { fallbackComponent })?.(props as Props);
