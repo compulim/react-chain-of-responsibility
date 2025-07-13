@@ -86,7 +86,7 @@ type CreateChainOfResponsibilityOptions = {
   readonly allowOverrideProps?: boolean | undefined;
 };
 
-type ProviderComponentType<Request, Props extends object, Init> = ComponentType<ProviderProps<Request, Props, Init>> & {
+type InferenceHelper<Request, Props extends object, Init> = {
   readonly '~types': {
     readonly component: ComponentType<Props>;
     readonly init: Init;
@@ -97,15 +97,15 @@ type ProviderComponentType<Request, Props extends object, Init> = ComponentType<
   };
 };
 
-type InferComponent<T extends ProviderComponentType<any, any, any>> = T['~types']['component'];
-type InferInit<T extends ProviderComponentType<any, any, any>> = T['~types']['init'];
-type InferMiddleware<T extends ProviderComponentType<any, any, any>> = T['~types']['middleware'];
-type InferProps<T extends ProviderComponentType<any, any, any>> = T['~types']['props'];
-type InferProxyProps<T extends ProviderComponentType<any, any, any>> = T['~types']['proxyProps'];
-type InferRequest<T extends ProviderComponentType<any, any, any>> = T['~types']['request'];
+type InferComponent<T extends InferenceHelper<any, any, any>> = T['~types']['component'];
+type InferInit<T extends InferenceHelper<any, any, any>> = T['~types']['init'];
+type InferMiddleware<T extends InferenceHelper<any, any, any>> = T['~types']['middleware'];
+type InferProps<T extends InferenceHelper<any, any, any>> = T['~types']['props'];
+type InferProxyProps<T extends InferenceHelper<any, any, any>> = T['~types']['proxyProps'];
+type InferRequest<T extends InferenceHelper<any, any, any>> = T['~types']['request'];
 
 type ChainOfResponsibility<Request, Props extends object, Init> = {
-  readonly Provider: ProviderComponentType<Request, Props, Init>;
+  readonly Provider: ComponentType<ProviderProps<Request, Props, Init>> & InferenceHelper<Request, Props, Init>;
   readonly Proxy: ComponentType<ProxyProps<Request, Props>>;
   readonly reactComponent: <P extends Props>(
     component: ComponentType<P>,
@@ -329,10 +329,12 @@ function createChainOfResponsibility<
     return useBuildRenderCallback()(request as Request, { fallbackComponent })?.(props as Props);
   }
 
+  const MemoizedChainOfResponsibilityProvider =
+    memo<ProviderProps<Request, Props, Init>>(ChainOfResponsibilityProvider);
+
   return Object.freeze({
-    Provider: memo<ProviderProps<Request, Props, Init>>(
-      ChainOfResponsibilityProvider
-    ) as unknown as ProviderComponentType<Request, Props, Init>,
+    Provider: MemoizedChainOfResponsibilityProvider as typeof MemoizedChainOfResponsibilityProvider &
+      InferenceHelper<Request, Props, Init>,
     Proxy: memo<ProxyProps<Request, Props>>(MiddlewareProxy),
     reactComponent,
     useBuildRenderCallback,
