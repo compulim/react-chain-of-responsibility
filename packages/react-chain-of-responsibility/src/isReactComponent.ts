@@ -70,8 +70,7 @@ function isReactComponent(
   );
 }
 
-// TODO: Add a check for isValidElement for better error message.
-const reactComponent = () => custom<ComponentType<unknown>>(value => isReactComponent(value));
+const reactComponent = () => custom<ComponentType<unknown>>(value => isReactComponent(value), 'not a valid React component');
 
 export default isReactComponent;
 export { reactComponent };
