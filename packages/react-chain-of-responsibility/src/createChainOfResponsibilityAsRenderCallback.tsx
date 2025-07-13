@@ -25,7 +25,8 @@ const functorReturnValueSchema = custom<FunctorReturnValue<any>>(
     safeParse(object({ render: function_() }), value).success &&
     !!value &&
     typeof value === 'object' &&
-    INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY in value
+    INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY in value,
+  'react-chain-of-responsibility: enhancer must return value constructed by reactComponent()'
 );
 
 interface FunctorReturnValue<Props extends BaseProps> {
@@ -186,6 +187,7 @@ function createChainOfResponsibility<
                 hasReturned = true;
 
                 // Make sure the return value is built using our helper function for forward-compatibility reason.
+                // TODO: Add test to prevent faking the functor return value.
                 return returnValue && parse(functorReturnValueSchema, returnValue);
               };
           })
