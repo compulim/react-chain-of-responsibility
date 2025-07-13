@@ -49,7 +49,7 @@ scenario('call next() after the function call ended should throw', bdd => {
     .then('should throw', (_, fn) =>
       expect(fn).toThrow(
         expect.objectContaining({
-          message: expect.stringContaining('enhancer must return value constructed by reactComponent()')
+          message: expect.stringContaining('middleware must return value constructed by reactComponent()')
         })
       )
     )

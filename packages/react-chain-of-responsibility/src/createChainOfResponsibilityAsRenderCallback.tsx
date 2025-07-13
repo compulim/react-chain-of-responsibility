@@ -26,7 +26,7 @@ const functorReturnValueSchema = custom<FunctorReturnValue<any>>(
     !!value &&
     typeof value === 'object' &&
     INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY in value,
-  'react-chain-of-responsibility: enhancer must return value constructed by reactComponent()'
+  'react-chain-of-responsibility: middleware must return value constructed by reactComponent()'
 );
 
 interface FunctorReturnValue<Props extends BaseProps> {

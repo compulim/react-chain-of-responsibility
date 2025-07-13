@@ -71,7 +71,7 @@ scenario('call next() after the function call ended should throw', bdd => {
     .then('should show error message', (_, { container }) =>
       expect(container).toHaveProperty(
         'textContent',
-        expect.stringContaining('enhancer must return value constructed by reactComponent()')
+        expect.stringContaining('middleware must return value constructed by reactComponent()')
       )
     )
     .and('the forged render function should not be called', ({ render }) => expect(render).toHaveBeenCalledTimes(0));
