@@ -9,7 +9,7 @@ import createChainOfResponsibility, { type InferMiddleware } from '../../createC
 
 type Props = { readonly children?: never; value: number };
 
-scenario('useBuildRenderCallback with a "removing" middleware', bdd => {
+scenario('useBuildRenderCallback with a middleware returning "undefined"', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
       const { Provider, useBuildRenderCallback } = createChainOfResponsibility<void, Props>();
@@ -24,14 +24,16 @@ scenario('useBuildRenderCallback with a "removing" middleware', bdd => {
         return <Fragment>Empty</Fragment>;
       }
 
-      return function TestComponent() {
-        return (
-          <Provider middleware={middleware}>
-            <MyProxy />
-          </Provider>
-        );
+      return {
+        TestComponent: function TestComponent() {
+          return (
+            <Provider middleware={middleware}>
+              <MyProxy />
+            </Provider>
+          );
+        }
       };
     })
-    .when('the component is rendered', TestComponent => render(<TestComponent />))
+    .when('the component is rendered', ({ TestComponent }) => render(<TestComponent />))
     .then('textContent should match', (_, { container }) => expect(container).toHaveProperty('textContent', 'Empty'));
 });

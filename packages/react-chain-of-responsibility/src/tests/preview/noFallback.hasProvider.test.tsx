@@ -18,14 +18,15 @@ scenario('rendering fallback component using useBuildRenderCallback() without <P
     .and.oneOf([
       [
         'a <TestComponent> rendered using <Proxy>',
-        ({ Provider, Proxy }) =>
-          function TestComponent() {
+        ({ Provider, Proxy }) => ({
+          TestComponent: function TestComponent() {
             return (
               <Provider middleware={[]}>
                 <Proxy request={undefined} value={1} />
               </Provider>
             );
           }
+        })
       ],
       [
         'a <TestComponent> rendered using useBuildRenderCallback()',
@@ -38,16 +39,33 @@ scenario('rendering fallback component using useBuildRenderCallback() without <P
             return render?.({ value: 1 });
           }
 
-          return function TestComponent() {
-            return (
-              <Provider middleware={[]}>
-                <MyComponent />
-              </Provider>
-            );
+          return {
+            TestComponent: function TestComponent() {
+              return (
+                <Provider middleware={[]}>
+                  <MyComponent />
+                </Provider>
+              );
+            }
           };
         }
       ]
     ])
-    .when('the component is rendered', TestComponent => render(<TestComponent />))
-    .then('textContent should match', (_, { container }) => expect(container).toHaveProperty('textContent', ''));
+    .and(
+      'a console.warn spy',
+      ({ TestComponent }) => ({
+        TestComponent,
+        warn: jest.spyOn(console, 'warn').mockImplementation(() => {})
+      }),
+      ({ warn }) => warn.mockRestore()
+    )
+    .when('the component is rendered', ({ TestComponent }) => render(<TestComponent />))
+    .then('textContent should match', (_, { container }) => expect(container).toHaveProperty('textContent', ''))
+    .and('should print warning once', ({ warn }) => expect(warn).toHaveBeenCalledTimes(1))
+    .and('should print warning message', ({ warn }) =>
+      expect(warn).toHaveBeenLastCalledWith(
+        expect.stringContaining('the request has fall through all middleware, set "fallbackComponent" as a catchall'),
+        undefined
+      )
+    );
 });

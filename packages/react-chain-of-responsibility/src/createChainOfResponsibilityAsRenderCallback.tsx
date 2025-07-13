@@ -127,15 +127,18 @@ function createChainOfResponsibility<
     get enhancer() {
       return undefined;
     },
-    useBuildRenderCallback(_request, options): ReturnType<UseBuildRenderCallback<Request, Props>> {
+    useBuildRenderCallback(request, options): ReturnType<UseBuildRenderCallback<Request, Props>> {
       const FallbackComponent = options?.fallbackComponent;
 
       if (FallbackComponent) {
         return props => <FallbackComponent {...props} />;
       }
 
-      // TODO: Should we built in a red box?
-      // TODO: Add console.warn here.
+      console.warn(
+        'react-chain-of-responsibility: the request has fall through all middleware, set "fallbackComponent" as a catchall',
+        request
+      );
+
       return;
     }
   };
@@ -225,8 +228,11 @@ function createChainOfResponsibility<
             const FallbackComponent = buildOptions.fallbackComponent;
 
             if (!FallbackComponent) {
-              // TODO: Should we show a red box here?
-              // TODO: Add a console.warn.
+              console.warn(
+                'react-chain-of-responsibility: the request has fall through all middleware, set "fallbackComponent" as a catchall',
+                request
+              );
+
               return;
             }
 
