@@ -86,6 +86,12 @@ type CreateChainOfResponsibilityOptions = {
   readonly passModifiedRequest?: boolean | undefined;
 };
 
+type RenderContextType<Request, Props> = {
+  readonly options: CreateChainOfResponsibilityOptions;
+  readonly renderCallbackProps: Props;
+  readonly requestState: readonly [Request];
+};
+
 type InferenceHelper<Request, Props extends object, Init> = {
   readonly '~types': {
     readonly component: ComponentType<Props>;
@@ -129,21 +135,13 @@ function createChainOfResponsibility<
   Props extends BaseProps = { readonly children?: never },
   Init = void
 >(options: CreateChainOfResponsibilityOptions = {}): ChainOfResponsibility<Request, Props, Init> {
-  const defaultUseBuildComponentCallback: ProviderContext<Request, Props> = {
+  const BuildContext = createContext<ProviderContext<Request, Props>>({
     get enhancer(): ComponentEnhancer<Request, Props> {
       return next => request => next(request);
     }
-  };
+  });
 
-  const BuildContext = createContext<ProviderContext<Request, Props>>(defaultUseBuildComponentCallback);
-
-  type RenderContextType = {
-    readonly options: CreateChainOfResponsibilityOptions;
-    readonly renderCallbackProps: Props;
-    readonly requestState: readonly [Request];
-  };
-
-  const RenderContext = createContext<RenderContextType>(
+  const RenderContext = createContext<RenderContextType<Request, Props>>(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     new Proxy({} as any, {
       get() {
@@ -228,7 +226,7 @@ function createChainOfResponsibility<
     return Object.freeze({
       [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined,
       render: (overridingProps?: Partial<Props> | undefined) => (
-        <RenderComponent
+        <ComponentWithProps
           bindProps={bindProps}
           component={component as ComponentType<Props>}
           overridingProps={overridingProps}
@@ -237,7 +235,7 @@ function createChainOfResponsibility<
     });
   }
 
-  const RenderComponent = memo(function RenderComponent({
+  const ComponentWithProps = memo(function ComponentWithProps({
     bindProps,
     component: Component,
     overridingProps
@@ -288,7 +286,7 @@ function createChainOfResponsibility<
               render: () => (
                 // Currently, there are no ways to set `boundProps` to `fallbackComponent`.
                 // `fallbackComponent` do not need `overridingProps` because it is the last one in the chain, it would not have the next() function.
-                <RenderComponent component={FallbackComponent} />
+                <ComponentWithProps component={FallbackComponent} />
               )
             });
           })(request);
@@ -298,7 +296,7 @@ function createChainOfResponsibility<
           ((props: Props) => {
             const memoizedProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
 
-            const context = useMemo<RenderContextType>(
+            const context = useMemo<RenderContextType<Request, Props>>(
               () =>
                 Object.freeze({
                   options: Object.freeze({ ...options }),
