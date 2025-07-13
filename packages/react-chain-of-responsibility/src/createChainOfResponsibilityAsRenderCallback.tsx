@@ -75,11 +75,13 @@ type CreateChainOfResponsibilityOptions = {
    * However, middleware could modify the request object before calling its next middleware. It is recommended
    * to use Object.freeze() to prevent middleware from modifying the request object.
    */
-  // If not enabled, web devs can pass void. If it's not void, give warnings.
   readonly passModifiedRequest?: boolean | undefined;
 
-  // TODO: Add support.
-  // If not enabled, web devs can pass void. If it's not void, give warnings.
+  /**
+   * Allows a component to pass contentfully different props to its downstream component. Default is false.
+   *
+   * It is recommended to keep this settings as default to prevent newly added component from unexpectedly changing behavior of downstream components.
+   */
   readonly allowOverrideProps?: boolean | undefined;
 };
 
@@ -166,7 +168,6 @@ function createChainOfResponsibility<
 
                 const returnValue = enhancer((nextRequest: Request) => {
                   if (hasReturned) {
-                    // TODO: Add test.
                     throw new Error(
                       'react-chain-of-responsibility: next() cannot be called after the function had returned synchronously'
                     );
@@ -216,9 +217,8 @@ function createChainOfResponsibility<
               return;
             }
 
-            // TODO: Can we simplify `undefined`?
             const render = () => (
-              // Currently, no way to set `bindProps` to `fallbackComponent`.
+              // Currently, there are no ways to set `boundProps` to `fallbackComponent`.
               // `fallbackComponent` should not set `overridingProps` because it is the last one in the chain, it would not have the next() function.
               <RenderComponent component={FallbackComponent} />
             );
