@@ -7,6 +7,8 @@
 
 // rootElement && createRoot(rootElement).render(<App />);
 
+import './esbuild.tsx';
+
 import React from 'react';
 import './index.css';
 // Testing against multiple version of React.
@@ -14,17 +16,9 @@ import './index.css';
 import { render } from 'react-dom';
 
 // import App from './App.tsx';
-import Test from './Test.tsx';
+import Test from './Test5.tsx';
 
 const rootElement = document.getElementById('root');
 
 // render(<App />, rootElement);
 render(<Test />, rootElement);
-
-declare const IS_DEVELOPMENT: boolean;
-
-if (typeof IS_DEVELOPMENT !== 'undefined' && IS_DEVELOPMENT) {
-  new EventSource('/esbuild').addEventListener('change', () => location.reload());
-}
-
-console.log('123');

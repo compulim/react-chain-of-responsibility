@@ -130,16 +130,17 @@ function createChainOfResponsibility<
     useBuildRenderCallback(request, options): ReturnType<UseBuildRenderCallback<Request, Props>> {
       const FallbackComponent = options?.fallbackComponent;
 
-      if (FallbackComponent) {
-        return props => <FallbackComponent {...props} />;
+      if (!FallbackComponent) {
+        console.warn(
+          'react-chain-of-responsibility: the request has fall through all middleware, set "fallbackComponent" as a catchall',
+          request
+        );
+
+        // TODO: Should this return () => undefined?
+        return;
       }
 
-      console.warn(
-        'react-chain-of-responsibility: the request has fall through all middleware, set "fallbackComponent" as a catchall',
-        request
-      );
-
-      return;
+      return props => <FallbackComponent {...props} />;
     }
   };
 
@@ -201,7 +202,6 @@ function createChainOfResponsibility<
           hasReturned = true;
 
           // Make sure the return value is built using our helper function for forward-compatibility reason.
-          // TODO: Add test to prevent faking the functor return value.
           return returnValue && parse(functorReturnValueSchema, returnValue);
         };
       })
@@ -233,6 +233,7 @@ function createChainOfResponsibility<
                 request
               );
 
+              // TODO: Should this return () => undefined?
               return;
             }
 
