@@ -34,9 +34,9 @@ scenario('call next() after the function call ended should throw', bdd => {
     .and(
       'a console.error spy',
       ({ render, TestComponent }) => ({
+        error: jest.spyOn(console, 'error').mockImplementation(() => {}),
         render,
-        TestComponent,
-        error: jest.spyOn(console, 'error').mockImplementation(() => {})
+        TestComponent
       }),
       ({ error }) => error.mockRestore()
     )
@@ -46,7 +46,7 @@ scenario('call next() after the function call ended should throw', bdd => {
         () =>
           render(<TestComponent />)
     )
-    .then('should show error message', (_, fn) =>
+    .then('should throw', (_, fn) =>
       expect(fn).toThrow(
         expect.objectContaining({
           message: expect.stringContaining('enhancer must return value constructed by reactComponent()')

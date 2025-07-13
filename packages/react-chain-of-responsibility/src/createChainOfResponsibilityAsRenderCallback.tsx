@@ -105,7 +105,6 @@ type InferProxyProps<T extends ProviderComponentType<any, any, any>> = T['~types
 type InferRequest<T extends ProviderComponentType<any, any, any>> = T['~types']['request'];
 
 type ChainOfResponsibility<Request, Props extends object, Init> = {
-  // readonly Provider: ComponentType<ProviderProps<Request, Props, Init>>;
   readonly Provider: ProviderComponentType<Request, Props, Init>;
   readonly Proxy: ComponentType<ProxyProps<Request, Props>>;
   readonly reactComponent: <P extends Props>(
@@ -115,14 +114,6 @@ type ChainOfResponsibility<Request, Props extends object, Init> = {
       | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
       | undefined
   ) => FunctorReturnValue<Props>;
-  // readonly types: {
-  //   readonly component: ComponentType<Props>;
-  //   readonly init: Init;
-  //   readonly middleware: ComponentMiddleware<Request, Props, Init>;
-  //   readonly props: Props;
-  //   readonly proxyProps: ProxyProps<Request, Props>;
-  //   readonly request: Request;
-  // };
   readonly useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props>;
   readonly useRequest: () => readonly [Request];
 };
@@ -159,7 +150,7 @@ function createChainOfResponsibility<
   const RenderContext = createContext<RenderContextType>(
     new Proxy({} as any, {
       get() {
-        throw new Error('This hook cannot be used outside of <Proxy> and useBuildRenderCallback');
+        throw new Error('react-chain-of-responsibility: this hook cannot be used outside of <Proxy> and useBuildRenderCallback()');
       }
     })
   );
@@ -337,16 +328,6 @@ function createChainOfResponsibility<
     ) as unknown as ProviderComponentType<Request, Props, Init>,
     Proxy: memo<ProxyProps<Request, Props>>(MiddlewareProxy),
     reactComponent,
-    // TODO: Should it be `types: undefined as any`?
-    // TODO: Maybe inferring from <Provider>?
-    // types: Object.freeze({
-    //   component: undefined as unknown as ComponentType<Props>,
-    //   init: undefined as unknown as Init,
-    //   middleware: undefined as unknown as ComponentMiddleware<Request, Props, Init>,
-    //   props: undefined as unknown as Props,
-    //   proxyProps: undefined as unknown as ProxyProps<Request, Props>,
-    //   request: undefined as unknown as Request
-    // }),
     useBuildRenderCallback,
     useRequest
   });
