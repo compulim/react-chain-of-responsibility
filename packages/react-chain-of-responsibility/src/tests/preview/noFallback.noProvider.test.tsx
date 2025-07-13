@@ -1,0 +1,40 @@
+/** @jest-environment jsdom */
+/// <reference types="@types/jest" />
+
+import { scenario } from '@testduet/given-when-then';
+import { render } from '@testing-library/react';
+import React, { type ComponentType } from 'react';
+
+import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
+
+type Props = {
+  readonly children?: never;
+  readonly value: number;
+};
+
+scenario('rendering fallback component using useBuildRenderCallback() without <Provider>', bdd => {
+  bdd
+    .given('a chain of responsiblity', () => createChainOfResponsibility<void, Props>())
+    .and.oneOf<ComponentType<{ readonly children?: never }>>([
+      [
+        'a <TestComponent> rendered using <Proxy>',
+        ({ Proxy }) =>
+          function TestComponent() {
+            return <Proxy request={undefined} value={1} />;
+          }
+      ],
+      [
+        'a <TestComponent> rendered using useBuildRenderCallback()',
+        ({ useBuildRenderCallback }) =>
+          function TestComponent() {
+            const render = useBuildRenderCallback()(undefined);
+
+            expect(render).toBeFalsy();
+
+            return render?.({ value: 1 });
+          }
+      ]
+    ])
+    .when('the component is rendered', TestComponent => render(<TestComponent />))
+    .then('textContent should match', (_, { container }) => expect(container).toHaveProperty('textContent', ''));
+});

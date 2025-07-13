@@ -127,7 +127,7 @@ function createChainOfResponsibility<
     get enhancer() {
       return undefined;
     },
-    useBuildRenderCallback(_request, options): RenderCallback<Props> {
+    useBuildRenderCallback(_request, options): ReturnType<UseBuildRenderCallback<Request, Props>> {
       const FallbackComponent = options?.fallbackComponent;
 
       if (FallbackComponent) {
@@ -135,7 +135,8 @@ function createChainOfResponsibility<
       }
 
       // TODO: Should we built in a red box?
-      return () => undefined;
+      // TODO: Add console.warn here.
+      return;
     }
   };
 
@@ -150,7 +151,9 @@ function createChainOfResponsibility<
   const RenderContext = createContext<RenderContextType>(
     new Proxy({} as any, {
       get() {
-        throw new Error('react-chain-of-responsibility: this hook cannot be used outside of <Proxy> and useBuildRenderCallback()');
+        throw new Error(
+          'react-chain-of-responsibility: this hook cannot be used outside of <Proxy> and useBuildRenderCallback()'
+        );
       }
     })
   );
@@ -226,6 +229,7 @@ function createChainOfResponsibility<
 
             if (!FallbackComponent) {
               // TODO: Should we show a red box here?
+              // TODO: Add a console.warn.
               return;
             }
 

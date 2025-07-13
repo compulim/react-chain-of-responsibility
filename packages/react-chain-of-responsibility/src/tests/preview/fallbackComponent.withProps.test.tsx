@@ -18,19 +18,43 @@ function Fallback({ value }: Props) {
 
 scenario('rendering fallback component with props', bdd => {
   bdd
-    .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy } = createChainOfResponsibility<void, Props>();
+    .given('a chain of responsiblity', () => createChainOfResponsibility<void, Props>())
+    .and.oneOf([
+      [
+        'a <TestComponent> rendered using <Proxy>',
+        ({ Provider, Proxy }) => {
+          const middleware: readonly InferMiddleware<typeof Provider>[] = [() => next => request => next(request)];
 
-      const middleware: readonly InferMiddleware<typeof Provider>[] = [() => next => request => next(request)];
+          return function TestComponent() {
+            return (
+              <Provider middleware={middleware}>
+                <Proxy fallbackComponent={Fallback} request={undefined} value={1} />
+              </Provider>
+            );
+          };
+        }
+      ],
+      [
+        'a <TestComponent> rendered using useBuildRenderCallback()',
+        ({ Provider, useBuildRenderCallback }) => {
+          function MyComponent() {
+            const render = useBuildRenderCallback()(undefined, { fallbackComponent: Fallback });
 
-      return function TestComponent() {
-        return (
-          <Provider middleware={middleware}>
-            <Proxy fallbackComponent={Fallback} request={undefined} value={1} />
-          </Provider>
-        );
-      };
-    })
+            expect(render).not.toBeFalsy();
+
+            return render?.({ value: 1 });
+          }
+
+          return function TestComponent() {
+            return (
+              <Provider middleware={[]}>
+                <MyComponent />
+              </Provider>
+            );
+          };
+        }
+      ]
+    ])
     .when('the component is rendered', TestComponent => render(<TestComponent />))
     .then('textContent should match', (_, { container }) =>
       expect(container).toHaveProperty('textContent', 'Fallback (1)')

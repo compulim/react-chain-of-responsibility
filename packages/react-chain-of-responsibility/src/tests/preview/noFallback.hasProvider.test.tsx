@@ -3,7 +3,7 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
 
@@ -12,26 +12,30 @@ type Props = {
   readonly value: number;
 };
 
-function Fallback({ value }: Props) {
-  return <Fragment>Fallback ({value})</Fragment>;
-}
-
-scenario('rendering fallback component without <Provider>', bdd => {
+scenario('rendering fallback component using useBuildRenderCallback() without <Provider>', bdd => {
   bdd
     .given('a chain of responsiblity', () => createChainOfResponsibility<void, Props>())
     .and.oneOf([
       [
         'a <TestComponent> rendered using <Proxy>',
-        ({ Proxy }) =>
+        ({ Provider, Proxy }) =>
           function TestComponent() {
-            return <Proxy fallbackComponent={Fallback} request={undefined} value={1} />;
+            return (
+              <Provider middleware={[]}>
+                <Proxy request={undefined} value={1} />
+              </Provider>
+            );
           }
       ],
       [
-        'a <TestComponent> rendered using useBuildRenderCallback',
-        ({ Provider, Proxy }) => {
+        'a <TestComponent> rendered using useBuildRenderCallback()',
+        ({ Provider, useBuildRenderCallback }) => {
           function MyComponent() {
-            return <Proxy fallbackComponent={Fallback} request={undefined} value={1} />;
+            const render = useBuildRenderCallback()(undefined);
+
+            expect(render).toBeFalsy();
+
+            return render?.({ value: 1 });
           }
 
           return function TestComponent() {
@@ -45,7 +49,5 @@ scenario('rendering fallback component without <Provider>', bdd => {
       ]
     ])
     .when('the component is rendered', TestComponent => render(<TestComponent />))
-    .then('textContent should match', (_, { container }) =>
-      expect(container).toHaveProperty('textContent', 'Fallback (1)')
-    );
+    .then('textContent should match', (_, { container }) => expect(container).toHaveProperty('textContent', ''));
 });
