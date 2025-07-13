@@ -18,7 +18,7 @@ type BaseProps = object;
 
 type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode;
 
-const INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY = Symbol();
+const DO_NOT_CREATE_THIS_OBJECT_YOURSELF = Symbol();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const functorReturnValueSchema = custom<FunctorReturnValue<any>>(
@@ -26,12 +26,12 @@ const functorReturnValueSchema = custom<FunctorReturnValue<any>>(
     safeParse(object({ render: function_() }), value).success &&
     !!value &&
     typeof value === 'object' &&
-    INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY in value,
+    DO_NOT_CREATE_THIS_OBJECT_YOURSELF in value,
   'react-chain-of-responsibility: middleware must return value constructed by reactComponent()'
 );
 
 interface FunctorReturnValue<Props extends BaseProps> {
-  readonly [INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY]: undefined;
+  readonly [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined;
   readonly render: (overridingProps?: Partial<Props> | undefined) => ReactNode;
 }
 
@@ -235,7 +235,7 @@ function createChainOfResponsibility<
           overridingProps={overridingProps}
         />
       ),
-      [INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY]: undefined
+      [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined
     });
   }
 
@@ -292,7 +292,7 @@ function createChainOfResponsibility<
 
             return Object.freeze({
               // Mark fallback render callback as functor return value.
-              [INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY]: undefined,
+              [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined,
               render
             });
           })(request);
