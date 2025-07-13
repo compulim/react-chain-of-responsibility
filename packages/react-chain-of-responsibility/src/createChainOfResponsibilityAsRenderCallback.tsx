@@ -321,6 +321,7 @@ function createChainOfResponsibility<
     Proxy: memo<ProxyProps<Request, Props>>(MiddlewareProxy),
     reactComponent,
     // TODO: Should it be `types: undefined as any`?
+    // TODO: Maybe inferring from <Provider>?
     types: Object.freeze({
       component: undefined as unknown as ComponentType<Props>,
       init: undefined as unknown as Init,
