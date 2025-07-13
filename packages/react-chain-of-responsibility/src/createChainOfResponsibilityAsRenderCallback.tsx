@@ -129,15 +129,15 @@ function createChainOfResponsibility<
     }
   };
 
-  const context = createContext<ProviderContext<Request, Props>>(defaultUseBuildComponentCallback);
+  const BuildContext = createContext<ProviderContext<Request, Props>>(defaultUseBuildComponentCallback);
 
-  type BuildRenderCallbackContextType = {
+  type RenderContextType = {
     readonly optionsState: readonly [CreateChainOfResponsibilityOptions];
     readonly props: Props;
     readonly requestState: readonly [Request];
   };
 
-  const BuildRenderCallbackContext = createContext<BuildRenderCallbackContextType>(
+  const RenderContext = createContext<RenderContextType>(
     new Proxy({} as any, {
       get() {
         throw new Error('This hook cannot be used outside of <Proxy> and useBuildRenderCallback');
@@ -145,7 +145,7 @@ function createChainOfResponsibility<
     })
   );
 
-  const useRequest = () => useContext(BuildRenderCallbackContext).requestState;
+  const useRequest = () => useContext(RenderContext).requestState;
 
   function ChainOfResponsibilityProvider({ children, init, middleware }: ProviderProps<Request, Props, Init>) {
     // TODO: Related to https://github.com/microsoft/TypeScript/issues/17002.
@@ -194,7 +194,7 @@ function createChainOfResponsibility<
         : []
     );
 
-    const { enhancer: parentEnhancer } = useContext(context);
+    const { enhancer: parentEnhancer } = useContext(BuildContext);
 
     const enhancer = useMemo<ComponentEnhancer<Request, Props>>(
       () =>
@@ -237,7 +237,7 @@ function createChainOfResponsibility<
           ((props: Props) => {
             const memoizedProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
 
-            const context = useMemo<BuildRenderCallbackContextType>(
+            const context = useMemo<RenderContextType>(
               () =>
                 Object.freeze({
                   optionsState: Object.freeze([options] as const),
@@ -248,9 +248,9 @@ function createChainOfResponsibility<
             );
 
             return (
-              <BuildRenderCallbackContext.Provider value={context}>
+              <RenderContext.Provider value={context}>
                 {result.render()}
-              </BuildRenderCallbackContext.Provider>
+              </RenderContext.Provider>
             );
           })
         );
@@ -263,7 +263,7 @@ function createChainOfResponsibility<
       [enhancer, useBuildRenderCallback]
     );
 
-    return <context.Provider value={contextValue}>{children}</context.Provider>;
+    return <BuildContext.Provider value={contextValue}>{children}</BuildContext.Provider>;
   }
 
   function reactComponent<P extends Props>(
@@ -297,7 +297,7 @@ function createChainOfResponsibility<
     const {
       props: renderCallbackProps,
       optionsState: [{ allowOverrideProps }]
-    } = useContext(BuildRenderCallbackContext);
+    } = useContext(RenderContext);
 
     if (overridingProps && !arePropsEqual(overridingProps, renderCallbackProps) && !allowOverrideProps) {
       console.warn('react-chain-of-responsibility: "allowOverrideProps" must be set to override props');
@@ -310,7 +310,7 @@ function createChainOfResponsibility<
     return <Component {...props} {...(typeof bindProps === 'function' ? bindProps?.(props) : bindProps)} />;
   });
 
-  const useBuildRenderCallback = () => useContext(context).useBuildRenderCallback;
+  const useBuildRenderCallback = () => useContext(BuildContext).useBuildRenderCallback;
 
   function MiddlewareProxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
     return useBuildRenderCallback()(request as Request, { fallbackComponent })?.(props as Props);
