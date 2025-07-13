@@ -8,11 +8,12 @@ import React from 'react';
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never };
+type Request = string;
 
 scenario('calling useRequest() outside of render', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, reactComponent, useRequest } = createChainOfResponsibility<string, Props>();
+      const { Provider, reactComponent, useRequest } = createChainOfResponsibility<Request, Props>();
 
       const MyComponent = function MyComponent() {
         return useRequest();

@@ -8,11 +8,12 @@ import React, { Fragment } from 'react';
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never; value: number };
+type Request = void;
 
 scenario('useBuildRenderCallback with a middleware returning "undefined"', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, useBuildRenderCallback } = createChainOfResponsibility<void, Props>();
+      const { Provider, useBuildRenderCallback } = createChainOfResponsibility<Request, Props>();
 
       const middleware: readonly InferMiddleware<typeof Provider>[] = [() => () => () => undefined];
 

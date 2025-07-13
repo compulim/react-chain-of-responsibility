@@ -11,10 +11,11 @@ type Props = {
   readonly children?: never;
   readonly value: number;
 };
+type Request = void;
 
 scenario('rendering fallback component using useBuildRenderCallback() without <Provider>', bdd => {
   bdd
-    .given('a chain of responsiblity', () => createChainOfResponsibility<void, Props>())
+    .given('a chain of responsiblity', () => createChainOfResponsibility<Request, Props>())
     .and.oneOf<{ TestComponent: ComponentType<{ readonly children?: never }> }>([
       [
         'a <TestComponent> rendered using <Proxy>',

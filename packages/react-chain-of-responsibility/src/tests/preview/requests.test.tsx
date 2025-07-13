@@ -8,6 +8,7 @@ import React, { Fragment } from 'react';
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never };
+type Request = string;
 
 function Audio() {
   return <Fragment>Audio</Fragment>;
@@ -24,7 +25,7 @@ function Binary() {
 scenario('multiple requests', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<string, Props>();
+      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>();
 
       const middleware: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request => {

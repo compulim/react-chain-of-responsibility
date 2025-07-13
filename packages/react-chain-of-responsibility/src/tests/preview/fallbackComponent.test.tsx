@@ -8,6 +8,7 @@ import React, { Fragment } from 'react';
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never };
+type Request = void;
 
 function Fallback() {
   return <Fragment>Fallback</Fragment>;
@@ -16,7 +17,7 @@ function Fallback() {
 scenario('rendering fallback component', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy } = createChainOfResponsibility<void, Props>();
+      const { Provider, Proxy } = createChainOfResponsibility<Request, Props>();
 
       const middleware: readonly InferMiddleware<typeof Provider>[] = [() => next => request => next(request)];
 

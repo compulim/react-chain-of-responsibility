@@ -8,6 +8,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never };
+type Request = string;
 
 function Audio() {
   // Audio is running useEffect hook.
@@ -26,7 +27,7 @@ function Video() {
 scenario('middleware use hooks while changing request', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<string, Props>();
+      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>();
 
       const middleware: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request => {

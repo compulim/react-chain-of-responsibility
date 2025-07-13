@@ -8,11 +8,12 @@ import React from 'react';
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never };
+type Request = void;
 
 scenario('removing a middleware by returning undefined', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<void, Props>();
+      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>();
 
       const failCall = jest.fn();
 

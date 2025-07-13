@@ -8,6 +8,7 @@ import React, { Fragment, type ReactNode } from 'react';
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly value: string };
+type Request = void;
 
 function Downstream({ value }: Props) {
   return <Fragment>({value})</Fragment>;
@@ -28,7 +29,7 @@ scenario('allowOverrideProps is disabled or undefined', bdd => {
       ['undefined', () => undefined]
     ])
     .and('a TestComponent using chain of responsiblity', allowOverrideProps => {
-      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<void, Props>({ allowOverrideProps });
+      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>({ allowOverrideProps });
 
       const middleware: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request => reactComponent(Upstream, { renderNext: next(request)?.render }),

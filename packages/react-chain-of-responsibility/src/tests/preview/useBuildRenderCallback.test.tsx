@@ -8,6 +8,7 @@ import React, { Fragment } from 'react';
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never; value: number };
+type Request = string;
 
 type MyComponentProps = Props & { readonly text: string };
 
@@ -22,7 +23,7 @@ function MyComponent({ text, value }: MyComponentProps) {
 scenario('useBuildRenderCallback', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, reactComponent, useBuildRenderCallback } = createChainOfResponsibility<string, Props>();
+      const { Provider, reactComponent, useBuildRenderCallback } = createChainOfResponsibility<Request, Props>();
 
       const middleware: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request => {

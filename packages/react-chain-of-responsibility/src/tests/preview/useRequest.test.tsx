@@ -8,11 +8,12 @@ import React, { Fragment, memo } from 'react';
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: never };
+type Request = string;
 
 scenario('useRequest', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent, useRequest } = createChainOfResponsibility<string, Props>();
+      const { Provider, Proxy, reactComponent, useRequest } = createChainOfResponsibility<Request, Props>();
 
       const MyComponent = memo(function MyComponent() {
         const [request] = useRequest();

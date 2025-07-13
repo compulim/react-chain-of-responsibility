@@ -12,13 +12,15 @@ type Props = {
   readonly value: number;
 };
 
+type Request = void;
+
 function Fallback({ value }: Props) {
   return <Fragment>Fallback ({value})</Fragment>;
 }
 
 scenario('rendering fallback component without <Provider>', bdd => {
   bdd
-    .given('a chain of responsiblity', () => createChainOfResponsibility<void, Props>())
+    .given('a chain of responsiblity', () => createChainOfResponsibility<Request, Props>())
     .and.oneOf([
       [
         'a <TestComponent> rendered using <Proxy>',

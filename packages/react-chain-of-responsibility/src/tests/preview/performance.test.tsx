@@ -12,6 +12,8 @@ type Props = {
   readonly prefix: string;
 };
 
+type Request = number;
+
 type UpstreamProps = Props & {
   readonly suffix: number;
 };
@@ -19,7 +21,7 @@ type UpstreamProps = Props & {
 scenario('for wasted rendering', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<number, Props>();
+      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>();
 
       const downstreamCall = jest.fn();
       const upstreamCall = jest.fn();

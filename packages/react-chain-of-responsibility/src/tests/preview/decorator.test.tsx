@@ -8,6 +8,7 @@ import React, { type ReactNode } from 'react';
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
 type Props = { readonly children?: ReactNode | undefined };
+type Request = ReadonlySet<'bold' | 'italic'>;
 
 function Bold({ children }: Props) {
   return <strong>{children}</strong>;
@@ -20,8 +21,6 @@ function Italic({ children }: Props) {
 function Text({ children }: Props) {
   return children;
 }
-
-type Request = ReadonlySet<'bold' | 'italic'>;
 
 scenario('decorating downstreamer', bdd => {
   bdd

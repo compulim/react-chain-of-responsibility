@@ -12,6 +12,8 @@ type Props = {
   readonly value: number;
 };
 
+type Request = void;
+
 function Fallback({ value }: Props) {
   return <Fragment>Fallback ({value})</Fragment>;
 }
@@ -27,7 +29,7 @@ function MyComponent({ children }: MyComponentProps) {
 scenario('rendering fallback component with props pass from a middleware component', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<void, Props>();
+      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>();
 
       const middleware: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request => {
