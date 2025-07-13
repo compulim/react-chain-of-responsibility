@@ -12,14 +12,15 @@ import createChainOfResponsibility, {
 type Props = { readonly children?: never };
 type Request = void;
 
-class ErrorBoundary extends Component<{ children?: ReactNode | undefined }, { error: any }> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+class ErrorBoundary extends Component<{ children?: ReactNode | undefined }, { error: unknown }> {
   constructor(props: { children?: ReactNode | undefined }) {
     super(props);
 
     this.state = { error: undefined };
   }
 
-  static getDerivedStateFromError(error: any) {
+  static getDerivedStateFromError(error: unknown) {
     return { error };
   }
 
@@ -29,11 +30,7 @@ class ErrorBoundary extends Component<{ children?: ReactNode | undefined }, { er
       state: { error }
     } = this;
 
-    if (error) {
-      return error.message;
-    }
-
-    return props.children;
+    return error && typeof error === 'object' && 'message' in error ? '' + error.message : props.children;
   }
 }
 
@@ -43,6 +40,7 @@ scenario('call next() after the function call ended should throw', bdd => {
       const { Provider, Proxy } = createChainOfResponsibility<Request, Props>();
       const render = jest.fn();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const middleware: readonly InferMiddleware<typeof Provider>[] = [() => () => () => ({ render }) as any];
 
       return {

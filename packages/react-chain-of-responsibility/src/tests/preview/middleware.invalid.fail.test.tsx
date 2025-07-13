@@ -17,6 +17,7 @@ scenario('passing an invalid middleware prop', bdd => {
 
       return {
         TestComponent: function TestComponent() {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           return <Provider middleware={1 as any} />;
         }
       };

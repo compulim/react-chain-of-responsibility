@@ -20,6 +20,7 @@ type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode;
 
 const INTERNAL_SYMBOL_TO_ENFORCE_FORWARD_COMPATIBILITY = Symbol();
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const functorReturnValueSchema = custom<FunctorReturnValue<any>>(
   value =>
     safeParse(object({ render: function_() }), value).success &&
@@ -96,11 +97,17 @@ type InferenceHelper<Request, Props extends object, Init> = {
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InferComponent<T extends InferenceHelper<any, any, any>> = T['~types']['component'];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InferInit<T extends InferenceHelper<any, any, any>> = T['~types']['init'];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InferMiddleware<T extends InferenceHelper<any, any, any>> = T['~types']['middleware'];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InferProps<T extends InferenceHelper<any, any, any>> = T['~types']['props'];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InferProxyProps<T extends InferenceHelper<any, any, any>> = T['~types']['proxyProps'];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InferRequest<T extends InferenceHelper<any, any, any>> = T['~types']['request'];
 
 type ChainOfResponsibility<Request, Props extends object, Init> = {
@@ -137,6 +144,7 @@ function createChainOfResponsibility<
   };
 
   const RenderContext = createContext<RenderContextType>(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     new Proxy({} as any, {
       get() {
         throw new Error(

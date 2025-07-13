@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function arePropsEqual<T extends Record<string, any>>(x: T, y: T): boolean {
   if (Object.is(x, y)) {
     return true;

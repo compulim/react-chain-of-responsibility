@@ -57,7 +57,7 @@ function isComponentClass(
 // There are no definitive ways to check if an object is a React component or not.
 // We are checking if the object has a render function (classic component).
 // Note: "forwardRef()" returns plain object, not class instance.
-export default function isReactComponent(
+function isReactComponent(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: any
 ): component is ComponentType {
@@ -73,4 +73,5 @@ export default function isReactComponent(
 // TODO: Add a check for isValidElement for better error message.
 const reactComponent = () => custom<ComponentType<unknown>>(value => isReactComponent(value));
 
+export default isReactComponent;
 export { reactComponent };

@@ -1,1 +1,1 @@
-export { default as createChainOfResponsibility } from "./createChainOfResponsibilityAsRenderCallback";
+export { default as createChainOfResponsibility } from './createChainOfResponsibilityAsRenderCallback.tsx';

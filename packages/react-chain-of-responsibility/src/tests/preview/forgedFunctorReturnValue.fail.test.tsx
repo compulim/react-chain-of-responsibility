@@ -18,6 +18,7 @@ scenario('call next() after the function call ended should throw', bdd => {
       const { Provider, Proxy } = createChainOfResponsibility<Request, Props>();
       const render = jest.fn();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const middleware: readonly InferMiddleware<typeof Provider>[] = [() => () => () => ({ render }) as any];
 
       return {

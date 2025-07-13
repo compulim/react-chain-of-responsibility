@@ -22,14 +22,15 @@ function MyComponent({ next, request }: MyComponentProps) {
   return next(request)?.render();
 }
 
-class ErrorBoundary extends Component<{ children?: ReactNode | undefined }, { error: any }> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+class ErrorBoundary extends Component<{ children?: ReactNode | undefined }, { error: unknown }> {
   constructor(props: { children?: ReactNode | undefined }) {
     super(props);
 
     this.state = { error: undefined };
   }
 
-  static getDerivedStateFromError(error: any) {
+  static getDerivedStateFromError(error: unknown) {
     return { error };
   }
 
@@ -39,11 +40,7 @@ class ErrorBoundary extends Component<{ children?: ReactNode | undefined }, { er
       state: { error }
     } = this;
 
-    if (error) {
-      return error.message;
-    }
-
-    return props.children;
+    return error && typeof error === 'object' && 'message' in error ? '' + error.message : props.children;
   }
 }
 
