@@ -136,7 +136,7 @@ function createChainOfResponsibility<
           request
         );
 
-        // TODO: Should this return () => undefined?
+        // For clarity, we are returning `undefined` instead of `() => undefined`.
         return;
       }
 
@@ -233,7 +233,7 @@ function createChainOfResponsibility<
                 request
               );
 
-              // TODO: Should this return () => undefined?
+              // For clarity, we are returning `undefined` instead of `() => undefined`.
               return;
             }
 

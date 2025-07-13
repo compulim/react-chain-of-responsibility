@@ -12,6 +12,10 @@ type Request = void;
 
 type ComponentProps = Props & { renderNext: (() => ReactNode) | undefined };
 
+function Emphasis({ renderNext }: ComponentProps) {
+  return <em>{renderNext?.()}</em>;
+}
+
 function Strong({ renderNext }: ComponentProps) {
   return <strong>{renderNext?.()}</strong>;
 }
@@ -29,6 +33,10 @@ scenario('multiple requests', bdd => {
     .given('a TestComponent using chain of responsiblity', () => {
       const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>();
 
+      const emphasisChain: readonly InferMiddleware<typeof Provider>[] = [
+        () => next => request => reactComponent(Emphasis, { renderNext: next(request)?.render })
+      ];
+
       const strongChain: readonly InferMiddleware<typeof Provider>[] = [
         () => next => request => reactComponent(Strong, { renderNext: next(request)?.render })
       ];
@@ -39,11 +47,13 @@ scenario('multiple requests', bdd => {
 
       return function TestComponent() {
         return (
-          <Provider middleware={strongChain}>
-            <Provider middleware={parenthesisChain}>
-              <Proxy fallbackComponent={PlainText} request={undefined}>
-                Hello, World!
-              </Proxy>
+          <Provider middleware={emphasisChain}>
+            <Provider middleware={strongChain}>
+              <Provider middleware={parenthesisChain}>
+                <Proxy fallbackComponent={PlainText} request={undefined}>
+                  Hello, World!
+                </Proxy>
+              </Provider>
             </Provider>
           </Provider>
         );
@@ -51,6 +61,6 @@ scenario('multiple requests', bdd => {
     })
     .when('the component is rendered', TestComponent => render(<TestComponent />))
     .then('should render parent middleware last', (_, { container }) =>
-      expect(container).toHaveProperty('outerHTML', '<div>(<strong>Hello, World!</strong>)</div>')
+      expect(container).toHaveProperty('outerHTML', '<div>(<strong><em>Hello, World!</em></strong>)</div>')
     );
 });
