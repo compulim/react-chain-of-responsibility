@@ -61,6 +61,9 @@ scenario('multiple requests', bdd => {
     })
     .when('the component is rendered', TestComponent => render(<TestComponent />))
     .then('should render parent middleware last', (_, { container }) =>
+      // Parenthesis should run first, strong next, lastly emphasis.
+      // The deeper the middleware is, the more specific it will be, and more customization it will have.
+      // Thus, the deeper middleware should run first.
       expect(container).toHaveProperty('innerHTML', '(<strong><em>Hello, World!</em></strong>)')
     );
 });
