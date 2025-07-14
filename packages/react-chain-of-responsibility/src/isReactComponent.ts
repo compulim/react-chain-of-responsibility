@@ -70,7 +70,8 @@ function isReactComponent(
   );
 }
 
-const reactComponent = () => custom<ComponentType<unknown>>(value => isReactComponent(value), 'not a valid React component');
+const reactComponent = () =>
+  custom<ComponentType<unknown>>(value => isReactComponent(value), 'not a valid React component');
 
 export default isReactComponent;
 export { reactComponent };
