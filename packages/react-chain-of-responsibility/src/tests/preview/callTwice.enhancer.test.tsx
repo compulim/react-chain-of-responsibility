@@ -58,10 +58,10 @@ scenario('call enhancer() twice', bdd => {
       };
     })
     .when('the component is rendered', TestComponent => render(<TestComponent />))
-    .then('outerHTML should match', (_, { container }) =>
+    .then('innerHTML should match', (_, { container }) =>
       expect(container).toHaveProperty(
-        'outerHTML',
-        '<div><strong>Hello, World! (1)</strong><strong>Hello, World! (2)</strong></div>'
+        'innerHTML',
+        '<strong>Hello, World! (1)</strong><strong>Hello, World! (2)</strong>'
       )
     );
 });

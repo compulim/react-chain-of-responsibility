@@ -61,6 +61,6 @@ scenario('multiple requests', bdd => {
     })
     .when('the component is rendered', TestComponent => render(<TestComponent />))
     .then('should render parent middleware last', (_, { container }) =>
-      expect(container).toHaveProperty('outerHTML', '<div>(<strong><em>Hello, World!</em></strong>)</div>')
+      expect(container).toHaveProperty('innerHTML', '(<strong><em>Hello, World!</em></strong>)')
     );
 });
