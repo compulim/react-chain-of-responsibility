@@ -88,7 +88,7 @@ type CreateChainOfResponsibilityOptions = {
   readonly passModifiedRequest?: boolean | undefined;
 };
 
-type RenderContextType<Request, Props> = {
+type RenderContextType<Props> = {
   readonly options: CreateChainOfResponsibilityOptions;
   readonly renderCallbackProps: Props;
 };
@@ -141,10 +141,12 @@ function createChainOfResponsibility<
     }
   });
 
-  const RenderContext = createContext<RenderContextType<Request, Props>>(
+  const RenderContext = createContext<RenderContextType<Props>>(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     new Proxy({} as any, {
       get() {
+        // The following is assertion, there is no way to hit this line.
+        /* istanbul ignore next */
         throw new Error(
           'react-chain-of-responsibility: this hook cannot be used outside of <Proxy> and useBuildRenderCallback()'
         );
@@ -284,7 +286,7 @@ function createChainOfResponsibility<
               // Mark fallback render callback as functor return value.
               [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined,
               render: () => (
-                // Currently, there are no ways to set `boundProps` to `fallbackComponent`.
+                // Currently, there are no ways to set `bindProps` to `fallbackComponent`.
                 // `fallbackComponent` do not need `overridingProps` because it is the last one in the chain, it would not have the next() function.
                 <ComponentWithProps component={FallbackComponent} />
               )
@@ -296,7 +298,7 @@ function createChainOfResponsibility<
           ((props: Props) => {
             const memoizedProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
 
-            const context = useMemo<RenderContextType<Request, Props>>(
+            const context = useMemo<RenderContextType<Props>>(
               () =>
                 Object.freeze({
                   options: Object.freeze({ ...options }),
