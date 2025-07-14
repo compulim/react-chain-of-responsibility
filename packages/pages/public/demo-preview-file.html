@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link href="demo.css" rel="stylesheet" type="text/css" />
+    <link href="demo-file.css" rel="stylesheet" type="text/css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18",
+          "react-chain-of-responsibility/preview": "./static/react-chain-of-responsibility-preview/js/main.js",
+          "react-dom/client": "https://esm.sh/react-dom@18/client"
+        }
+      }
+    </script>
+    <script type="module">
+      import React from 'react';
+
+      window.React = React;
+    </script>
+    <script src="https://esm.sh/tsx" type="module"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script async id="code" type="text/babel">
+      import { createChainOfResponsibility } from 'react-chain-of-responsibility/preview';
+      import { createRoot } from 'react-dom/client';
+
+      type Props = { url: string; };
+      type Request = { contentType: string; };
+
+      const { Provider, Proxy, reactComponent } = createChainOfResponsibility < Request, Props> ();
+
+      // <Image> will handle request with content type `image/*`.
+      const Image = ({ url }) =>
+        <img className="file file--image" src={url} />;
+
+      // <Video> will handle request with content type `video/*`.
+      const Video = ({ url }) =>
+        <video className="file file--video" controls><source src={url} /></video>;
+
+      // <Binary> will handle everything.
+      const Binary = ({ url }) => <div className="file file--binary">{url}</div>;
+
+      // Register 3 middleware in the chain.
+      // In production component, this will be expanded by bring-your-own middleware/components.
+      const middleware = [
+        () => next => request => request.contentType.startsWith('image/') ? reactComponent(Image) : next(request),
+        () => next => request => request.contentType.startsWith('video/') ? reactComponent(Video) : next(request),
+        () => next => request => reactComponent(Binary)
+      ];
+
+      // Render 3 files each with different content type.
+      const rootContainer = createRoot(document.getElementById('root'));
+
+      rootContainer.render(
+        <Provider middleware={middleware}>
+          <Proxy request={{ contentType: "image/jpeg" }} url="https://picsum.photos/426/240" />
+          <Proxy request={{ contentType: "video/mp4" }} url="https://www.pexels.com/download/video/5692323/?h=240&w=426" />
+          <Proxy request={{ contentType: "application/octet-stream" }} url="filename.zip" />
+        </Provider>
+      );
+    </script>
+    <script type="module">
+      window.parent.postMessage({ code: document.getElementById('code')?.textContent }, '*');
+    </script>
+  </body>
+</html>
