@@ -1,5 +1,6 @@
 import React, {
   createContext,
+  Fragment,
   memo,
   useCallback,
   useContext,
@@ -318,7 +319,9 @@ function createChainOfResponsibility<
   const useRequest = () => useContext(RenderContext).requestState;
 
   function ChainOfResponsibilityProxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
-    return useBuildRenderCallback()(request as Request, { fallbackComponent })?.(props as Props);
+    const result = useBuildRenderCallback()(request as Request, { fallbackComponent })?.(props as Props);
+
+    return result && <Fragment>{result}</Fragment>;
   }
 
   const MemoizedChainOfResponsibilityProvider =

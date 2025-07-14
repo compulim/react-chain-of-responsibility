@@ -3,7 +3,7 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import createChainOfResponsibility from '../../createChainOfResponsibilityAsRenderCallback';
 
@@ -37,7 +37,7 @@ scenario('rendering fallback component using useBuildRenderCallback() without <P
 
             expect(render).toBeFalsy();
 
-            return render?.({ value: 1 });
+            return <Fragment>{render?.({ value: 1 })}</Fragment>;
           }
 
           return {
