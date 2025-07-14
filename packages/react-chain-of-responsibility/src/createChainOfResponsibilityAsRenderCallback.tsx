@@ -206,7 +206,7 @@ function createChainOfResponsibility<
       allowOverrideProps ? { ...renderCallbackProps, ...overridingProps } : { ...renderCallbackProps }
     );
 
-    return <Component {...props} {...(typeof bindProps === 'function' ? bindProps?.(props) : bindProps)} />;
+    return <Component {...props} {...(typeof bindProps === 'function' ? bindProps(props) : bindProps)} />;
   });
 
   const useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props> = () => {
