@@ -15,10 +15,6 @@ import applyMiddleware from './private/applyMiddleware.ts';
 import arePropsEqual from './private/arePropsEqual.ts';
 import useMemoValueWithEquality from './private/useMemoValueWithEquality.ts';
 
-type BaseProps = object;
-
-type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode;
-
 // TODO: Related to https://github.com/microsoft/TypeScript/issues/17002.
 //       typescript@5.2.2 has a bug, Array.isArray() is a type predicate but only works with mutable array, not readonly array.
 declare global {
@@ -27,6 +23,10 @@ declare global {
     isArray(arg: any): arg is readonly any[];
   }
 }
+
+type BaseProps = object;
+
+type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode;
 
 const DO_NOT_CREATE_THIS_OBJECT_YOURSELF = Symbol();
 
@@ -47,7 +47,9 @@ interface FunctorReturnValue<Props extends BaseProps> {
 
 type ComponentFunctor<Request, Props extends BaseProps> = (request: Request) => FunctorReturnValue<Props> | undefined;
 
-type ComponentEnhancer<Request, Props extends BaseProps> = (next: ComponentFunctor<Request, Props>) => ComponentFunctor<Request, Props>;
+type ComponentEnhancer<Request, Props extends BaseProps> = (
+  next: ComponentFunctor<Request, Props>
+) => ComponentFunctor<Request, Props>;
 
 type ComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
   init: Init
