@@ -31,7 +31,7 @@ type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode;
 const DO_NOT_CREATE_THIS_OBJECT_YOURSELF = Symbol();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const functorReturnValueSchema = custom<FunctorReturnValue<any>>(
+const componentFunctorReturnValueSchema = custom<ComponentFunctorReturnValue<any>>(
   value =>
     safeParse(object({ render: function_() }), value).success &&
     !!value &&
@@ -40,12 +40,14 @@ const functorReturnValueSchema = custom<FunctorReturnValue<any>>(
   'react-chain-of-responsibility: middleware must return value constructed by reactComponent()'
 );
 
-interface FunctorReturnValue<Props extends BaseProps> {
+interface ComponentFunctorReturnValue<Props extends BaseProps> {
   readonly [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined;
   readonly render: (overridingProps?: Partial<Props> | undefined) => ReactNode;
 }
 
-type ComponentFunctor<Request, Props extends BaseProps> = (request: Request) => FunctorReturnValue<Props> | undefined;
+type ComponentFunctor<Request, Props extends BaseProps> = (
+  request: Request
+) => ComponentFunctorReturnValue<Props> | undefined;
 
 type ComponentEnhancer<Request, Props extends BaseProps> = (
   next: ComponentFunctor<Request, Props>
@@ -63,7 +65,7 @@ interface UseBuildRenderCallback<Request, Props extends BaseProps> {
   (request: Request, options?: undefined | UseBuildRenderCallbackOptions<Props>): RenderCallback<Props> | undefined;
 }
 
-type ProviderContext<Request, Props extends BaseProps> = {
+type BuildContext<Request, Props extends BaseProps> = {
   get enhancer(): ComponentEnhancer<Request, Props>;
 };
 
@@ -137,7 +139,7 @@ type ChainOfResponsibility<Request, Props extends object, Init> = {
       | (Partial<Props> & Omit<P, keyof Props>)
       | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
       | undefined
-  ) => FunctorReturnValue<Props>;
+  ) => ComponentFunctorReturnValue<Props>;
   readonly useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props>;
 };
 
@@ -146,7 +148,7 @@ function createChainOfResponsibility<
   Props extends BaseProps = { readonly children?: never },
   Init = void
 >(options: CreateChainOfResponsibilityOptions = {}): ChainOfResponsibility<Request, Props, Init> {
-  const BuildContext = createContext<ProviderContext<Request, Props>>({
+  const BuildContext = createContext<BuildContext<Request, Props>>({
     get enhancer(): ComponentEnhancer<Request, Props> {
       return next => request => next(request);
     }
@@ -175,33 +177,34 @@ function createChainOfResponsibility<
       middleware.map(fn => (init: Init) => {
         const enhancer = fn(init);
 
-        return (next: (request: Request) => FunctorReturnValue<Props> | undefined) => (originalRequest: Request) => {
-          // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
-          // eslint-disable-next-line prefer-const
-          let hasReturned: boolean;
+        return (next: (request: Request) => ComponentFunctorReturnValue<Props> | undefined) =>
+          (originalRequest: Request) => {
+            // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
+            // eslint-disable-next-line prefer-const
+            let hasReturned: boolean;
 
-          const returnValue = enhancer((nextRequest: Request) => {
-            if (hasReturned) {
-              throw new Error(
-                'react-chain-of-responsibility: next() cannot be called after the function had returned synchronously'
-              );
-            }
+            const returnValue = enhancer((nextRequest: Request) => {
+              if (hasReturned) {
+                throw new Error(
+                  'react-chain-of-responsibility: next() cannot be called after the function had returned synchronously'
+                );
+              }
 
-            // We do not allow passing void/undefined to next() because it would be confusing whether to keep the original request or pass an undefined.
-            !options.passModifiedRequest &&
-              !Object.is(nextRequest, originalRequest) &&
-              console.warn(
-                'react-chain-of-responsibility: next() must be called with the original request, otherwise, set "options.passModifiedRequest" to true to pass a different request object downstream'
-              );
+              // We do not allow passing void/undefined to next() because it would be confusing whether to keep the original request or pass an undefined.
+              !options.passModifiedRequest &&
+                !Object.is(nextRequest, originalRequest) &&
+                console.warn(
+                  'react-chain-of-responsibility: next() must be called with the original request, otherwise, set "options.passModifiedRequest" to true to pass a different request object downstream'
+                );
 
-            return next(options.passModifiedRequest ? nextRequest : originalRequest);
-          })(originalRequest);
+              return next(options.passModifiedRequest ? nextRequest : originalRequest);
+            })(originalRequest);
 
-          hasReturned = true;
+            hasReturned = true;
 
-          // Make sure the return value is built using our helper function for forward-compatibility reason.
-          return returnValue && parse(functorReturnValueSchema, returnValue);
-        };
+            // Make sure the return value is built using our helper function for forward-compatibility reason.
+            return returnValue && parse(componentFunctorReturnValueSchema, returnValue);
+          };
       })
     );
 
@@ -212,13 +215,13 @@ function createChainOfResponsibility<
         // We are reversing because it is easier to read:
         // - With reverse, [a, b, c] will become a(b(c(fn)))
         // - Without reverse, [a, b, c] will become c(b(a(fn)))
-        applyMiddleware<[Request], FunctorReturnValue<Props> | undefined, [Init]>(
+        applyMiddleware<[Request], ComponentFunctorReturnValue<Props> | undefined, [Init]>(
           ...[...fortifiedMiddleware, ...[() => parentEnhancer]].reverse()
         )(init as Init),
       [init, middleware, parentEnhancer]
     );
 
-    const contextValue = useMemo<ProviderContext<Request, Props>>(
+    const contextValue = useMemo<BuildContext<Request, Props>>(
       () => ({ enhancer, useBuildRenderCallback }),
       [enhancer, useBuildRenderCallback]
     );
@@ -232,7 +235,7 @@ function createChainOfResponsibility<
       | (Partial<Props> & Omit<P, keyof Props>)
       | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
       | undefined
-  ): FunctorReturnValue<Props> {
+  ): ComponentFunctorReturnValue<Props> {
     return Object.freeze({
       [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined,
       render: (overridingProps?: Partial<Props> | undefined) => (
