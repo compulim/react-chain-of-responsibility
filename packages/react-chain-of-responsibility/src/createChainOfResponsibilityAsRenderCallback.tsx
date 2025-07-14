@@ -65,7 +65,7 @@ interface UseBuildRenderCallback<Request, Props extends BaseProps> {
   (request: Request, options?: undefined | UseBuildRenderCallbackOptions<Props>): RenderCallback<Props> | undefined;
 }
 
-type BuildContext<Request, Props extends BaseProps> = {
+type BuildContextType<Request, Props extends BaseProps> = {
   readonly enhancer: ComponentEnhancer<Request, Props>;
 };
 
@@ -148,7 +148,7 @@ function createChainOfResponsibility<
   Props extends BaseProps = { readonly children?: never },
   Init = void
 >(options: CreateChainOfResponsibilityOptions = {}): ChainOfResponsibility<Request, Props, Init> {
-  const BuildContext = createContext<BuildContext<Request, Props>>(
+  const BuildContext = createContext<BuildContextType<Request, Props>>(
     Object.freeze({ enhancer: next => request => next(request) })
   );
 
@@ -316,7 +316,7 @@ function createChainOfResponsibility<
       [init, middleware, parentEnhancer]
     );
 
-    const contextValue = useMemo<BuildContext<Request, Props>>(() => Object.freeze({ enhancer }), [enhancer]);
+    const contextValue = useMemo<BuildContextType<Request, Props>>(() => Object.freeze({ enhancer }), [enhancer]);
 
     return <BuildContext.Provider value={contextValue}>{children}</BuildContext.Provider>;
   }
