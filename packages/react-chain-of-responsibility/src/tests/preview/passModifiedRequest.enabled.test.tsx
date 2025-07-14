@@ -26,7 +26,7 @@ function Upstream({ renderNext }: UpstreamProps) {
   return result ? <Fragment>{result}</Fragment> : null;
 }
 
-scenario('passModifiedRequest is disabled or undefined', bdd => {
+scenario('passModifiedRequest is enabled', bdd => {
   bdd
     .given('a TestComponent using chain of responsiblity', () => {
       const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>({
