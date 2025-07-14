@@ -3,7 +3,7 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { type ReactNode } from 'react';
+import React, { Fragment, type ReactNode } from 'react';
 
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
@@ -19,7 +19,7 @@ function Italic({ children }: Props) {
 }
 
 function Text({ children }: Props) {
-  return children;
+  return children ? <Fragment>{children}</Fragment> : null;
 }
 
 scenario('decorating downstreamer', bdd => {

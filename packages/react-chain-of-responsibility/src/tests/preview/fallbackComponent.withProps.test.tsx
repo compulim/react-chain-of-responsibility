@@ -44,7 +44,9 @@ scenario('rendering fallback component with props', bdd => {
 
             expect(render).not.toBeFalsy();
 
-            return render?.({ value: 1 });
+            const result = render?.({ value: 1 });
+
+            return result ? <Fragment>{result}</Fragment> : null;
           }
 
           return function TestComponent() {

@@ -19,7 +19,9 @@ type UpstreamProps = Props & {
 };
 
 function Upstream({ renderNext, value }: UpstreamProps) {
-  return renderNext?.({ value: value.toUpperCase() });
+  const result = renderNext?.({ value: value.toUpperCase() });
+
+  return result ? <Fragment>{result}</Fragment> : null;
 }
 
 scenario('allowOverrideProps is disabled or undefined', bdd => {

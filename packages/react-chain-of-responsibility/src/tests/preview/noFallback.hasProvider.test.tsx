@@ -37,7 +37,9 @@ scenario('rendering fallback component using useBuildRenderCallback() without <P
 
             expect(render).toBeFalsy();
 
-            return <Fragment>{render?.({ value: 1 })}</Fragment>;
+            const result = render?.({ value: 1 });
+
+            return result ? <Fragment>{result}</Fragment> : null;
           }
 
           return {

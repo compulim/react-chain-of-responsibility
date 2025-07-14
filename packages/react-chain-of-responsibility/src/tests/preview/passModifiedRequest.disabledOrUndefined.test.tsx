@@ -21,7 +21,9 @@ type UpstreamProps = Props & {
 };
 
 function Upstream({ renderNext }: UpstreamProps) {
-  return renderNext?.();
+  const result = renderNext?.();
+
+  return result ? <Fragment>{result}</Fragment> : null;
 }
 
 scenario('passModifiedRequest is disabled or undefined', bdd => {

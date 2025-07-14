@@ -25,7 +25,7 @@ function Parenthesis({ renderNext }: ComponentProps) {
 }
 
 function PlainText({ children }: Props) {
-  return <Fragment>{children}</Fragment>;
+  return children ? <Fragment>{children}</Fragment> : null;
 }
 
 scenario('multiple requests', bdd => {

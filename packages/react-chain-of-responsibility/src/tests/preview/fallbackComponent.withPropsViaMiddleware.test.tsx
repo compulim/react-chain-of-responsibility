@@ -23,7 +23,7 @@ type MyComponentProps = Props & {
 };
 
 function MyComponent({ children }: MyComponentProps) {
-  return children;
+  return children ? <Fragment>{children}</Fragment> : null;
 }
 
 scenario('rendering fallback component with props pass from a middleware component', bdd => {

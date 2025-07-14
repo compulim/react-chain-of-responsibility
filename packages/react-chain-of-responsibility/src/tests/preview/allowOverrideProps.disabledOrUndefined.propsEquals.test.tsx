@@ -20,7 +20,9 @@ type UpstreamProps = Props & {
 
 function Upstream({ renderNext, value }: UpstreamProps) {
   // Recreate a content-equal props, should not warn.
-  return renderNext?.({ value });
+  const result = renderNext?.({ value });
+
+  return result ? <Fragment>{result}</Fragment> : null;
 }
 
 scenario('allowOverrideProps is disabled or undefined with content-equals props being recreated', bdd => {

@@ -3,14 +3,13 @@
 
 // TODO: Remove this test when we end-to-end test our samples.
 
+import type { RenderResult } from '@testing-library/react';
 import { render } from '@testing-library/react';
 import React, { type ComponentType, type PropsWithChildren } from 'react';
 import { withProps, wrapWith } from 'react-wrap-with';
 
 import createChainOfResponsibility from '../../createChainOfResponsibility';
-
-import type { RenderResult } from '@testing-library/react';
-import type { ComponentMiddleware } from './types';
+import type { ComponentMiddleware } from '../../types';
 
 type LinkProps = PropsWithChildren<{ className: string; href: string }>;
 

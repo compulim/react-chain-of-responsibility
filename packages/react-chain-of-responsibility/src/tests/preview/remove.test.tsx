@@ -20,7 +20,7 @@ scenario('removing a middleware by returning undefined', bdd => {
       function Fail() {
         failCall();
 
-        return undefined;
+        return null;
       }
 
       const middleware: readonly InferMiddleware<typeof Provider>[] = [

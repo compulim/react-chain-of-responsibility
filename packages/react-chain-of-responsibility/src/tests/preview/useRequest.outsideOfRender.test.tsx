@@ -3,7 +3,7 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
@@ -16,7 +16,9 @@ scenario('calling useRequest() outside of render', bdd => {
       const { Provider, reactComponent, useRequest } = createChainOfResponsibility<Request, Props>();
 
       const MyComponent = function MyComponent() {
-        return useRequest();
+        const result = useRequest();
+
+        return result ? <Fragment>{result}</Fragment> : null;
       };
 
       const middleware: readonly InferMiddleware<typeof Provider>[] = [

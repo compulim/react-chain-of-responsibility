@@ -3,7 +3,7 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { type ReactNode } from 'react';
+import React, { Fragment, type ReactNode } from 'react';
 
 import createChainOfResponsibility, {
   type InferMiddleware
@@ -19,7 +19,9 @@ type MyComponentProps = Props & {
 
 function MyComponent({ next, request }: MyComponentProps) {
   // Calling next() during render phase should throw.
-  return next(request)?.render();
+  const result = next(request)?.render();
+
+  return result ? <Fragment>{result}</Fragment> : null;
 }
 
 scenario('call next() after the function call ended should throw', bdd => {

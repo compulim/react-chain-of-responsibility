@@ -30,7 +30,9 @@ scenario('stability test with changing request', bdd => {
 
       function MyProxy({ request }: { readonly request: number }) {
         // We are using `useBuildRenderCallback` for less memoization.
-        return useBuildRenderCallback()(request)?.({});
+        const result = useBuildRenderCallback()(request)?.({});
+
+        return result ? <Fragment>{result}</Fragment> : null;
       }
 
       return [

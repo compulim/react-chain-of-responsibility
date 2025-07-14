@@ -37,8 +37,9 @@ scenario('useBuildRenderCallback', bdd => {
 
       function MyProxy() {
         const render = useBuildRenderCallback();
+        const result = render('Hello, World!')?.({ value: 1 });
 
-        return render('Hello, World!')?.({ value: 1 });
+        return result ? <Fragment>{result}</Fragment> : null;
       }
 
       return function TestComponent() {
