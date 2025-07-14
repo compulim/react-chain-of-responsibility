@@ -89,7 +89,7 @@ type ComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
 ) => ComponentEnhancer<Request, Props>;
 
 type UseBuildRenderCallbackOptions<Props> = {
-  fallbackComponent?: ComponentType<Props> | undefined;
+  readonly fallbackComponent?: ComponentType<Props> | undefined;
 };
 
 interface UseBuildRenderCallback<Request, Props extends BaseProps> {
@@ -106,7 +106,7 @@ type RenderContextType<Props> = {
 };
 
 type ProviderProps<Request, Props extends BaseProps, Init> = PropsWithChildren<{
-  middleware: readonly ComponentMiddleware<Request, Props, Init>[];
+  readonly middleware: readonly ComponentMiddleware<Request, Props, Init>[];
 }> &
   (Init extends never | void
     ? { readonly init?: undefined }
@@ -189,9 +189,9 @@ function createChainOfResponsibility<
     component: Component,
     overridingProps
   }: {
-    bindProps?: Partial<Props> | ((props: Props) => Partial<Props>) | undefined;
-    component: ComponentType<Props>;
-    overridingProps?: Partial<Props> | undefined;
+    readonly bindProps?: Partial<Props> | ((props: Props) => Partial<Props>) | undefined;
+    readonly component: ComponentType<Props>;
+    readonly overridingProps?: Partial<Props> | undefined;
   }) {
     const {
       options: { allowOverrideProps },
@@ -202,9 +202,9 @@ function createChainOfResponsibility<
       console.warn('react-chain-of-responsibility: "allowOverrideProps" must be set to true to override props');
     }
 
-    const props = allowOverrideProps
-      ? Object.freeze({ ...renderCallbackProps, ...overridingProps })
-      : Object.freeze({ ...renderCallbackProps });
+    const props = Object.freeze(
+      allowOverrideProps ? { ...renderCallbackProps, ...overridingProps } : { ...renderCallbackProps }
+    );
 
     return <Component {...props} {...(typeof bindProps === 'function' ? bindProps?.(props) : bindProps)} />;
   });
