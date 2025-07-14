@@ -147,6 +147,9 @@ function createChainOfResponsibility<
   Props extends BaseProps = { readonly children?: never },
   Init = void
 >(options: CreateChainOfResponsibilityOptions = {}): ChainOfResponsibility<Request, Props, Init> {
+  // Freeze options to prevent accidental change.
+  options = Object.freeze({ ...options });
+
   const BuildContext = createContext<BuildContextType<Request, Props>>(
     Object.freeze({ enhancer: next => request => next(request) })
   );
