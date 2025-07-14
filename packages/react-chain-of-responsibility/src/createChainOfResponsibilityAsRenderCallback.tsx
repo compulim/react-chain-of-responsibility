@@ -268,38 +268,42 @@ function createChainOfResponsibility<
     }
 
     // Remap the middleware, so all inputs/outputs are validated.
-    const fortifiedMiddleware = Object.freeze(
-      middleware.map<ComponentMiddleware<Request, Props, Init>>(fn => (init: Init) => {
-        const enhancer = fn(init);
+    const fortifiedMiddleware = useMemo(
+      () =>
+        Object.freeze(
+          middleware.map<ComponentMiddleware<Request, Props, Init>>(fn => (init: Init) => {
+            const enhancer = fn(init);
 
-        return next => originalRequest => {
-          // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
-          // eslint-disable-next-line prefer-const
-          let hasReturned: boolean;
+            return next => originalRequest => {
+              // False positive: although we did not re-assign the variable from true, it was initialized as undefined.
+              // eslint-disable-next-line prefer-const
+              let hasReturned: boolean;
 
-          const returnValue = enhancer(nextRequest => {
-            if (hasReturned) {
-              throw new Error(
-                'react-chain-of-responsibility: next() cannot be called after the function had returned synchronously'
-              );
-            }
+              const returnValue = enhancer(nextRequest => {
+                if (hasReturned) {
+                  throw new Error(
+                    'react-chain-of-responsibility: next() cannot be called after the function had returned synchronously'
+                  );
+                }
 
-            // We do not allow passing void/undefined to next() because it would be confusing whether to keep the original request or pass an undefined.
-            !options.passModifiedRequest &&
-              !Object.is(nextRequest, originalRequest) &&
-              console.warn(
-                'react-chain-of-responsibility: next() must be called with the original request, otherwise, set "options.passModifiedRequest" to true to pass a different request object downstream'
-              );
+                // We do not allow passing void/undefined to next() because it would be confusing whether to keep the original request or pass an undefined.
+                !options.passModifiedRequest &&
+                  !Object.is(nextRequest, originalRequest) &&
+                  console.warn(
+                    'react-chain-of-responsibility: next() must be called with the original request, otherwise, set "options.passModifiedRequest" to true to pass a different request object downstream'
+                  );
 
-            return next(options.passModifiedRequest ? nextRequest : originalRequest);
-          })(originalRequest);
+                return next(options.passModifiedRequest ? nextRequest : originalRequest);
+              })(originalRequest);
 
-          hasReturned = true;
+              hasReturned = true;
 
-          // Make sure the return value is built using our helper function for forward-compatibility reason.
-          return returnValue && parse(componentFunctorReturnValueSchema, returnValue);
-        };
-      })
+              // Make sure the return value is built using our helper function for forward-compatibility reason.
+              return returnValue && parse(componentFunctorReturnValueSchema, returnValue);
+            };
+          })
+        ),
+      [middleware]
     );
 
     const { enhancer: parentEnhancer } = useContext(BuildContext);
@@ -312,7 +316,7 @@ function createChainOfResponsibility<
         applyMiddleware<[Request], ComponentFunctorReturnValue<Props> | undefined, [Init]>(
           ...[...fortifiedMiddleware, ...[() => parentEnhancer]].reverse()
         )(init as Init),
-      [init, middleware, parentEnhancer]
+      [init, fortifiedMiddleware, parentEnhancer]
     );
 
     const contextValue = useMemo<BuildContextType<Request, Props>>(() => Object.freeze({ enhancer }), [enhancer]);
