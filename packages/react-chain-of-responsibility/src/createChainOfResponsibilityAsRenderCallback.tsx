@@ -28,6 +28,37 @@ type BaseProps = object;
 
 type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode;
 
+type CreateChainOfResponsibilityOptions = {
+  /**
+   * Allows one component to pass different set of props to its downstream component. Default is false.
+   *
+   * It is recommended to keep this settings as default to prevent newly added component from unexpectedly changing behavior of downstream components.
+   */
+  readonly allowOverrideProps?: boolean | undefined;
+
+  /**
+   * Allows a middleware to pass another request object when calling its next middleware. Default is false.
+   *
+   * It is recommended to keep this settings as default ot prevent newly added middleware from unexpectedly changing behavior of downstream middleware.
+   *
+   * To prevent upstream middleware from modifying the request, the request object should be set to be immutable through `Object.freeze`.
+   */
+  readonly passModifiedRequest?: boolean | undefined;
+};
+
+type ChainOfResponsibility<Request, Props extends BaseProps, Init> = {
+  readonly Provider: ComponentType<ProviderProps<Request, Props, Init>> & InferenceHelper<Request, Props, Init>;
+  readonly Proxy: ComponentType<ProxyProps<Request, Props>>;
+  readonly reactComponent: <P extends Props>(
+    component: ComponentType<P>,
+    bindProps?:
+      | (Partial<Props> & Omit<P, keyof Props>)
+      | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
+      | undefined
+  ) => ComponentFunctorReturnValue<Props>;
+  readonly useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props>;
+};
+
 const DO_NOT_CREATE_THIS_OBJECT_YOURSELF = Symbol();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,25 +119,7 @@ type ProxyProps<Request, Props extends BaseProps> = Props & {
   readonly request: Request;
 };
 
-type CreateChainOfResponsibilityOptions = {
-  /**
-   * Allows one component to pass different set of props to its downstream component. Default is false.
-   *
-   * It is recommended to keep this settings as default to prevent newly added component from unexpectedly changing behavior of downstream components.
-   */
-  readonly allowOverrideProps?: boolean | undefined;
-
-  /**
-   * Allows a middleware to pass another request object when calling its next middleware. Default is false.
-   *
-   * It is recommended to keep this settings as default ot prevent newly added middleware from unexpectedly changing behavior of downstream middleware.
-   *
-   * To prevent upstream middleware from modifying the request, the request object should be set to be immutable through `Object.freeze`.
-   */
-  readonly passModifiedRequest?: boolean | undefined;
-};
-
-type InferenceHelper<Request, Props extends object, Init> = {
+type InferenceHelper<Request, Props extends BaseProps, Init> = {
   readonly '~types': {
     readonly component: ComponentType<Props>;
     readonly init: Init;
@@ -129,19 +142,6 @@ type InferProps<T extends InferenceHelper<any, any, any>> = T['~types']['props']
 type InferProxyProps<T extends InferenceHelper<any, any, any>> = T['~types']['proxyProps'];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InferRequest<T extends InferenceHelper<any, any, any>> = T['~types']['request'];
-
-type ChainOfResponsibility<Request, Props extends object, Init> = {
-  readonly Provider: ComponentType<ProviderProps<Request, Props, Init>> & InferenceHelper<Request, Props, Init>;
-  readonly Proxy: ComponentType<ProxyProps<Request, Props>>;
-  readonly reactComponent: <P extends Props>(
-    component: ComponentType<P>,
-    bindProps?:
-      | (Partial<Props> & Omit<P, keyof Props>)
-      | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
-      | undefined
-  ) => ComponentFunctorReturnValue<Props>;
-  readonly useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props>;
-};
 
 function createChainOfResponsibility<
   Request = void,
