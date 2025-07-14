@@ -91,7 +91,6 @@ type CreateChainOfResponsibilityOptions = {
 type RenderContextType<Request, Props> = {
   readonly options: CreateChainOfResponsibilityOptions;
   readonly renderCallbackProps: Props;
-  readonly requestState: readonly [Request];
 };
 
 type InferenceHelper<Request, Props extends object, Init> = {
@@ -129,7 +128,6 @@ type ChainOfResponsibility<Request, Props extends object, Init> = {
       | undefined
   ) => FunctorReturnValue<Props>;
   readonly useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props>;
-  readonly useRequest: () => readonly [Request];
 };
 
 function createChainOfResponsibility<
@@ -302,8 +300,7 @@ function createChainOfResponsibility<
               () =>
                 Object.freeze({
                   options: Object.freeze({ ...options }),
-                  renderCallbackProps: memoizedProps,
-                  requestState: Object.freeze([request] as const)
+                  renderCallbackProps: memoizedProps
                 }),
               [memoizedProps, request]
             );
@@ -315,8 +312,6 @@ function createChainOfResponsibility<
       [enhancer]
     );
   };
-
-  const useRequest = () => useContext(RenderContext).requestState;
 
   function ChainOfResponsibilityProxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
     const result = useBuildRenderCallback()(request as Request, { fallbackComponent })?.(props as Props);
@@ -332,8 +327,7 @@ function createChainOfResponsibility<
       InferenceHelper<Request, Props, Init>,
     Proxy: memo<ProxyProps<Request, Props>>(ChainOfResponsibilityProxy),
     reactComponent,
-    useBuildRenderCallback,
-    useRequest
+    useBuildRenderCallback
   });
 }
 
