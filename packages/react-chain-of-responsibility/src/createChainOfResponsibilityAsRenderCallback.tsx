@@ -23,6 +23,7 @@ type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode;
 //       typescript@5.2.2 has a bug, Array.isArray() is a type predicate but only works with mutable array, not readonly array.
 declare global {
   interface ArrayConstructor {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     isArray(arg: any): arg is readonly any[];
   }
 }
