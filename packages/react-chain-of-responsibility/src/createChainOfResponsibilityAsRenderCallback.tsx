@@ -330,6 +330,8 @@ function createChainOfResponsibility<
     Proxy: memo<ProxyProps<Request, Props>>(ChainOfResponsibilityProxy),
     reactComponent,
     useBuildRenderCallback
+
+    // TODO: Consider adding back `asMiddleware`.
   });
 }
 
