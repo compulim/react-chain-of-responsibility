@@ -351,6 +351,5 @@ export {
   type InferProps,
   type InferProxyProps,
   type InferRequest,
-  type ProxyProps,
   type UseBuildRenderCallback
 };
