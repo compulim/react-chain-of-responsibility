@@ -13,6 +13,7 @@ import { custom, function_, object, parse, safeParse } from 'valibot';
 
 import applyMiddleware from './private/applyMiddleware.ts';
 import arePropsEqual from './private/arePropsEqual.ts';
+import isArray from './private/isArray.ts';
 import useMemoValueWithEquality from './private/useMemoValueWithEquality.ts';
 
 type BaseProps = object;
@@ -154,11 +155,9 @@ function createChainOfResponsibility<
     })
   );
 
+
   function ChainOfResponsibilityProvider({ children, init, middleware }: ProviderProps<Request, Props, Init>) {
-    // TODO: Related to https://github.com/microsoft/TypeScript/issues/17002.
-    //       typescript@5.2.2 has a bug, Array.isArray() is a type predicate but only works with mutable array, not readonly array.
-    //       After removing "as unknown", `middleware` on the next line become `any[]`.
-    if (!Array.isArray(middleware as unknown) || middleware.some(middleware => typeof middleware !== 'function')) {
+    if (!isArray(middleware) || middleware.some(middleware => typeof middleware !== 'function')) {
       throw new Error('react-chain-of-responsibility: "middleware" prop must be an array of functions');
     }
 
