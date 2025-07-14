@@ -3,7 +3,7 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import createChainOfResponsibility, { type InferMiddleware } from '../../createChainOfResponsibilityAsRenderCallback';
 
@@ -11,11 +11,11 @@ type Props = { readonly children?: never };
 type Request = void;
 
 function Hello() {
-  return 'Hello';
+  return <Fragment>Hello</Fragment>;
 }
 
 function World() {
-  return 'World';
+  return <Fragment>World</Fragment>;
 }
 
 scenario('call enhancer() twice', bdd => {
