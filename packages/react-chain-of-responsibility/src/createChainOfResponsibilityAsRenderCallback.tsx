@@ -66,7 +66,7 @@ interface UseBuildRenderCallback<Request, Props extends BaseProps> {
 }
 
 type BuildContext<Request, Props extends BaseProps> = {
-  get enhancer(): ComponentEnhancer<Request, Props>;
+  readonly enhancer: ComponentEnhancer<Request, Props>;
 };
 
 type ProviderProps<Request, Props extends BaseProps, Init> = PropsWithChildren<{
@@ -318,10 +318,7 @@ function createChainOfResponsibility<
       [init, middleware, parentEnhancer]
     );
 
-    const contextValue = useMemo<BuildContext<Request, Props>>(
-      () => ({ enhancer, useBuildRenderCallback }),
-      [enhancer, useBuildRenderCallback]
-    );
+    const contextValue = useMemo<BuildContext<Request, Props>>(() => Object.freeze({ enhancer }), [enhancer]);
 
     return <BuildContext.Provider value={contextValue}>{children}</BuildContext.Provider>;
   }
