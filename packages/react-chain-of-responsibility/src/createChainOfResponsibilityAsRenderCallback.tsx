@@ -148,11 +148,9 @@ function createChainOfResponsibility<
   Props extends BaseProps = { readonly children?: never },
   Init = void
 >(options: CreateChainOfResponsibilityOptions = {}): ChainOfResponsibility<Request, Props, Init> {
-  const BuildContext = createContext<BuildContext<Request, Props>>({
-    get enhancer(): ComponentEnhancer<Request, Props> {
-      return next => request => next(request);
-    }
-  });
+  const BuildContext = createContext<BuildContext<Request, Props>>(
+    Object.freeze({ enhancer: next => request => next(request) })
+  );
 
   const RenderContext = createContext<RenderContextType<Props>>(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
