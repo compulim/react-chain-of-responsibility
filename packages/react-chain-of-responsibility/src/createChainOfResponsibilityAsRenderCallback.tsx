@@ -45,9 +45,9 @@ interface FunctorReturnValue<Props extends BaseProps> {
   readonly render: (overridingProps?: Partial<Props> | undefined) => ReactNode;
 }
 
-type ComponentEnhancer<Request, Props extends BaseProps> = (
-  next: (request: Request) => FunctorReturnValue<Props> | undefined
-) => (request: Request) => FunctorReturnValue<Props> | undefined;
+type ComponentFunctor<Request, Props extends BaseProps> = (request: Request) => FunctorReturnValue<Props> | undefined;
+
+type ComponentEnhancer<Request, Props extends BaseProps> = (next: ComponentFunctor<Request, Props>) => ComponentFunctor<Request, Props>;
 
 type ComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
   init: Init
