@@ -69,6 +69,11 @@ type BuildContextType<Request, Props extends BaseProps> = {
   readonly enhancer: ComponentEnhancer<Request, Props>;
 };
 
+type RenderContextType<Props> = {
+  readonly options: CreateChainOfResponsibilityOptions;
+  readonly renderCallbackProps: Props;
+};
+
 type ProviderProps<Request, Props extends BaseProps, Init> = PropsWithChildren<{
   middleware: readonly ComponentMiddleware<Request, Props, Init>[];
 }> &
@@ -99,11 +104,6 @@ type CreateChainOfResponsibilityOptions = {
    * To prevent upstream middleware from modifying the request, the request object should be set to be immutable through `Object.freeze`.
    */
   readonly passModifiedRequest?: boolean | undefined;
-};
-
-type RenderContextType<Props> = {
-  readonly options: CreateChainOfResponsibilityOptions;
-  readonly renderCallbackProps: Props;
 };
 
 type InferenceHelper<Request, Props extends object, Init> = {
