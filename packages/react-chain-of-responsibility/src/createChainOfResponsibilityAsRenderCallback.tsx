@@ -217,9 +217,9 @@ function createChainOfResponsibility<
         const result =
           // Put the "fallbackComponent" as the last one in the chain.
           enhancer(() => {
-            const FallbackComponent = buildOptions.fallbackComponent;
+            const { fallbackComponent } = buildOptions;
 
-            if (!FallbackComponent) {
+            if (!fallbackComponent) {
               console.warn(
                 'react-chain-of-responsibility: the request has fall through all middleware, set "fallbackComponent" as a catchall',
                 request
@@ -235,7 +235,7 @@ function createChainOfResponsibility<
               render: () => (
                 // Currently, there are no ways to set `bindProps` to `fallbackComponent`.
                 // `fallbackComponent` do not need `overridingProps` because it is the last one in the chain, it would not have the next() function.
-                <ComponentWithProps component={FallbackComponent} />
+                <ComponentWithProps component={fallbackComponent} />
               )
             });
           })(request);
