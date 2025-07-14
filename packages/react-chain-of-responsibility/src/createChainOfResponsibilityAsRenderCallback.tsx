@@ -101,7 +101,6 @@ type BuildContextType<Request, Props extends BaseProps> = {
 };
 
 type RenderContextType<Props> = {
-  readonly options: CreateChainOfResponsibilityOptions;
   readonly renderCallbackProps: Props;
 };
 
@@ -193,10 +192,8 @@ function createChainOfResponsibility<
     readonly component: ComponentType<Props>;
     readonly overridingProps?: Partial<Props> | undefined;
   }) {
-    const {
-      options: { allowOverrideProps },
-      renderCallbackProps
-    } = useContext(RenderContext);
+    const { allowOverrideProps } = options;
+    const { renderCallbackProps } = useContext(RenderContext);
 
     if (overridingProps && !arePropsEqual(overridingProps, renderCallbackProps) && !allowOverrideProps) {
       console.warn('react-chain-of-responsibility: "allowOverrideProps" must be set to true to override props');
@@ -246,11 +243,7 @@ function createChainOfResponsibility<
             const renderCallbackProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
 
             const context = useMemo<RenderContextType<Props>>(
-              () =>
-                Object.freeze({
-                  options: Object.freeze({ ...options }),
-                  renderCallbackProps
-                }),
+              () => Object.freeze({ renderCallbackProps }),
               [renderCallbackProps]
             );
 
