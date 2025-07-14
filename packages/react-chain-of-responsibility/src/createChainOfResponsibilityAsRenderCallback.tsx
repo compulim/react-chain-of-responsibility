@@ -243,15 +243,15 @@ function createChainOfResponsibility<
         return (
           result &&
           ((props: Props) => {
-            const memoizedProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
+            const renderCallbackProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
 
             const context = useMemo<RenderContextType<Props>>(
               () =>
                 Object.freeze({
                   options: Object.freeze({ ...options }),
-                  renderCallbackProps: memoizedProps
+                  renderCallbackProps
                 }),
-              [memoizedProps, request]
+              [renderCallbackProps]
             );
 
             return <RenderContext.Provider value={context}>{result.render()}</RenderContext.Provider>;
