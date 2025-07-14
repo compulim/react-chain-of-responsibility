@@ -25,6 +25,16 @@
         "types": "./dist/react-chain-of-responsibility.fluentUI.d.ts",
         "default": "./dist/react-chain-of-responsibility.fluentUI.js"
       }
+    },
+    "./preview": {
+      "import": {
+        "types": "./dist/react-chain-of-responsibility.preview.d.mts",
+        "default": "./dist/react-chain-of-responsibility.preview.mjs"
+      },
+      "require": {
+        "types": "./dist/react-chain-of-responsibility.preview.d.ts",
+        "default": "./dist/react-chain-of-responsibility.preview.js"
+      }
     }
   },
   "main": "./dist/react-chain-of-responsibility.js",
@@ -130,5 +140,8 @@
   },
   "peerDependencies": {
     "react": ">=16.8.0"
+  },
+  "dependencies": {
+    "valibot": "^1.1.0"
   }
 }
