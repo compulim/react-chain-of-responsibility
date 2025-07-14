@@ -321,7 +321,7 @@ function createChainOfResponsibility<
   function ChainOfResponsibilityProxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
     const result = useBuildRenderCallback()(request as Request, { fallbackComponent })?.(props as Props);
 
-    return result && <Fragment>{result}</Fragment>;
+    return result ? <Fragment>{result}</Fragment> : null;
   }
 
   const MemoizedChainOfResponsibilityProvider =
