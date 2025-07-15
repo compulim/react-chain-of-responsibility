@@ -26,8 +26,6 @@ declare global {
 
 type BaseProps = object;
 
-type RenderCallback<Props extends BaseProps> = (props: Props) => ReactNode;
-
 type CreateChainOfResponsibilityOptions = {
   /**
    * Allows one component to pass different set of props to its downstream component. Default is false.
@@ -49,20 +47,18 @@ type CreateChainOfResponsibilityOptions = {
 type ChainOfResponsibility<Request, Props extends BaseProps, Init> = {
   readonly Provider: ComponentType<ProviderProps<Request, Props, Init>> & InferenceHelper<Request, Props, Init>;
   readonly Proxy: ComponentType<ProxyProps<Request, Props>>;
-  readonly reactComponent: <P extends Props>(
-    component: ComponentType<P>,
-    bindProps?:
-      | (Partial<Props> & Omit<P, keyof Props>)
-      | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
-      | undefined
-  ) => ComponentFunctorReturnValue<Props>;
+  readonly reactComponent: ReactComponentHandlerResult<Props>;
   readonly useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props>;
 };
 
+// TODO: Maybe this one should be local.
+//       Verify that reactComponent() from an instance of CoR should throw error when used in another instance of CoR.
 const DO_NOT_CREATE_THIS_OBJECT_YOURSELF = Symbol();
 
+type ComponentRenderer<Props> = (props: Props) => ReactNode;
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const componentFunctorReturnValueSchema = custom<ComponentFunctorReturnValue<any>>(
+const componentHandlerResultSchema = custom<ComponentHandlerResult<any>>(
   value =>
     safeParse(object({ render: function_() }), value).success &&
     !!value &&
@@ -71,29 +67,37 @@ const componentFunctorReturnValueSchema = custom<ComponentFunctorReturnValue<any
   'react-chain-of-responsibility: middleware must return value constructed by reactComponent()'
 );
 
-interface ComponentFunctorReturnValue<Props extends BaseProps> {
+interface ComponentHandlerResult<Props extends BaseProps> {
   readonly [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined;
   readonly render: (overridingProps?: Partial<Props> | undefined) => ReactNode;
 }
 
-type ComponentFunctor<Request, Props extends BaseProps> = (
+type ComponentHandler<Request, Props extends BaseProps> = (
   request: Request
-) => ComponentFunctorReturnValue<Props> | undefined;
+) => ComponentHandlerResult<Props> | undefined;
 
 type ComponentEnhancer<Request, Props extends BaseProps> = (
-  next: ComponentFunctor<Request, Props>
-) => ComponentFunctor<Request, Props>;
+  next: ComponentHandler<Request, Props>
+) => ComponentHandler<Request, Props>;
 
 type ComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
   init: Init
 ) => ComponentEnhancer<Request, Props>;
+
+type ReactComponentHandlerResult<Props extends object> = <P extends Props>(
+  component: ComponentType<P>,
+  bindProps?:
+    | (Partial<Props> & Omit<P, keyof Props>)
+    | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
+    | undefined
+) => ComponentHandlerResult<Props>;
 
 type UseBuildRenderCallbackOptions<Props> = {
   readonly fallbackComponent?: ComponentType<Props> | undefined;
 };
 
 interface UseBuildRenderCallback<Request, Props extends BaseProps> {
-  (request: Request, options?: undefined | UseBuildRenderCallbackOptions<Props>): RenderCallback<Props> | undefined;
+  (request: Request, options?: undefined | UseBuildRenderCallbackOptions<Props>): ComponentRenderer<Props> | undefined;
 }
 
 type BuildContextType<Request, Props extends BaseProps> = {
@@ -120,17 +124,15 @@ type ProxyProps<Request, Props extends BaseProps> = Props & {
 
 type InferenceHelper<Request, Props extends BaseProps, Init> = {
   readonly '~types': {
-    readonly component: ComponentType<Props>;
     readonly init: Init;
     readonly middleware: ComponentMiddleware<Request, Props, Init>;
     readonly props: Props;
     readonly proxyProps: ProxyProps<Request, Props>;
+    readonly providerProps: ProviderProps<Request, Props, Init>;
     readonly request: Request;
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type InferComponent<T extends InferenceHelper<any, any, any>> = T['~types']['component'];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InferInit<T extends InferenceHelper<any, any, any>> = T['~types']['init'];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -139,6 +141,8 @@ type InferMiddleware<T extends InferenceHelper<any, any, any>> = T['~types']['mi
 type InferProps<T extends InferenceHelper<any, any, any>> = T['~types']['props'];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InferProxyProps<T extends InferenceHelper<any, any, any>> = T['~types']['proxyProps'];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type InferProviderProps<T extends InferenceHelper<any, any, any>> = T['~types']['providerProps'];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InferRequest<T extends InferenceHelper<any, any, any>> = T['~types']['request'];
 
@@ -173,7 +177,7 @@ function createChainOfResponsibility<
       | (Partial<Props> & Omit<P, keyof Props>)
       | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
       | undefined
-  ): ComponentFunctorReturnValue<Props> {
+  ): ComponentHandlerResult<Props> {
     return Object.freeze({
       [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined,
       render: (overridingProps?: Partial<Props> | undefined) => (
@@ -230,7 +234,7 @@ function createChainOfResponsibility<
             }
 
             return Object.freeze({
-              // Mark fallback render callback as functor return value.
+              // Convert fallback component as renderer.
               [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined,
               render: () => (
                 // Currently, there are no ways to set `bindProps` to `fallbackComponent`.
@@ -295,7 +299,7 @@ function createChainOfResponsibility<
               hasReturned = true;
 
               // Make sure the return value is built using our helper function for forward-compatibility reason.
-              return returnValue && parse(componentFunctorReturnValueSchema, returnValue);
+              return returnValue && parse(componentHandlerResultSchema, returnValue);
             };
           })
         ),
@@ -309,7 +313,7 @@ function createChainOfResponsibility<
         // We are reversing because it is easier to read:
         // - With reverse, [a, b, c] will become a(b(c(fn)))
         // - Without reverse, [a, b, c] will become c(b(a(fn)))
-        applyMiddleware<[Request], ComponentFunctorReturnValue<Props> | undefined, [Init]>(
+        applyMiddleware<[Request], ComponentHandlerResult<Props> | undefined, [Init]>(
           ...[...fortifiedMiddleware, ...[() => parentEnhancer]].reverse()
         )(init as Init),
       [init, fortifiedMiddleware, parentEnhancer]
@@ -343,12 +347,22 @@ function createChainOfResponsibility<
 export default createChainOfResponsibility;
 export {
   type ChainOfResponsibility,
+  type ComponentEnhancer,
+  type ComponentHandler,
+  type ComponentHandlerResult,
+  type ComponentMiddleware,
+  type ComponentRenderer,
   type CreateChainOfResponsibilityOptions,
-  type InferComponent,
+  type InferenceHelper,
   type InferInit,
   type InferMiddleware,
   type InferProps,
+  type InferProviderProps,
   type InferProxyProps,
   type InferRequest,
-  type UseBuildRenderCallback
+  type ProviderProps,
+  type ProxyProps,
+  type ReactComponentHandlerResult,
+  type UseBuildRenderCallback,
+  type UseBuildRenderCallbackOptions
 };
