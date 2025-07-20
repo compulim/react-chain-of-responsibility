@@ -142,6 +142,7 @@
     "react": ">=16.8.0"
   },
   "dependencies": {
+    "handler-chain": "^0.1.0",
     "valibot": "^1.1.0"
   }
 }
