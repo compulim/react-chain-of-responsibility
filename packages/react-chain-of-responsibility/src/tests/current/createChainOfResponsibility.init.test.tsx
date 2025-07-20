@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react';
 import { test } from 'node:test';
-import assert from 'node:assert';
 import expect from 'expect';
 import React, { Fragment } from 'react';
 import { withProps, wrapWith } from 'react-wrap-with';
