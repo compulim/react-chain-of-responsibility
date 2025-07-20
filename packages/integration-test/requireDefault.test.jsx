@@ -15,7 +15,7 @@ test('simple scenario', () => {
   // WHEN: Render <Proxy>.
   const App = () => (
     <Provider middleware={[() => () => () => HelloWorld]}>
-      <Proxy />
+      <Proxy request={undefined} />
     </Provider>
   );
 
@@ -29,11 +29,25 @@ test('Fluent UI scenario', () => {
   // GIVEN: A middleware.
   const { Provider, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI();
 
-  const DisplayString = ({ text }) => <Fragment>{text}</Fragment>;
-  const CallRender = ({ text }) => useBuildRenderFunction()({ text }, HelloWorld);
+  const DisplayString = (
+    /** @type {{ text?: string | undefined }} */
+    { text }
+  ) => <Fragment>{text}</Fragment>;
+  const CallRender = (
+    /** @type {{ text?: string | undefined }} */
+    { text }
+  ) => useBuildRenderFunction()({ text }, HelloWorld);
 
-  const App = ({ text }) => (
-    <Provider middleware={[() => next => request => (request?.text ? DisplayString : next(request))]}>
+  const App = (
+    /** @type {{ text?: string | undefined }} */
+    { text }
+  ) => (
+    <Provider
+      middleware={[
+        () => next => (/** @type {{ text?: string | undefined } | undefined} */ request) =>
+          request?.text ? DisplayString : next(request)
+      ]}
+    >
       <CallRender text={text} />
     </Provider>
   );
