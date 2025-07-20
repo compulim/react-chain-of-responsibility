@@ -1,3 +1,4 @@
+import { applyMiddleware } from 'handler-chain';
 import React, {
   createContext,
   Fragment,
@@ -11,7 +12,6 @@ import React, {
 } from 'react';
 import { custom, function_, object, parse, safeParse } from 'valibot';
 
-import applyMiddleware from './private/applyMiddleware.ts';
 import arePropsEqual from './private/arePropsEqual.ts';
 import useMemoValueWithEquality from './private/useMemoValueWithEquality.ts';
 
@@ -313,7 +313,7 @@ function createChainOfResponsibility<
         // We are reversing because it is easier to read:
         // - With reverse, [a, b, c] will become a(b(c(fn)))
         // - Without reverse, [a, b, c] will become c(b(a(fn)))
-        applyMiddleware<[Request], ComponentHandlerResult<Props> | undefined, [Init]>(
+        applyMiddleware<ComponentHandlerResult<Props> | undefined, Request, Init>(
           ...[...fortifiedMiddleware, ...[() => parentEnhancer]].reverse()
         )(init as Init),
       [init, fortifiedMiddleware, parentEnhancer]
