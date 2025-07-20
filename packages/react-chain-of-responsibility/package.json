@@ -51,7 +51,7 @@
     "precommit:typescript:test": "tsc --noEmit --project ./src/tsconfig.precommit.test.json",
     "prepack": "cp ../../CHANGELOG.md . && cp ../../LICENSE . && cp ../../README.md .",
     "switch": "cat package.json | jq --arg SWITCH_NAME $SWITCH_NAME -r '(.[\"switch:\" + $SWITCH_NAME] // {}) as $TEMPLATE | .devDependencies += ($TEMPLATE.devDependencies // {}) | .dependencies += ($TEMPLATE.dependencies // {})' | tee ./package.json.tmp && mv ./package.json.tmp ./package.json",
-    "test": "node --test --import tsx --import ./src/test-setup.mjs src/tests/current/createChainOfResponsibility.init.test.tsx"
+    "test": "node --test --import tsx --import ./src/test-setup.mjs \"src/tests/current/createChainOfResponsibility.init.test.tsx\" \"src/tests/current/createChainOfResponsibility.simple.test.tsx\" \"src/tests/current/createChainOfResponsibility.fragment.test.tsx\" \"src/tests/current/createChainOfResponsibility.nested.test.tsx\" \"src/tests/current/createChainOfResponsibility.memo.test.tsx\" \"src/tests/current/createChainOfResponsibility.middlewareReturn.null.test.tsx\" \"src/tests/current/createChainOfResponsibility.middlewareReturn.false.test.tsx\""
   },
   "repository": {
     "type": "git",

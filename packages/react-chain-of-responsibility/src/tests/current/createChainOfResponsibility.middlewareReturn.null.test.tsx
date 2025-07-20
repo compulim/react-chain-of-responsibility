@@ -1,7 +1,6 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { render } from '@testing-library/react';
+import { test } from 'node:test';
+import expect from 'expect';
 import React from 'react';
 import { withProps, wrapWith } from 'react-wrap-with';
 
