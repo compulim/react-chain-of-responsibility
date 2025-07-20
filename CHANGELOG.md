@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - (Preview) 💢 Changed signature to return wrapped return value, instead of plain `ComponentType`, by [@compulim](https://github.com/compulim) in PR [#91](https://github.com/compulim/react-chain-of-responsibility/pull/91) and [#92](https://github.com/compulim/react-chain-of-responsibility/pull/92)
+- Use `handler-chain` package, by [@compulim](https://github.com/compulim) in PR [#93](https://github.com/compulim/react-chain-of-responsibility/pull/93)
 
 ### Removed
 
