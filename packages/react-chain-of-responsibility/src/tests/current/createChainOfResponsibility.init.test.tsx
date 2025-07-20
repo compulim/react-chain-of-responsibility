@@ -1,9 +1,21 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { render } from '@testing-library/react';
+import { test } from 'node:test';
+import assert from 'node:assert';
+import expect from 'expect';
 import React, { Fragment } from 'react';
 import { withProps, wrapWith } from 'react-wrap-with';
+import { JSDOM } from 'jsdom';
+
+// Setup JSDOM environment for React testing
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+  url: 'http://localhost',
+  pretendToBeVisual: true,
+  resources: 'usable'
+});
+
+global.window = dom.window;
+global.document = dom.window.document;
+global.navigator = dom.window.navigator;
 
 import createChainOfResponsibility from '../../createChainOfResponsibility';
 

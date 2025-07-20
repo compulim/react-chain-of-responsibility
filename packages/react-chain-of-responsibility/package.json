@@ -51,7 +51,7 @@
     "precommit:typescript:test": "tsc --noEmit --project ./src/tsconfig.precommit.test.json",
     "prepack": "cp ../../CHANGELOG.md . && cp ../../LICENSE . && cp ../../README.md .",
     "switch": "cat package.json | jq --arg SWITCH_NAME $SWITCH_NAME -r '(.[\"switch:\" + $SWITCH_NAME] // {}) as $TEMPLATE | .devDependencies += ($TEMPLATE.devDependencies // {}) | .dependencies += ($TEMPLATE.dependencies // {})' | tee ./package.json.tmp && mv ./package.json.tmp ./package.json",
-    "test": "jest"
+    "test": "tsx --test $(find src -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx' | tr '\\n' ' ')"
   },
   "repository": {
     "type": "git",
@@ -126,6 +126,7 @@
     "@types/react": "^18.3.23",
     "esbuild": "^0.25.5",
     "escape-string-regexp": "^4.0.0",
+    "expect": "^30.0.4",
     "jest": "^30.0.2",
     "jest-environment-jsdom": "^30.0.2",
     "prettier": "^3.5.3",
@@ -135,6 +136,7 @@
     "react-test-renderer": "^18.3.1",
     "react-wrap-with": "^0.1.0",
     "tsup": "^8.5.0",
+    "tsx": "^4.20.3",
     "type-fest": "^4.41.0",
     "typescript": "^5.8.3"
   },
