@@ -5,9 +5,7 @@ import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import React, { Fragment, type ReactNode } from 'react';
 
-import createChainOfResponsibility, {
-  type InferMiddleware
-} from '../createChainOfResponsibilityAsRenderCallback.tsx';
+import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback.tsx';
 
 type Props = { readonly children?: never };
 type Request = string;
