@@ -314,7 +314,7 @@ function createChainOfResponsibility<
         // - With reverse, [a, b, c] will become a(b(c(fn)))
         // - Without reverse, [a, b, c] will become c(b(a(fn)))
         applyMiddleware<ComponentHandlerResult<Props> | undefined, Request, Init>(
-          ...[...fortifiedMiddleware, ...[() => parentEnhancer]].reverse()
+          ...[...fortifiedMiddleware, ...[() => parentEnhancer]]
         )(init as Init),
       [init, fortifiedMiddleware, parentEnhancer]
     );

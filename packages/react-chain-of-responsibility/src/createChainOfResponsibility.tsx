@@ -1,4 +1,4 @@
-import { applyMiddleware, type Enhancer } from 'handler-chain';
+import { applyMiddleware } from 'handler-chain';
 import React, {
   createContext,
   isValidElement,
@@ -11,7 +11,7 @@ import React, {
 } from 'react';
 
 import isReactComponent from './isReactComponent.ts';
-import { type ComponentMiddleware } from './types.ts';
+import { type ComponentEnhancer, type ComponentMiddleware } from './types.ts';
 
 // TODO: Simplify to ComponentType<Props> | undefined.
 type ResultComponent<Props> = ComponentType<Props> | false | null | undefined;
@@ -25,7 +25,7 @@ interface UseBuildComponentCallback<Request, Props> {
 }
 
 type ProviderContext<Request, Props> = {
-  get enhancer(): Enhancer<ResultComponent<Props>, Request> | undefined;
+  get enhancer(): ComponentEnhancer<Request, Props> | undefined;
   useBuildComponentCallback: UseBuildComponentCallback<Request, Props>;
 };
 
@@ -160,7 +160,7 @@ function createChainOfResponsibility<Request = void, Props extends object = { re
         // - With reverse, [a, b, c] will become a(b(c(fn)))
         // - Without reverse, [a, b, c] will become c(b(a(fn)))
         applyMiddleware<ResultComponent<Props>, Request, Init>(
-          ...[...patchedMiddleware, ...(parentEnhancer ? [() => parentEnhancer] : [])].reverse()
+          ...[...patchedMiddleware, ...(parentEnhancer ? [() => parentEnhancer] : [])]
         )(init as Init),
       [init, middleware, parentEnhancer]
     );
