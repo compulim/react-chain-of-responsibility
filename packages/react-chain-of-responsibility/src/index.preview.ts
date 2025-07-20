@@ -19,4 +19,4 @@ export {
   type ReactComponentHandlerResult,
   type UseBuildRenderCallback,
   type UseBuildRenderCallbackOptions
-} from './createChainOfResponsibilityAsRenderCallback.tsx';
+} from './preview/createChainOfResponsibilityAsRenderCallback.tsx';
