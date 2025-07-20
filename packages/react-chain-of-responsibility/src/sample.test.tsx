@@ -1,6 +1,6 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
 
+import { test } from 'node:test';
+import expect from 'expect';
 import { render } from '@testing-library/react';
 import React, { Fragment, memo } from 'react';
 

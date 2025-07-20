@@ -1,6 +1,6 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
 
+import { test } from 'node:test';
+import expect from 'expect';
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import React, { Fragment, useEffect, useState } from 'react';
