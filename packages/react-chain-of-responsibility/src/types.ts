@@ -13,6 +13,4 @@ type ComponentMiddleware<Request, Props = { children?: never }, Init = undefined
   Init
 >;
 
-export {
-  type ComponentEnhancer, type ComponentHandler, type ComponentMiddleware, type ComponentResult
-};
+export { type ComponentEnhancer, type ComponentHandler, type ComponentMiddleware, type ComponentResult };
