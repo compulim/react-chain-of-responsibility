@@ -15,6 +15,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - (Preview) 💢 Changed signature to return wrapped return value, instead of plain `ComponentType`, by [@compulim](https://github.com/compulim) in PR [#91](https://github.com/compulim/react-chain-of-responsibility/pull/91) and [#92](https://github.com/compulim/react-chain-of-responsibility/pull/92)
 - Use `handler-chain` package, by [@compulim](https://github.com/compulim) in PR [#93](https://github.com/compulim/react-chain-of-responsibility/pull/93)
+- Bumped dependencies, in PR [#97](https://github.com/compulim/react-chain-of-responsibility/pull/97)
+  - Development dependencies
+    - [`@babel/preset-env@7.28.0`](https://npmjs.com/package/@babel/preset-env/v/7.28.0)
+    - [`@fluentui/react@8.123.1`](https://npmjs.com/package/@fluentui/react/v/8.123.1)
+    - [`@testduet/wait-for@0.1.1-main.3a4f261`](https://npmjs.com/package/@testduet/wait-for/v/0.1.1-main.3a4f261)
+    - [`@types/node@24.0.15`](https://npmjs.com/package/@types/node/v/24.0.15)
+    - [`@typescript-eslint/eslint-plugin@8.37.0`](https://npmjs.com/package/@typescript-eslint/eslint-plugin/v/8.37.0)
+    - [`@typescript-eslint/parser@8.37.0`](https://npmjs.com/package/@typescript-eslint/parser/v/8.37.0)
+    - [`esbuild@0.25.8`](https://npmjs.com/package/esbuild/v/0.25.8)
+    - [`eslint@9.31.0`](https://npmjs.com/package/eslint/v/9.31.0)
+    - [`eslint-import-resolver-typescript@4.4.4`](https://npmjs.com/package/eslint-import-resolver-typescript/v/4.4.4)
+    - [`eslint-plugin-prettier@5.5.3`](https://npmjs.com/package/eslint-plugin-prettier/v/5.5.3)
+    - [`jest@30.0.4`](https://npmjs.com/package/jest/v/30.0.4)
+    - [`jest-environment-jsdom@30.0.4`](https://npmjs.com/package/jest-environment-jsdom/v/30.0.4)
+    - [`prettier@3.6.2`](https://npmjs.com/package/prettier/v/3.6.2)
+    - [`shiki@3.8.1`](https://npmjs.com/package/shiki/v/3.8.1)
 
 ### Removed
 
@@ -232,6 +248,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       -  [`prettier@2.8.4`](https://npmjs.com/package/prettier)
       -  [`typescript@4.9.5`](https://npmjs.com/package/typescript)
 
+[Unreleased]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.3.0...HEAD
 [0.3.0]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/compulim/react-chain-of-responsibility/compare/v0.0.2...v0.1.0

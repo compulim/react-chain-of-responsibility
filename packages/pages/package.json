@@ -65,22 +65,22 @@
     ]
   },
   "devDependencies": {
-    "@fluentui/react": "^8.123.0",
+    "@fluentui/react": "^8.123.1",
     "@tsconfig/strictest": "^2.0.5",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
-    "esbuild": "^0.25.5",
+    "esbuild": "^0.25.8",
     "react-wrap-with": "^0.1.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
     "classnames": "^2.5.1",
     "micromark": "^4.0.2",
-    "prettier": "^3.5.3",
+    "prettier": "^3.6.2",
     "react": "^18.3.1",
     "react-chain-of-responsibility": "^0.0.0-0",
     "react-dom": "^18.3.1",
-    "shiki": "^3.7.0",
+    "shiki": "^3.8.1",
     "valibot": "^1.1.0"
   }
 }
