@@ -98,6 +98,12 @@
     }
   },
   "pinDependencies": {
+    "@testduet/given-when-then": [
+      "main"
+    ],
+    "@testduet/wait-for": [
+      "main"
+    ],
     "@types/react": [
       "18"
     ],

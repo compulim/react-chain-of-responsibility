@@ -42,6 +42,9 @@
     }
   },
   "pinDependencies": {
+    "@testduet/wait-for": [
+      "main"
+    ],
     "@types/react": [
       "18"
     ],
