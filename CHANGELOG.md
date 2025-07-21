@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Development dependencies
     - [`@babel/preset-env@7.28.0`](https://npmjs.com/package/@babel/preset-env/v/7.28.0)
     - [`@fluentui/react@8.123.1`](https://npmjs.com/package/@fluentui/react/v/8.123.1)
-    - [`@testduet/given-when-then@0.1.0-main.5e524dc`](https://npmjs.com/package/@testduet/given-when-then/v/0.1.0-main.5e524dc)
+    - [`@testduet/wait-for@0.1.1-main.3a4f261`](https://npmjs.com/package/@testduet/wait-for/v/0.1.1-main.3a4f261)
     - [`@types/node@24.0.15`](https://npmjs.com/package/@types/node/v/24.0.15)
     - [`@typescript-eslint/eslint-plugin@8.37.0`](https://npmjs.com/package/@typescript-eslint/eslint-plugin/v/8.37.0)
     - [`@typescript-eslint/parser@8.37.0`](https://npmjs.com/package/@typescript-eslint/parser/v/8.37.0)
