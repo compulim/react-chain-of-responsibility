@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "build": "esbuild --bundle --entry-names=[name]/[ext]/main --jsx=transform --minify --outdir=./public/static/ --sourcemap app=./src/app/index.tsx",
+    "build": "esbuild --alias:react=./src/react.cjs --bundle --entry-names=[name]/[ext]/main --format=esm --jsx=automatic --minify --outdir=./public/static/ --sourcemap app=./src/app2/index.tsx react-chain-of-responsibility=./src/bundle.ts react-chain-of-responsibility-preview=./src/bundle.preview.ts",
     "bump": "npm run bump:prod && npm run bump:dev",
     "bump:dev": "PACKAGES_TO_BUMP=$(cat package.json | jq -r '(.pinDependencies // {}) as $P | (.localPeerDependencies // {}) as $L | (.devDependencies // {}) | to_entries | map(select(.key as $K | $L | has($K) | not)) | map(.key + \"@\" + ($P[.key] // [\"latest\"])[0]) | join(\" \")') && [ ! -z \"$PACKAGES_TO_BUMP\" ] && npm install $PACKAGES_TO_BUMP || true",
     "bump:prod": "PACKAGES_TO_BUMP=$(cat package.json | jq -r '(.pinDependencies // {}) as $P | (.localPeerDependencies // {}) as $L | (.dependencies // {}) | to_entries | map(select(.key as $K | $L | has($K) | not)) | map(.key + \"@\" + ($P[.key] // [\"latest\"])[0]) | join(\" \")') && [ ! -z \"$PACKAGES_TO_BUMP\" ] && npm install $PACKAGES_TO_BUMP || true",
@@ -65,22 +65,22 @@
     ]
   },
   "devDependencies": {
-    "@fluentui/react": "^8.123.1",
+    "@fluentui/react": "^8.123.0",
     "@tsconfig/strictest": "^2.0.5",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
-    "esbuild": "^0.25.8",
+    "esbuild": "^0.25.5",
     "react-wrap-with": "^0.1.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
     "classnames": "^2.5.1",
     "micromark": "^4.0.2",
-    "prettier": "^3.6.2",
+    "prettier": "^3.5.3",
     "react": "^18.3.1",
     "react-chain-of-responsibility": "^0.0.0-0",
     "react-dom": "^18.3.1",
-    "shiki": "^3.8.1",
+    "shiki": "^3.7.0",
     "valibot": "^1.1.0"
   }
 }
