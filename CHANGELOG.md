@@ -24,7 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - [`@typescript-eslint/eslint-plugin@8.37.0`](https://npmjs.com/package/@typescript-eslint/eslint-plugin/v/8.37.0)
     - [`@typescript-eslint/parser@8.37.0`](https://npmjs.com/package/@typescript-eslint/parser/v/8.37.0)
     - [`esbuild@0.25.8`](https://npmjs.com/package/esbuild/v/0.25.8)
-    - [`escape-string-regexp@5.0.0`](https://npmjs.com/package/escape-string-regexp/v/5.0.0)
     - [`eslint@9.31.0`](https://npmjs.com/package/eslint/v/9.31.0)
     - [`eslint-import-resolver-typescript@4.4.4`](https://npmjs.com/package/eslint-import-resolver-typescript/v/4.4.4)
     - [`eslint-plugin-prettier@5.5.3`](https://npmjs.com/package/eslint-plugin-prettier/v/5.5.3)
