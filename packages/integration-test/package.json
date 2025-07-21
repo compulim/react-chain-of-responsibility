@@ -59,15 +59,15 @@
     ]
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-env": "^7.28.0",
     "@babel/preset-react": "^7.27.1",
     "@testduet/wait-for": "^0.1.0",
     "@tsconfig/strictest": "^2.0.5",
     "@types/jest": "^30.0.0",
     "@types/react": "^18.3.23",
     "@types/react-test-renderer": "^19.1.0",
-    "jest": "^30.0.2",
-    "jest-environment-jsdom": "^30.0.2",
+    "jest": "^30.0.4",
+    "jest-environment-jsdom": "^30.0.4",
     "react": "^18.3.1",
     "react-test-renderer": "^18.3.1",
     "typescript": "^5.8.3"
