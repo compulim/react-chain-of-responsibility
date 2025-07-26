@@ -13,7 +13,6 @@ import React, {
 import { custom, function_, object, parse, safeParse } from 'valibot';
 
 import arePropsEqual from './private/arePropsEqual.ts';
-import useMemoValueWithEquality from './private/useMemoValueWithEquality.ts';
 
 // TODO: Related to https://github.com/microsoft/TypeScript/issues/17002.
 //       typescript@5.2.2 has a bug, Array.isArray() is a type predicate but only works with mutable array, not readonly array.
@@ -105,7 +104,7 @@ type BuildContextType<Request, Props extends BaseProps> = {
 };
 
 type RenderContextType<Props> = {
-  readonly renderCallbackProps: Props;
+  readonly originalProps: Props;
 };
 
 type ProviderProps<Request, Props extends BaseProps, Init> = PropsWithChildren<{
@@ -200,7 +199,7 @@ function createChainOfResponsibility<
     readonly overridingProps?: Partial<Props> | undefined;
   }) {
     const { allowOverrideProps } = options;
-    const { renderCallbackProps } = useContext(RenderContext);
+    const { originalProps: renderCallbackProps } = useContext(RenderContext);
 
     if (overridingProps && !arePropsEqual(overridingProps, renderCallbackProps) && !allowOverrideProps) {
       console.warn('react-chain-of-responsibility: "allowOverrideProps" must be set to true to override props');
@@ -212,6 +211,8 @@ function createChainOfResponsibility<
 
     return <Component {...props} {...(typeof bindProps === 'function' ? bindProps(props) : bindProps)} />;
   });
+
+  const RENDER_CALLBACK_SYMBOL = `REACT_CHAIN_OF_RESPONSIBILITY:DO_NOT_USE_THIS_RENDER_CALLBACK`;
 
   const useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props> = () => {
     const { enhancer } = useContext(BuildContext);
@@ -246,21 +247,36 @@ function createChainOfResponsibility<
 
         return (
           result &&
-          ((props: Props) => {
-            const renderCallbackProps = useMemoValueWithEquality<Props>(() => props, arePropsEqual);
-
-            const context = useMemo<RenderContextType<Props>>(
-              () => Object.freeze({ renderCallbackProps }),
-              [renderCallbackProps]
-            );
-
-            return <RenderContext.Provider value={context}>{result.render()}</RenderContext.Provider>;
-          })
+          ((props: Props) => (
+            // This is render function, we cannot call any hooks here.
+            <RenderCallbackAsComponent
+              {...props} // Spreading the props to leverage React.memo()
+              {...{
+                // TODO: Verify if `result.render` is stable or not, and check performance
+                [RENDER_CALLBACK_SYMBOL]: result.render
+              }}
+            />
+          ))
         );
       },
       [enhancer]
     );
   };
+
+  type RenderCallbackAsComponentProps = Props & {
+    // First render function does not need overrideProps.
+    // Override props is for upstreamer to override props before passing to downsteamers.
+    readonly [RENDER_CALLBACK_SYMBOL]: () => ReactNode;
+  };
+
+  const RenderCallbackAsComponent = memo(function RenderFunction({
+    [RENDER_CALLBACK_SYMBOL]: render,
+    ...props
+  }: RenderCallbackAsComponentProps) {
+    const context = useMemo<RenderContextType<Props>>(() => Object.freeze({ originalProps: props as Props }), [props]);
+
+    return <RenderContext.Provider value={context}>{render()}</RenderContext.Provider>;
+  });
 
   function ChainOfResponsibilityProvider({ children, init, middleware }: ProviderProps<Request, Props, Init>) {
     if (!Array.isArray(middleware) || middleware.some(middleware => typeof middleware !== 'function')) {
