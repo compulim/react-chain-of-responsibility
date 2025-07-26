@@ -235,12 +235,8 @@ function createChainOfResponsibility<
               return;
             }
 
-            // Convert fallback component as renderer.
-            return createComponentHandlerResult(() => (
-              // Currently, there are no ways to set `bindProps` to `fallbackComponent`.
-              // `fallbackComponent` do not need `overridingProps` because it is the last one in the chain, it would not have the next() function.
-              <ComponentWithProps component={fallbackComponent} />
-            ));
+            // `fallbackComponent` do not need `overridingProps` because it is the last one in the chain, it would not have the next() function.
+            return reactComponent(fallbackComponent);
           })(request);
 
         return (
