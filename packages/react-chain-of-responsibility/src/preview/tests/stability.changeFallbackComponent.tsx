@@ -3,9 +3,9 @@
 
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment, memo, type ComponentType } from 'react';
+import React, { Fragment, type ComponentType } from 'react';
 
-import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback';
+import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback.tsx';
 
 type Props = { readonly children?: never };
 type Request = number;
