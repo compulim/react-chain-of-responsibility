@@ -15,30 +15,30 @@ scenario('stability test with changing middleware', bdd => {
     .given('a TestComponent using chain of responsiblity', () => {
       const { Provider, reactComponent, useBuildRenderCallback } = createChainOfResponsibility<Request, Props>();
 
+      let count = 0;
       const alohaCall = jest.fn();
 
-      const Aloha = function Aloha() {
+      const Aloha = function Aloha({ value }: { value: number }) {
         alohaCall();
 
-        return <Fragment>Aloha!</Fragment>;
+        return <Fragment>Aloha! ({value})</Fragment>;
       };
 
-      // Changing middleware always call `reactComponent(...)` again and would result in wasted rendering.
-      // Until we do equality check on the return value of `reactComponent(...)` to see if they are different instances but same result.
-      // Otherwise, we need to cache the `reactComponent(Aloha)` for testing purpose.
-      // This way of testing it is preferred over `memo(Aloha)`.
-      // In production, web devs should do `memo(Aloha)` instead.
-      const renderAloha = reactComponent(Aloha);
+      // Changing middleware should always call `reactComponent(...)` again.
+      // This is to make sure bindProps function with side-effect should be properly re-rendered.
+      const renderAloha = reactComponent<Props & { readonly value: number }>(Aloha, () => ({ value: ++count }));
 
       const helloWorldCall = jest.fn();
 
-      const HelloWorld = function HelloWorld() {
+      const HelloWorld = function HelloWorld({ value }: { value: number }) {
         helloWorldCall();
 
-        return <Fragment>Hello, World!</Fragment>;
+        return <Fragment>Hello, World! ({value})</Fragment>;
       };
 
-      const renderHelloWorld = reactComponent(HelloWorld);
+      const renderHelloWorld = reactComponent<Props & { readonly value: number }>(HelloWorld, () => ({
+        value: ++count
+      }));
 
       const myProxyCall = jest.fn();
 
@@ -79,7 +79,7 @@ scenario('stability test with changing middleware', bdd => {
       render(<TestComponent middleware={[() => () => () => renderHelloWorld]} />)
     )
     .then('textContent should match', (_, { container }) =>
-      expect(container).toHaveProperty('textContent', 'Hello, World!')
+      expect(container).toHaveProperty('textContent', 'Hello, World! (1)')
     )
     .and('<HelloWorld> should have been rendered once', ({ helloWorldCall }) =>
       expect(helloWorldCall).toHaveBeenCalledTimes(1)
@@ -98,10 +98,11 @@ scenario('stability test with changing middleware', bdd => {
       }
     )
     .then('textContent should match', (_, { container }) =>
-      expect(container).toHaveProperty('textContent', 'Hello, World!')
+      expect(container).toHaveProperty('textContent', 'Hello, World! (2)')
     )
-    .and('<HelloWorld> should not have been re-rendered', ({ helloWorldCall }) =>
-      expect(helloWorldCall).toHaveBeenCalledTimes(1)
+    .and('<HelloWorld> should have been re-rendered', ({ helloWorldCall }) =>
+      // Should be called again to make sure side effect in bindProps is captured.
+      expect(helloWorldCall).toHaveBeenCalledTimes(2)
     )
     // Every time middleware change, it should invalidate `useBuildRenderCallback`.
     // In future, we may do more granular check to see if enhancer actually changed or not and reduce wasted rendering.
@@ -117,10 +118,12 @@ scenario('stability test with changing middleware', bdd => {
         return result;
       }
     )
-    .then('textContent should match', (_, { container }) => expect(container).toHaveProperty('textContent', 'Aloha!'))
+    .then('textContent should match', (_, { container }) =>
+      expect(container).toHaveProperty('textContent', 'Aloha! (3)')
+    )
     .and('<Aloha> should have been rendered once', ({ alohaCall }) => expect(alohaCall).toHaveBeenCalledTimes(1))
-    .and('<HelloWorld> should have been rendered once', ({ helloWorldCall }) =>
-      expect(helloWorldCall).toHaveBeenCalledTimes(1)
+    .and('<HelloWorld> should not have been rendered', ({ helloWorldCall }) =>
+      expect(helloWorldCall).toHaveBeenCalledTimes(2)
     )
     .and('<MyProxy> should have been rendered 3 times', ({ myProxyCall }) =>
       expect(myProxyCall).toHaveBeenCalledTimes(3)

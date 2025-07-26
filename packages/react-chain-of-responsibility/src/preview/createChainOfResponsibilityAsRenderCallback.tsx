@@ -178,6 +178,7 @@ function createChainOfResponsibility<
 
   function reactComponent<P extends Props>(
     component: ComponentType<P>,
+    // For `bindProps` of type function, do not do side-effect in it, it may not be always called in all scenarios.
     bindProps?:
       | (Partial<Props> & Omit<P, keyof Props>)
       | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
@@ -256,15 +257,14 @@ function createChainOfResponsibility<
     readonly render: () => ReactNode;
   };
 
-  const BuildRenderCallback = memo(
-    function BuildRenderCallback({ originalProps, render }: BuildRenderCallbackProps) {
-      const context = useMemo<RenderContextType<Props>>(() => Object.freeze({ originalProps }), [originalProps]);
+  // Do not memoize <BuildRenderCallback>.
+  // `bindProps` may have side effect and we want to be re-rendered to capture the side-effect.
+  // To prevent wasted render, web devs should memoize it themselves.
+  function BuildRenderCallback({ originalProps, render }: BuildRenderCallbackProps) {
+    const context = useMemo<RenderContextType<Props>>(() => Object.freeze({ originalProps }), [originalProps]);
 
-      return <RenderContext.Provider value={context}>{render()}</RenderContext.Provider>;
-    },
-    (prevProps, nextProps) =>
-      arePropsEqual(prevProps.originalProps, nextProps.originalProps) && Object.is(prevProps.render, nextProps.render)
-  );
+    return <RenderContext.Provider value={context}>{render()}</RenderContext.Provider>;
+  }
 
   function ChainOfResponsibilityProvider({ children, init, middleware }: ProviderProps<Request, Props, Init>) {
     if (!Array.isArray(middleware) || middleware.some(middleware => typeof middleware !== 'function')) {
@@ -328,7 +328,7 @@ function createChainOfResponsibility<
     return <BuildContext.Provider value={contextValue}>{children}</BuildContext.Provider>;
   }
 
-  const ChainOfResponsibilityProxy = memo(function ChainOfResponsibilityProxy({
+  const ChainOfResponsibilityProxy = function ChainOfResponsibilityProxy({
     fallbackComponent,
     request,
     ...props
@@ -336,7 +336,7 @@ function createChainOfResponsibility<
     const result = useBuildRenderCallback()(request, { fallbackComponent })?.(props as Props);
 
     return result ? <Fragment>{result}</Fragment> : null;
-  });
+  };
 
   const MemoizedChainOfResponsibilityProvider =
     memo<ProviderProps<Request, Props, Init>>(ChainOfResponsibilityProvider);
