@@ -145,6 +145,12 @@ type InferProviderProps<T extends InferenceHelper<any, any, any>> = T['~types'][
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type InferRequest<T extends InferenceHelper<any, any, any>> = T['~types']['request'];
 
+function createComponentHandlerResult<Props extends BaseProps>(
+  render: (overridingProps?: Partial<Props> | undefined) => ReactNode
+): ComponentHandlerResult<Props> {
+  return Object.freeze({ [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined, render });
+}
+
 function createChainOfResponsibility<
   Request = void,
   Props extends BaseProps = { readonly children?: never },
@@ -172,21 +178,19 @@ function createChainOfResponsibility<
 
   function reactComponent<P extends Props>(
     component: ComponentType<P>,
+    // For `bindProps` of type function, do not do side-effect in it, it may not be always called in all scenarios.
     bindProps?:
       | (Partial<Props> & Omit<P, keyof Props>)
       | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
       | undefined
   ): ComponentHandlerResult<Props> {
-    return Object.freeze({
-      [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined,
-      render: (overridingProps?: Partial<Props> | undefined) => (
-        <ComponentWithProps
-          bindProps={bindProps}
-          component={component as ComponentType<Props>}
-          overridingProps={overridingProps}
-        />
-      )
-    });
+    return createComponentHandlerResult((overridingProps?: Partial<Props> | undefined) => (
+      <ComponentWithProps
+        bindProps={bindProps}
+        component={component as ComponentType<Props>}
+        overridingProps={overridingProps}
+      />
+    ));
   }
 
   const ComponentWithProps = memo(function ComponentWithProps({
@@ -212,8 +216,6 @@ function createChainOfResponsibility<
     return <Component {...props} {...(typeof bindProps === 'function' ? bindProps(props) : bindProps)} />;
   });
 
-  const RENDER_CALLBACK_SYMBOL = `REACT_CHAIN_OF_RESPONSIBILITY:DO_NOT_USE_THIS_RENDER_CALLBACK`;
-
   const useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props> = () => {
     const { enhancer } = useContext(BuildContext);
 
@@ -234,28 +236,15 @@ function createChainOfResponsibility<
               return;
             }
 
-            return Object.freeze({
-              // Convert fallback component as renderer.
-              [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined,
-              render: () => (
-                // Currently, there are no ways to set `bindProps` to `fallbackComponent`.
-                // `fallbackComponent` do not need `overridingProps` because it is the last one in the chain, it would not have the next() function.
-                <ComponentWithProps component={fallbackComponent} />
-              )
-            });
+            // `fallbackComponent` do not need `overridingProps` because it is the last one in the chain, it would not have the next() function.
+            return reactComponent(fallbackComponent);
           })(request);
 
         return (
           result &&
-          ((props: Props) => (
+          ((originalProps: Props) => (
             // This is render function, we cannot call any hooks here.
-            <RenderCallbackAsComponent
-              {...props} // Spreading the props to leverage React.memo()
-              {...{
-                // TODO: Verify if `result.render` is stable or not, and check performance
-                [RENDER_CALLBACK_SYMBOL]: result.render
-              }}
-            />
+            <BuildRenderCallback originalProps={originalProps} render={result.render} />
           ))
         );
       },
@@ -263,20 +252,19 @@ function createChainOfResponsibility<
     );
   };
 
-  type RenderCallbackAsComponentProps = Props & {
-    // First render function does not need overrideProps.
-    // Override props is for upstreamer to override props before passing to downsteamers.
-    readonly [RENDER_CALLBACK_SYMBOL]: () => ReactNode;
+  type BuildRenderCallbackProps = {
+    readonly originalProps: Props;
+    readonly render: () => ReactNode;
   };
 
-  const RenderCallbackAsComponent = memo(function RenderFunction({
-    [RENDER_CALLBACK_SYMBOL]: render,
-    ...props
-  }: RenderCallbackAsComponentProps) {
-    const context = useMemo<RenderContextType<Props>>(() => Object.freeze({ originalProps: props as Props }), [props]);
+  // Do not memoize <BuildRenderCallback>.
+  // `bindProps` may have side effect and we want to be re-rendered to capture the side-effect.
+  // To prevent wasted render, web devs should memoize it themselves.
+  function BuildRenderCallback({ originalProps, render }: BuildRenderCallbackProps) {
+    const context = useMemo<RenderContextType<Props>>(() => Object.freeze({ originalProps }), [originalProps]);
 
     return <RenderContext.Provider value={context}>{render()}</RenderContext.Provider>;
-  });
+  }
 
   function ChainOfResponsibilityProvider({ children, init, middleware }: ProviderProps<Request, Props, Init>) {
     if (!Array.isArray(middleware) || middleware.some(middleware => typeof middleware !== 'function')) {
@@ -352,7 +340,7 @@ function createChainOfResponsibility<
   return Object.freeze({
     Provider: MemoizedChainOfResponsibilityProvider as typeof MemoizedChainOfResponsibilityProvider &
       InferenceHelper<Request, Props, Init>,
-    Proxy: memo<ProxyProps<Request, Props>>(ChainOfResponsibilityProxy),
+    Proxy: ChainOfResponsibilityProxy,
     reactComponent,
     useBuildRenderCallback
 
