@@ -328,15 +328,11 @@ function createChainOfResponsibility<
     return <BuildContext.Provider value={contextValue}>{children}</BuildContext.Provider>;
   }
 
-  const ChainOfResponsibilityProxy = function ChainOfResponsibilityProxy({
-    fallbackComponent,
-    request,
-    ...props
-  }: ProxyProps<Request, Props>): ReactNode {
+  function ChainOfResponsibilityProxy({ fallbackComponent, request, ...props }: ProxyProps<Request, Props>) {
     const result = useBuildRenderCallback()(request, { fallbackComponent })?.(props as Props);
 
     return result ? <Fragment>{result}</Fragment> : null;
-  };
+  }
 
   const MemoizedChainOfResponsibilityProvider =
     memo<ProviderProps<Request, Props, Init>>(ChainOfResponsibilityProvider);
