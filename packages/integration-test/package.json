@@ -51,6 +51,9 @@
     "@types/react-dom": [
       "18"
     ],
+    "@types/react-test-renderer": [
+      "18"
+    ],
     "react": [
       "18"
     ],
