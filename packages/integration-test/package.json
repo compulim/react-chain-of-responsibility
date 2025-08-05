@@ -23,21 +23,27 @@
   "switch:react-16": {
     "devDependencies": {
       "@types/react": "^16",
-      "react": "16.8.0",
-      "react-test-renderer": "16.8.0"
+      "@types/react-dom": "^16",
+      "react": "16.8.6",
+      "react-dom": "16.8.6",
+      "react-test-renderer": "16.8.6"
     }
   },
   "switch:react-17": {
     "devDependencies": {
       "@types/react": "^17",
+      "@types/react-dom": "^17",
       "react": "17.0.0",
+      "react-dom": "17.0.0",
       "react-test-renderer": "17.0.0"
     }
   },
   "switch:react-18": {
     "devDependencies": {
       "@types/react": "^18",
+      "@types/react-dom": "^18",
       "react": "18.0.0",
+      "react-dom": "18.0.0",
       "react-test-renderer": "18.0.0"
     }
   },
@@ -49,6 +55,9 @@
       "18"
     ],
     "@types/react-dom": [
+      "18"
+    ],
+    "@types/react-test-renderer": [
       "18"
     ],
     "react": [
@@ -68,10 +77,12 @@
     "@tsconfig/strictest": "^2.0.5",
     "@types/jest": "^30.0.0",
     "@types/react": "^18.3.23",
-    "@types/react-test-renderer": "^19.1.0",
+    "@types/react-dom": "^18.3.7",
+    "@types/react-test-renderer": "^18.3.1",
     "jest": "^30.0.4",
     "jest-environment-jsdom": "^30.0.4",
     "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-test-renderer": "^18.3.1",
     "typescript": "^5.8.3"
   },
