@@ -75,9 +75,9 @@
       "@types/react": "^16",
       "@types/react-dom": "^16",
       "@types/react-test-renderer": "^16",
-      "react": "16.8.0",
-      "react-dom": "16.8.0",
-      "react-test-renderer": "16.8.0"
+      "react": "16.8.6",
+      "react-dom": "16.8.6",
+      "react-test-renderer": "16.8.6"
     }
   },
   "switch:react-17": {
@@ -93,6 +93,7 @@
   },
   "switch:react-18": {
     "devDependencies": {
+      "@testing-library/react": "^16",
       "@types/react": "^18",
       "@types/react-dom": "^18",
       "@types/react-test-renderer": "^18",
@@ -161,7 +162,7 @@
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
-    "react": ">=16.8.0"
+    "react": ">=16.8.6"
   },
   "dependencies": {
     "handler-chain": "^0.1.0",
