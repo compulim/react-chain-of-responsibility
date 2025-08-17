@@ -32,6 +32,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - [`prettier@3.6.2`](https://npmjs.com/package/prettier/v/3.6.2)
     - [`shiki@3.8.1`](https://npmjs.com/package/shiki/v/3.8.1)
 
+### Fixed
+
+- Exporting `/preview.js` to support TypeScript module resolution of "node10" and Webpack, by [@compulim](https://github.com/compulim) in PR [#103](https://github.com/compulim/react-chain-of-responsibility/pull/103)
+
 ### Removed
 
 - 💢 `createChainOfResponsibilityForFluentUI` is marked as deprecated and will be removed in future releases, by [@compulim](https://github.com/compulim) in PR [#90](https://github.com/compulim/react-chain-of-responsibility/pull/90)
