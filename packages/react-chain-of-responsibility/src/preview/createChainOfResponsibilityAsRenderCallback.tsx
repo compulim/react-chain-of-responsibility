@@ -8,6 +8,7 @@ import React, {
   useMemo,
   type ComponentType,
   type PropsWithChildren,
+  type ReactElement,
   type ReactNode
 } from 'react';
 import { custom, function_, object, parse, safeParse } from 'valibot';
@@ -54,7 +55,7 @@ type ChainOfResponsibility<Request, Props extends BaseProps, Init> = {
 //       Verify that reactComponent() from an instance of CoR should throw error when used in another instance of CoR.
 const DO_NOT_CREATE_THIS_OBJECT_YOURSELF = Symbol();
 
-type ComponentRenderer<Props> = (props: Props) => ReactNode;
+type ComponentRenderer<Props> = (props: Props) => ReactElement | null;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const componentHandlerResultSchema = custom<ComponentHandlerResult<any>>(
@@ -68,7 +69,7 @@ const componentHandlerResultSchema = custom<ComponentHandlerResult<any>>(
 
 interface ComponentHandlerResult<Props extends BaseProps> {
   readonly [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined;
-  readonly render: (overridingProps?: Partial<Props> | undefined) => ReactNode;
+  readonly render: (overridingProps?: Partial<Props> | undefined) => ReactElement | null;
 }
 
 type ComponentHandler<Request, Props extends BaseProps> = (
@@ -146,7 +147,7 @@ type InferProviderProps<T extends InferenceHelper<any, any, any>> = T['~types'][
 type InferRequest<T extends InferenceHelper<any, any, any>> = T['~types']['request'];
 
 function createComponentHandlerResult<Props extends BaseProps>(
-  render: (overridingProps?: Partial<Props> | undefined) => ReactNode
+  render: (overridingProps?: Partial<Props> | undefined) => ReactElement | null
 ): ComponentHandlerResult<Props> {
   return Object.freeze({ [DO_NOT_CREATE_THIS_OBJECT_YOURSELF]: undefined, render });
 }

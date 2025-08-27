@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- (Preview) 💢 Changed signature to return wrapped return value, instead of plain `ComponentType`, by [@compulim](https://github.com/compulim) in PR [#91](https://github.com/compulim/react-chain-of-responsibility/pull/91), [#92](https://github.com/compulim/react-chain-of-responsibility/pull/92), [#99](https://github.com/compulim/react-chain-of-responsibility/pull/99), [#100](https://github.com/compulim/react-chain-of-responsibility/pull/100), and [#101](https://github.com/compulim/react-chain-of-responsibility/pull/101)
+- (Preview) 💢 Changed signature to return wrapped return value, instead of plain `ComponentType`, by [@compulim](https://github.com/compulim) in PR [#91](https://github.com/compulim/react-chain-of-responsibility/pull/91), [#92](https://github.com/compulim/react-chain-of-responsibility/pull/92), [#99](https://github.com/compulim/react-chain-of-responsibility/pull/99), [#100](https://github.com/compulim/react-chain-of-responsibility/pull/100), [#101](https://github.com/compulim/react-chain-of-responsibility/pull/101), and [#104](https://github.com/compulim/react-chain-of-responsibility/pull/104)
 - Use `handler-chain` package, by [@compulim](https://github.com/compulim) in PR [#93](https://github.com/compulim/react-chain-of-responsibility/pull/93)
 - Bumped dependencies, in PR [#97](https://github.com/compulim/react-chain-of-responsibility/pull/97)
   - Development dependencies
