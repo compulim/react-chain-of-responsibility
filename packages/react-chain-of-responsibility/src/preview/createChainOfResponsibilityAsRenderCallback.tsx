@@ -88,10 +88,15 @@ type ComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
 type ReactComponentInit<
   Props extends BaseProps,
   W extends (BaseProps & { children?: ReactNode | undefined }) | void = void
-> = {
-  wrapperComponent?: ComponentType<W> | undefined;
-  wrapperProps?: W | ((props: Props) => W) | undefined;
-};
+> = W extends void
+  ? {
+      wrapperComponent?: undefined;
+      wrapperProps?: undefined;
+    }
+  : {
+      wrapperComponent: ComponentType<W>;
+      wrapperProps: W | ((props: Props) => W);
+    };
 
 type ReactComponentHandlerResult<Props extends BaseProps> = <
   P extends Props,
@@ -196,15 +201,21 @@ function createChainOfResponsibility<
     // memo() and generic type do not play well together.
     const TypedWrapperComponent = WrapperComponent as ComponentType<WrapperComponentProps<P, W>>;
 
-    return createComponentHandlerResult((overridingProps?: Partial<Props> | undefined) => (
-      <TypedWrapperComponent
-        bindProps={bindProps}
-        component={component}
-        overridingProps={overridingProps}
-        wrapperComponent={init?.wrapperComponent}
-        wrapperProps={init?.wrapperProps}
-      />
-    ));
+    if (init?.wrapperComponent) {
+      return createComponentHandlerResult((overridingProps?: Partial<Props> | undefined) => (
+        <TypedWrapperComponent
+          bindProps={bindProps}
+          component={component}
+          overridingProps={overridingProps}
+          wrapperComponent={init.wrapperComponent as ComponentType<W>}
+          wrapperProps={init.wrapperProps as W}
+        />
+      ));
+    } else {
+      return createComponentHandlerResult((overridingProps?: Partial<Props> | undefined) => (
+        <TypedWrapperComponent bindProps={bindProps} component={component} overridingProps={overridingProps} />
+      ));
+    }
   }
 
   type WrapperComponentProps<
