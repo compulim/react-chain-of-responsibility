@@ -201,7 +201,7 @@ function createChainOfResponsibility<
     // memo() and generic type do not play well together.
     const TypedWrapperComponent = WrapperComponent as ComponentType<WrapperComponentProps<P, W>>;
 
-    if (init?.wrapperComponent) {
+    if (init?.wrapperComponent && init.wrapperProps) {
       return createComponentHandlerResult((overridingProps?: Partial<Props> | undefined) => (
         <TypedWrapperComponent
           bindProps={bindProps}
