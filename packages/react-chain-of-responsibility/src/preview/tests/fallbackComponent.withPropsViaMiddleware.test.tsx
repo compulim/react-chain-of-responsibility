@@ -8,7 +8,6 @@ import React, { Fragment, type ReactNode } from 'react';
 import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback';
 
 type Props = {
-  readonly children?: never;
   readonly value: number;
 };
 
