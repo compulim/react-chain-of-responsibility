@@ -11,6 +11,7 @@ import React, {
   type ReactElement,
   type ReactNode
 } from 'react';
+import { type SetOptional } from 'type-fest';
 import { custom, function_, object, parse, safeParse } from 'valibot';
 
 import arePropsEqual from './private/arePropsEqual.ts';
@@ -84,12 +85,26 @@ type ComponentMiddleware<Request, Props extends BaseProps, Init = undefined> = (
   init: Init
 ) => ComponentEnhancer<Request, Props>;
 
-type ReactComponentHandlerResult<Props extends object> = <P extends Props>(
+type ReactComponentInit<
+  Props extends BaseProps,
+  W extends (BaseProps & { children?: ReactNode | undefined }) | void = void
+> = W extends void
+  ? {
+      wrapperComponent?: undefined;
+      wrapperProps?: undefined;
+    }
+  : {
+      wrapperComponent: ComponentType<W>;
+      wrapperProps: W | ((props: Props) => W);
+    };
+
+type ReactComponentHandlerResult<Props extends BaseProps> = <
+  P extends Props,
+  W extends (BaseProps & { children?: ReactNode | undefined }) | void = void
+>(
   component: ComponentType<P>,
-  bindProps?:
-    | (Partial<Props> & Omit<P, keyof Props>)
-    | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
-    | undefined
+  bindProps?: SetOptional<P, keyof Props> | ((props: Props) => SetOptional<P, keyof Props>) | undefined,
+  init?: ReactComponentInit<Props, W>
 ) => ComponentHandlerResult<Props>;
 
 type UseBuildRenderCallbackOptions<Props> = {
@@ -177,32 +192,54 @@ function createChainOfResponsibility<
     })
   );
 
-  function reactComponent<P extends Props>(
+  function reactComponent<P extends Props, W extends (BaseProps & { children?: ReactNode | undefined }) | void = void>(
     component: ComponentType<P>,
     // For `bindProps` of type function, do not do side-effect in it, it may not be always called in all scenarios.
-    bindProps?:
-      | (Partial<Props> & Omit<P, keyof Props>)
-      | ((props: Props) => Partial<Props> & Omit<P, keyof Props>)
-      | undefined
+    bindProps?: SetOptional<P, keyof Props> | ((props: Props) => SetOptional<P, keyof Props>) | undefined,
+    init?: ReactComponentInit<Props, W> | undefined
   ): ComponentHandlerResult<Props> {
-    return createComponentHandlerResult((overridingProps?: Partial<Props> | undefined) => (
-      <ComponentWithProps
-        bindProps={bindProps}
-        component={component as ComponentType<Props>}
-        overridingProps={overridingProps}
-      />
-    ));
+    // memo() and generic type do not play well together.
+    const TypedWrapperComponent = WrapperComponent as ComponentType<WrapperComponentProps<P, W>>;
+
+    if (init?.wrapperComponent && init.wrapperProps) {
+      return createComponentHandlerResult((overridingProps?: Partial<Props> | undefined) => (
+        <TypedWrapperComponent
+          bindProps={bindProps}
+          component={component}
+          overridingProps={overridingProps}
+          wrapperComponent={init.wrapperComponent as ComponentType<W>}
+          wrapperProps={init.wrapperProps as W}
+        />
+      ));
+    } else {
+      return createComponentHandlerResult((overridingProps?: Partial<Props> | undefined) => (
+        <TypedWrapperComponent bindProps={bindProps} component={component} overridingProps={overridingProps} />
+      ));
+    }
   }
 
-  const ComponentWithProps = memo(function ComponentWithProps({
+  type WrapperComponentProps<
+    P extends Props,
+    W extends (BaseProps & { children?: ReactNode | undefined }) | void = void
+  > = {
+    readonly bindProps: SetOptional<P, keyof Props> | ((props: Props) => SetOptional<P, keyof Props>) | undefined;
+    readonly component: ComponentType<P>;
+    readonly overridingProps: Partial<Props> | undefined;
+    readonly wrapperComponent?: ComponentType<W> | undefined;
+    readonly wrapperProps?: W | ((props: Props) => W) | undefined;
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const WrapperComponent = memo<WrapperComponentProps<any, any>>(function WrapperComponent<
+    P extends Props,
+    W extends BaseProps & { children?: ReactNode | undefined }
+  >({
     bindProps,
     component: Component,
-    overridingProps
-  }: {
-    readonly bindProps?: Partial<Props> | ((props: Props) => Partial<Props>) | undefined;
-    readonly component: ComponentType<Props>;
-    readonly overridingProps?: Partial<Props> | undefined;
-  }) {
+    overridingProps,
+    wrapperComponent: WrapperComponent,
+    wrapperProps
+  }: WrapperComponentProps<P, W>) {
     const { allowOverrideProps } = options;
     const { originalProps: renderCallbackProps } = useContext(RenderContext);
 
@@ -214,7 +251,22 @@ function createChainOfResponsibility<
       allowOverrideProps ? { ...renderCallbackProps, ...overridingProps } : { ...renderCallbackProps }
     );
 
-    return <Component {...props} {...(typeof bindProps === 'function' ? bindProps(props) : bindProps)} />;
+    const child = (
+      <Component
+        {...({
+          ...props,
+          ...(typeof bindProps === 'function' ? bindProps(props) : bindProps)
+        } as P)}
+      />
+    );
+
+    return WrapperComponent && wrapperProps ? (
+      <WrapperComponent {...(typeof wrapperProps === 'function' ? wrapperProps(props) : wrapperProps)}>
+        {child}
+      </WrapperComponent>
+    ) : (
+      child
+    );
   });
 
   const useBuildRenderCallback: () => UseBuildRenderCallback<Request, Props> = () => {
