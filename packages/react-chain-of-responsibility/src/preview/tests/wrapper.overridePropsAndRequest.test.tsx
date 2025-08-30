@@ -39,7 +39,7 @@ function Upstream({ result, value }: UpstreamProps): ReactElement | null {
 
 scenario('with wrapper component and overriding props and request', bdd => {
   bdd
-    .given('a TestComponent using chain of responsiblity', () => {
+    .given('a TestComponent using chain of responsibility', () => {
       const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>({
         allowOverrideProps: true,
         passModifiedRequest: true
