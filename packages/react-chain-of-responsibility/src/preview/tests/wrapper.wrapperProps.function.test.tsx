@@ -30,7 +30,7 @@ function MyComponent({ value }: MyComponentProps) {
 
 scenario('with wrapper component', bdd => {
   bdd
-    .given('a TestComponent using chain of responsiblity', () => {
+    .given('a TestComponent using chain of responsibility', () => {
       const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>();
 
       const middleware: readonly InferMiddleware<typeof Provider>[] = [
