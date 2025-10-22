@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Changed ECMAScript target version, by [@compulim](https://github.com/compulim), in PR [#XXX](https://github.com/compulim/react-chain-of-responsibility/pull/XXX)
+- Changed ECMAScript target version, by [@compulim](https://github.com/compulim), in PR [#108](https://github.com/compulim/react-chain-of-responsibility/pull/108)
    - CommonJS will target ES2019, changed from ESNext, will support Webpack 4
    - ES Modules will continue to target ESNext
 
