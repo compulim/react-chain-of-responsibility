@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed backward compatible barrel file to use CommonJS build, by [@compulim](https://github.com/compulim), in PR [#XXX](https://github.com/compulim/react-chain-of-responsibility/pull/XXX)
+- Fixed backward compatible barrel file to use CommonJS build, by [@compulim](https://github.com/compulim), in PR [#111](https://github.com/compulim/react-chain-of-responsibility/pull/111)
 
 ## [0.4.1] - 2025-10-22
 
