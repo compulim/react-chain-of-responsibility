@@ -3,6 +3,7 @@
   "version": "0.0.0-0",
   "description": "Using chain of responsibility design pattern for compositing and customizing React component.",
   "files": [
+    "./*.js",
     "./dist/"
   ],
   "exports": {
