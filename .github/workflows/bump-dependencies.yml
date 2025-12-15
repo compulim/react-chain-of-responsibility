@@ -1,4 +1,4 @@
-name: Bump dependencies
+name: 🧼 Bump dependencies
 
 on:
   workflow_dispatch: {}
