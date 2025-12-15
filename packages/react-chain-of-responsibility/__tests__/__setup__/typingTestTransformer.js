@@ -13,6 +13,8 @@ const run = ({ filename }) => {
     allowSyntheticDefaultImports: true,
     jsx: typeScript.JsxEmit.React,
     lib: ['lib.dom.d.ts', 'lib.esnext.d.ts'],
+    module: typeScript.ModuleKind.ESNext,
+    moduleResolution: typeScript.ModuleResolutionKind.Bundler,
     noEmit: true,
     skipLibCheck: true,
     strict: true,
