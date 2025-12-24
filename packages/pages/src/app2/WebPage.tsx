@@ -33,11 +33,14 @@ function WebPage(props: Props) {
 
   const onCodeRef = useRefFrom(onCode);
 
-  const handleMessage = useCallback<(event: MessageEvent) => void>(event => {
-    const result = safeParse(codeMessageEventDataSchema, event.data);
+  const handleMessage = useCallback<(event: MessageEvent) => void>(
+    event => {
+      const result = safeParse(codeMessageEventDataSchema, event.data);
 
-    result.success && onCodeRef.current?.(result.output);
-  }, [onCodeRef]);
+      result.success && onCodeRef.current?.(result.output);
+    },
+    [onCodeRef]
+  );
 
   useEffect(() => {
     window.addEventListener('message', handleMessage);
