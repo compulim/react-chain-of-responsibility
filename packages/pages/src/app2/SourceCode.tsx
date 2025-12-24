@@ -22,7 +22,9 @@ function SourceCode(props: Props) {
   useEffect(() => {
     let unmounted = false;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHTMLCode(undefined);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPrettifiedCode('');
 
     (async () => {

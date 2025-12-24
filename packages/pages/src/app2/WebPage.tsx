@@ -12,6 +12,7 @@ import {
   type InferOutput
 } from 'valibot';
 import './WebPage.css';
+import { useRefFrom } from 'use-ref-from';
 
 const codeMessageEventDataSchema = pipe(object({ code: string() }), readonly());
 
@@ -30,11 +31,16 @@ type Props = InferInput<typeof propsSchema>;
 function WebPage(props: Props) {
   const { onCode, src } = parse(propsSchema, props);
 
-  const handleMessage = useCallback<(event: MessageEvent) => void>(event => {
-    const result = safeParse(codeMessageEventDataSchema, event.data);
+  const onCodeRef = useRefFrom(onCode);
 
-    result.success && onCode?.(result.output);
-  }, []);
+  const handleMessage = useCallback<(event: MessageEvent) => void>(
+    event => {
+      const result = safeParse(codeMessageEventDataSchema, event.data);
+
+      result.success && onCodeRef.current?.(result.output);
+    },
+    [onCodeRef]
+  );
 
   useEffect(() => {
     window.addEventListener('message', handleMessage);
