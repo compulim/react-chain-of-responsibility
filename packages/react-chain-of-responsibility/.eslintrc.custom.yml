@@ -1,0 +1,2 @@
+rules:
+  react-hooks/static-components: off # We use a lot of techniques
