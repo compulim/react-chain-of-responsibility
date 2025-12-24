@@ -18,9 +18,6 @@
   },
   "author": "William Wong (https://github.com/compulim)",
   "license": "MIT",
-  "localPeerDependencies": {
-    "react-chain-of-responsibility": "^0.0.0-0"
-  },
   "switch:react-16": {
     "devDependencies": {
       "@types/react": "^16",
@@ -47,6 +44,9 @@
       "react-dom": "18.0.0",
       "react-test-renderer": "18.0.0"
     }
+  },
+  "localPeerDependencies": {
+    "react-chain-of-responsibility": "0.0.0-0"
   },
   "pinDependencies": {
     "@testduet/wait-for": [
@@ -87,6 +87,6 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "react-chain-of-responsibility": "^0.0.0-0"
+    "react-chain-of-responsibility": "0.0.0-0"
   }
 }
