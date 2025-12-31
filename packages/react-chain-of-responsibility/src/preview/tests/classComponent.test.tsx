@@ -1,11 +1,11 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Component, Fragment } from 'react';
+import { expect } from 'expect';
+import NodeTest from 'node:test';
+import React from 'react';
+import createChainOfResponsibility from '../createChainOfResponsibilityAsRenderCallback.tsx';
 
-import createChainOfResponsibility from '../createChainOfResponsibilityAsRenderCallback';
+const { Component, Fragment } = React;
 
 type Props = { readonly children?: never };
 type Request = string;
@@ -18,23 +18,27 @@ class MyComponent extends Component<MyComponentProps> {
   }
 }
 
-scenario('call enhancer() twice', bdd => {
-  bdd
-    .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>({
-        passModifiedRequest: true
-      });
+scenario(
+  'call enhancer() twice',
+  bdd => {
+    bdd
+      .given('a TestComponent using chain of responsiblity', () => {
+        const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>({
+          passModifiedRequest: true
+        });
 
-      return function TestComponent() {
-        return (
-          <Provider middleware={[() => () => request => reactComponent(MyComponent, { request })]}>
-            <Proxy request="Hello, World!" />
-          </Provider>
-        );
-      };
-    })
-    .when('the component is rendered', TestComponent => render(<TestComponent />))
-    .then('textContent should match', (_, { container }) =>
-      expect(container).toHaveProperty('textContent', 'Hello, World!')
-    );
-});
+        return function TestComponent() {
+          return (
+            <Provider middleware={[() => () => request => reactComponent(MyComponent, { request })]}>
+              <Proxy request="Hello, World!" />
+            </Provider>
+          );
+        };
+      })
+      .when('the component is rendered', TestComponent => render(<TestComponent />))
+      .then('textContent should match', (_, { container }) =>
+        expect(container).toHaveProperty('textContent', 'Hello, World!')
+      );
+  },
+  NodeTest
+);

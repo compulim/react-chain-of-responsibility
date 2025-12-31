@@ -57,7 +57,7 @@
     "init": "npm run init:dev --if-present && npm run init:prod --if-present",
     "init:dev": "npm install --save--dev @compulim/test-harness@0.0.0-0 @tsconfig/recommended @tsconfig/strictest @types/node @types/react@18 @types/react-dom@18 escape-string-regexp expect publint react@18 react-dom@18 react-test-renderer@18 tsup typescript",
     "test:types": "node --experimental-strip-types --import @compulim/test-harness/test-types.import --test **/*.test-types.ts",
-    "test:unit": "node --experimental-strip-types --experimental-test-coverage --test"
+    "test:unit": "node --experimental-strip-types --experimental-test-coverage --experimental-test-isolation=none --import @compulim/test-harness/happy-dom.import --import @compulim/test-harness/jsx.import --test **/*.test.{cjs,mjs,js,cts,mts,ts,jsx,tsx}"
   },
   "repository": {
     "type": "git",
@@ -108,12 +108,6 @@
     }
   },
   "pinDependencies": {
-    "@testduet/given-when-then": [
-      "main"
-    ],
-    "@testduet/wait-for": [
-      "main"
-    ],
     "@types/react": [
       "18"
     ],
@@ -136,44 +130,41 @@
       "18"
     ]
   },
+  "localPeerDependencies": {
+    "@compulim/test-harness": "0.0.0-0"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
   "devDependencies": {
-    "@babel/preset-env": "^7.28.0",
-    "@babel/preset-react": "^7.27.1",
-    "@babel/preset-typescript": "^7.27.1",
+    "@compulim/test-harness": "0.0.0-0",
     "@fluentui/react": "^8.123.1",
-    "@testduet/given-when-then": "^0.1.0-main.334801c",
-    "@testduet/wait-for": "^0.1.1-main.3a4f261",
+    "@testduet/given-when-then": "^0.1.0",
+    "@testduet/wait-for": "^0.1.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",
     "@tsconfig/recommended": "^1.0.10",
     "@tsconfig/strictest": "^2.0.5",
-    "@types/jest": "^30.0.0",
     "@types/node": "^24.0.15",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@types/react-test-renderer": "^18.3.1",
-    "esbuild": "^0.25.8",
+    "@types/sinon": "^21.0.0",
     "escape-string-regexp": "^4.0.0",
-    "jest": "^30.0.4",
-    "jest-environment-jsdom": "^30.0.4",
+    "jest-mock": "^30.2.0",
     "prettier": "^3.6.2",
     "publint": "^0.3.12",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-test-renderer": "^18.3.1",
     "react-wrap-with": "^0.1.0",
+    "sinon": "^21.0.1",
     "tsup": "^8.5.0",
     "type-fest": "^4.41.0",
     "typescript": "^5.8.3"
   },
-  "peerDependencies": {
-    "react": ">=16.8.0"
-  },
   "dependencies": {
     "handler-chain": "^0.1.0",
     "valibot": "^1.1.0"
-  },
-  "localPeerDependencies": {
-    "@compulim/test-harness": "0.0.0-0"
   }
 }

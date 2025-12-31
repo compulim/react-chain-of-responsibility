@@ -1,11 +1,11 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment } from 'react';
+import { expect } from 'expect';
+import NodeTest from 'node:test';
+import React from 'react';
+import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback.tsx';
 
-import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback';
+const { Fragment } = React;
 
 type Props = {
   readonly children?: never;
@@ -63,4 +63,4 @@ scenario('rendering fallback component with props', bdd => {
     .then('textContent should match', (_, { container }) =>
       expect(container).toHaveProperty('textContent', 'Fallback (1)')
     );
-});
+}, NodeTest);

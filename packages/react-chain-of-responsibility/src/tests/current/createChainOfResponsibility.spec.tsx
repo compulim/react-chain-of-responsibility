@@ -1,15 +1,14 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 // TODO: Remove this test when we end-to-end test our samples.
 
+import { describeEach } from '@compulim/test-harness/describeEach';
 import type { RenderResult } from '@testing-library/react';
 import { render } from '@testing-library/react';
+import { expect } from 'expect';
+import { before, describe, test } from 'node:test';
 import React, { type ComponentType, type PropsWithChildren } from 'react';
 import { withProps, wrapWith } from 'react-wrap-with';
-
-import createChainOfResponsibility from '../../createChainOfResponsibility';
-import type { ComponentMiddleware } from '../../types';
+import createChainOfResponsibility from '../../createChainOfResponsibility.tsx';
+import type { ComponentMiddleware } from '../../types.ts';
 
 type LinkProps = PropsWithChildren<{ className: string; href: string }>;
 
@@ -54,10 +53,10 @@ describe('with a link middleware', () => {
 
   const { Provider, Proxy, useBuildComponentCallback } = createChainOfResponsibility<string, LinkProps, string[]>();
 
-  describe.each(['hook', 'proxy'])('when rendering with %s', type => {
+  describeEach<['hook' | 'proxy']>([['hook'], ['proxy']])('when rendering with %s', type => {
     let RenderLink: ComponentType<LinkProps>;
 
-    beforeAll(() => {
+    before(() => {
       if (type === 'proxy') {
         RenderLink = wrapWith(withProps(Provider, { init: ['internal.example.com'], middleware }))(
           (props: LinkProps) => <Proxy {...props} request={props.href} />
@@ -85,7 +84,7 @@ describe('with a link middleware', () => {
       let link: HTMLElement | null;
       let result: RenderResult;
 
-      beforeAll(() => {
+      before(() => {
         result = render(
           <RenderLink className="link" href="/sitemap.html">
             Site map
@@ -119,7 +118,7 @@ describe('with a link middleware', () => {
       let link: HTMLElement | null;
       let result: RenderResult;
 
-      beforeAll(() => {
+      before(() => {
         result = render(
           <RenderLink className="link" href="https://example.com/">
             Example.com
@@ -153,7 +152,7 @@ describe('with a link middleware', () => {
       let link: HTMLElement | null;
       let result: RenderResult;
 
-      beforeAll(() => {
+      before(() => {
         result = render(
           <RenderLink className="link" href="https://internal.example.com/sitemap.html">
             Site map

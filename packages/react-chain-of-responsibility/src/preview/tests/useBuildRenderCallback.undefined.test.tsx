@@ -1,48 +1,53 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment } from 'react';
+import { expect } from 'expect';
+import { spyOn } from 'jest-mock';
+import NodeTest from 'node:test';
+import React from 'react';
+import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback.tsx';
 
-import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback';
+const { Fragment } = React;
 
 type Props = { readonly children?: never; value: number };
 type Request = void;
 
-scenario('useBuildRenderCallback with an empty chain', bdd => {
-  bdd
-    .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, useBuildRenderCallback } = createChainOfResponsibility<Request, Props>();
+scenario(
+  'useBuildRenderCallback with an empty chain',
+  bdd => {
+    bdd
+      .given('a TestComponent using chain of responsiblity', () => {
+        const { Provider, useBuildRenderCallback } = createChainOfResponsibility<Request, Props>();
 
-      const middleware: readonly InferMiddleware<typeof Provider>[] = [];
+        const middleware: readonly InferMiddleware<typeof Provider>[] = [];
 
-      function MyProxy() {
-        const render = useBuildRenderCallback();
+        function MyProxy() {
+          const render = useBuildRenderCallback();
 
-        expect(render()).toBe(undefined);
+          expect(render()).toBe(undefined);
 
-        return <Fragment>Empty</Fragment>;
-      }
-
-      return {
-        TestComponent: function TestComponent() {
-          return (
-            <Provider middleware={middleware}>
-              <MyProxy />
-            </Provider>
-          );
+          return <Fragment>Empty</Fragment>;
         }
-      };
-    })
-    .and(
-      'a console.warn spy',
-      ({ TestComponent }) => ({
-        TestComponent,
-        warn: jest.spyOn(console, 'warn').mockImplementation(() => {})
-      }),
-      ({ warn }) => warn.mockRestore()
-    )
-    .when('the component is rendered', ({ TestComponent }) => render(<TestComponent />))
-    .then('textContent should match', (_, { container }) => expect(container).toHaveProperty('textContent', 'Empty'));
-});
+
+        return {
+          TestComponent: function TestComponent() {
+            return (
+              <Provider middleware={middleware}>
+                <MyProxy />
+              </Provider>
+            );
+          }
+        };
+      })
+      .and(
+        'a console.warn spy',
+        ({ TestComponent }) => ({
+          TestComponent,
+          warn: spyOn(console, 'warn')
+        }),
+        ({ warn }) => warn.mockRestore()
+      )
+      .when('the component is rendered', ({ TestComponent }) => render(<TestComponent />))
+      .then('textContent should match', (_, { container }) => expect(container).toHaveProperty('textContent', 'Empty'));
+  },
+  NodeTest
+);

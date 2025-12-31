@@ -1,11 +1,11 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment, type ReactNode } from 'react';
+import { expect } from 'expect';
+import NodeTest from 'node:test';
+import React, { type ReactNode } from 'react';
+import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback.tsx';
 
-import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback';
+const { Fragment } = React;
 
 type Props = { readonly children?: ReactNode | undefined };
 type Request = ReadonlySet<'bold' | 'italic'>;
@@ -73,4 +73,4 @@ scenario('decorating downstreamer', bdd => {
     )
     .when('the component is rendered with nothing', TestComponent => render(<TestComponent request={new Set()} />))
     .then('should be plain text', (_, { container }) => expect(container).toHaveProperty('innerHTML', 'Hello, World!'));
-});
+}, NodeTest);

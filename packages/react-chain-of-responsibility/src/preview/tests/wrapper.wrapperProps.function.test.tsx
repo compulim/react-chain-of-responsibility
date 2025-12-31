@@ -1,11 +1,9 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
+import { expect } from 'expect';
+import NodeTest from 'node:test';
 import React, { Fragment, type ReactNode } from 'react';
-
-import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback';
+import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback.tsx';
 
 type Props = { readonly children?: never; readonly value: number };
 type Request = number;
@@ -54,4 +52,4 @@ scenario('with wrapper component', bdd => {
     .then('textContent should match', (_, { container }) =>
       expect(container).toHaveProperty('textContent', '<MyWrapper value={3}>Hello, World! (2)</MyWrapper>')
     );
-});
+}, NodeTest);

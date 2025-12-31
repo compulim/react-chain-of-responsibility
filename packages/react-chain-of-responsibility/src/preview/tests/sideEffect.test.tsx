@@ -1,99 +1,106 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment } from 'react';
+import { expect } from 'expect';
+import NodeTest, { mock } from 'node:test';
+import React from 'react';
+import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback.tsx';
 
-import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback';
+const { Fragment } = React;
 
 type Props = { readonly children?: never };
 type Request = void;
 
-scenario('side effect in bindProps', bdd => {
-  bdd
-    .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent, useBuildRenderCallback } = createChainOfResponsibility<Request, Props>();
+scenario(
+  'side effect in bindProps',
+  bdd => {
+    bdd
+      .given('a TestComponent using chain of responsiblity', () => {
+        const { Provider, Proxy, reactComponent, useBuildRenderCallback } = createChainOfResponsibility<
+          Request,
+          Props
+        >();
 
-      let count = 0;
-      const renderCall = jest.fn();
+        let count = 0;
+        const renderCall = mock.fn();
 
-      const MyComponent = function MyComponent({ value }: Props & { readonly value: number }) {
-        renderCall();
+        const MyComponent = function MyComponent({ value }: Props & { readonly value: number }) {
+          renderCall();
 
-        return <Fragment>Hello, World! ({value})</Fragment>;
-      };
+          return <Fragment>Hello, World! ({value})</Fragment>;
+        };
 
-      const middleware: readonly InferMiddleware<typeof Provider>[] = [
-        // `bindProps` has side effect.
-        () => () => () => reactComponent(MyComponent, { value: ++count })
-      ];
+        const middleware: readonly InferMiddleware<typeof Provider>[] = [
+          // `bindProps` has side effect.
+          () => () => () => reactComponent(MyComponent, { value: ++count })
+        ];
 
-      return {
-        middleware,
-        MyComponent,
-        Provider,
-        Proxy,
-        renderCall,
-        useBuildRenderCallback
-      };
-    })
-    .and.oneOf([
-      [
-        'rendered using useBuildRenderCallback()',
-        ({ middleware, Provider, renderCall, useBuildRenderCallback }) => {
-          function MyProxy() {
-            const result = useBuildRenderCallback()()?.({});
+        return {
+          middleware,
+          MyComponent,
+          Provider,
+          Proxy,
+          renderCall,
+          useBuildRenderCallback
+        };
+      })
+      .and.oneOf([
+        [
+          'rendered using useBuildRenderCallback()',
+          ({ middleware, Provider, renderCall, useBuildRenderCallback }) => {
+            function MyProxy() {
+              const result = useBuildRenderCallback()()?.({});
 
-            return result ? <Fragment>{result}</Fragment> : null;
+              return result ? <Fragment>{result}</Fragment> : null;
+            }
+
+            return {
+              renderCall,
+              TestComponent: function TestComponent() {
+                return (
+                  <Provider middleware={middleware}>
+                    <MyProxy />
+                  </Provider>
+                );
+              }
+            };
           }
+        ],
+        [
+          'rendered using <Proxy>',
+          ({ middleware, Provider, Proxy, renderCall }) => {
+            return {
+              renderCall,
+              TestComponent: function TestComponent() {
+                return (
+                  <Provider middleware={middleware}>
+                    <Proxy request={undefined} />
+                  </Provider>
+                );
+              }
+            };
+          }
+        ]
+      ])
 
-          return {
-            renderCall,
-            TestComponent: function TestComponent() {
-              return (
-                <Provider middleware={middleware}>
-                  <MyProxy />
-                </Provider>
-              );
-            }
-          };
-        }
-      ],
-      [
-        'rendered using <Proxy>',
-        ({ middleware, Provider, Proxy, renderCall }) => {
-          return {
-            renderCall,
-            TestComponent: function TestComponent() {
-              return (
-                <Provider middleware={middleware}>
-                  <Proxy request={undefined} />
-                </Provider>
-              );
-            }
-          };
-        }
-      ]
-    ])
+      // ---
 
-    // ---
+      .when('the component is rendered', ({ TestComponent }) => render(<TestComponent />))
+      .then('textContent should match', (_, { container }) =>
+        expect(container).toHaveProperty('textContent', 'Hello, World! (1)')
+      )
+      .and('should have rendered once', ({ renderCall }) => expect(renderCall.mock.callCount()).toBe(1))
 
-    .when('the component is rendered', ({ TestComponent }) => render(<TestComponent />))
-    .then('textContent should match', (_, { container }) =>
-      expect(container).toHaveProperty('textContent', 'Hello, World! (1)')
-    )
-    .and('should have rendered once', ({ renderCall }) => expect(renderCall).toHaveBeenCalledTimes(1))
+      // ---
 
-    // ---
+      .when('the component is rendered again', ({ TestComponent }, result) => {
+        result.rerender(<TestComponent />);
 
-    .when('the component is rendered again', ({ TestComponent }, result) => {
-      result.rerender(<TestComponent />);
-
-      return result;
-    })
-    .then('textContent should match', (_, { container }) =>
-      expect(container).toHaveProperty('textContent', 'Hello, World! (2)')
-    )
-    .and('should have rendered twice', ({ renderCall }) => expect(renderCall).toHaveBeenCalledTimes(2));
-});
+        return result;
+      })
+      .then('textContent should match', (_, { container }) =>
+        expect(container).toHaveProperty('textContent', 'Hello, World! (2)')
+      )
+      .and('should have rendered twice', ({ renderCall }) => expect(renderCall.mock.callCount()).toBe(2));
+  },
+  NodeTest
+);

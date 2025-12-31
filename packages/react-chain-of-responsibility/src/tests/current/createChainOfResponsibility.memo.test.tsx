@@ -1,10 +1,10 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { render } from '@testing-library/react';
-import React, { Fragment, memo } from 'react';
+import { expect } from 'expect';
+import { test } from 'node:test';
+import React from 'react';
+import createChainOfResponsibility from '../../createChainOfResponsibility.tsx';
 
-import createChainOfResponsibility from '../../createChainOfResponsibility';
+const { Fragment, memo } = React;
 
 type Props = { children?: never; text: string };
 

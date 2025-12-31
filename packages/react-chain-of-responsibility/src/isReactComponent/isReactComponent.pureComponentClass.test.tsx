@@ -1,6 +1,9 @@
-import React, { PureComponent } from 'react';
+import { expect } from 'expect';
+import { test } from 'node:test';
+import React from 'react';
+import isReactComponent from '../isReactComponent.ts';
 
-import isReactComponent from '../isReactComponent';
+const { PureComponent } = React;
 
 test('component class should return true', () => {
   class ComponentClass extends PureComponent {

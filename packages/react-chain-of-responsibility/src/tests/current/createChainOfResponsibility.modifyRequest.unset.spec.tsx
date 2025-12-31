@@ -1,21 +1,20 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { render } from '@testing-library/react';
+import { expect } from 'expect';
+import { spyOn, type SpiedFunction } from 'jest-mock';
+import { afterEach, beforeEach, test } from 'node:test';
 import React, { Fragment } from 'react';
 import { withProps, wrapWith } from 'react-wrap-with';
-
-import createChainOfResponsibility from '../../createChainOfResponsibility';
+import createChainOfResponsibility from '../../createChainOfResponsibility.tsx';
 
 type AppProps = { thing: string };
 type Props = { children?: never };
 
-let consoleWarnMock: jest.SpyInstance;
+let consoleWarnMock: SpiedFunction;
 
 beforeEach(() => {
   // Currently, there is no way to hide the caught exception thrown by render().
   // We are mocking `console.log` to hide the exception.
-  consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation(() => jest.fn());
+  consoleWarnMock = spyOn(console, 'warn');
 });
 
 afterEach(() => {

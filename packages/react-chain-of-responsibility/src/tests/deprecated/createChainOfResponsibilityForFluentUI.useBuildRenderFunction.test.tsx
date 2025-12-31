@@ -1,11 +1,11 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { render } from '@testing-library/react';
-import React, { Fragment } from 'react';
+import { expect } from 'expect';
+import { test } from 'node:test';
+import React from 'react';
 import { withProps, wrapWith } from 'react-wrap-with';
+import createChainOfResponsibilityForFluentUI from '../../createChainOfResponsibilityForFluentUI.tsx';
 
-import createChainOfResponsibilityForFluentUI from '../../createChainOfResponsibilityForFluentUI';
+const { Fragment } = React;
 
 type Props = { text?: string | undefined };
 

@@ -1,10 +1,8 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { render } from '@testing-library/react';
+import { expect } from 'expect';
+import { mock, test } from 'node:test';
 import React, { Fragment, useMemo } from 'react';
-
-import createChainOfResponsibilityForFluentUI from '../../createChainOfResponsibilityForFluentUI';
+import createChainOfResponsibilityForFluentUI from '../../createChainOfResponsibilityForFluentUI.tsx';
 
 type Props = { value?: number };
 
@@ -13,7 +11,7 @@ test('useBuildRenderFunction should call getKey() for computing "key" attribute'
   const { Provider, types: _types, useBuildRenderFunction } = createChainOfResponsibilityForFluentUI<Props>();
 
   const keys: (null | number | string | undefined)[] = [];
-  const getKey = jest.fn(() => 'a');
+  const getKey = mock.fn(() => 'a');
 
   const Inner = () => {
     const renderFunction = useBuildRenderFunction({ getKey });
@@ -50,9 +48,9 @@ test('useBuildRenderFunction should call getKey() for computing "key" attribute'
   expect(result.container).toHaveProperty('textContent', '1');
 
   // THEN: It should have called getKey() once with { value: 1 } and returned "a".
-  expect(getKey).toHaveBeenCalledTimes(1);
-  expect(getKey).toHaveBeenNthCalledWith(1, { value: 1 });
-  expect(getKey).toHaveNthReturnedWith(1, 'a');
+  expect(getKey.mock.callCount()).toBe(1);
+  expect(getKey.mock.calls[0]?.arguments).toEqual([{ value: 1 }]);
+  expect(getKey.mock.calls[0]?.result).toBe('a');
 
   // THEN: It should have rendered 1 key.
   expect(keys).toEqual(['a']);

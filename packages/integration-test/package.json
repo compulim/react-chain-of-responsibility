@@ -1,8 +1,14 @@
 {
-  "name": "@compulim/react-chain-of-responsibility-integration-test",
+  "name": "@compulim/integration-test",
   "version": "0.0.0-0",
   "description": "",
   "private": true,
+  "files": [
+    "**/*.cjs",
+    "**/*.js",
+    "**/*.mjs",
+    "webDriver/**/*"
+  ],
   "scripts": {
     "build": "npm run build:copy && npm run build:custom --if-present",
     "build:copy": "mkdir -p ./webDriver/static/; SRC=$(node --eval=\"console.log(require('path').resolve(require('resolve-cwd')('react-chain-of-responsibility'), '../../dist'))\"); DEST=$(realpath ./webDriver/static); rm -rf $DEST; mkdir -p $DEST/js/; cp $SRC/** $DEST/js/",
@@ -65,10 +71,6 @@
       "react-test-renderer": "18.0.0"
     }
   },
-  "localPeerDependencies": {
-    "react-chain-of-responsibility": "0.0.0-0",
-    "@compulim/test-harness": "0.0.0-0"
-  },
   "pinDependencies": {
     "@testduet/wait-for": [
       "main"
@@ -92,10 +94,11 @@
       "18"
     ]
   },
+  "localPeerDependencies": {
+    "@compulim/test-harness": "0.0.0-0",
+    "react-chain-of-responsibility": "0.0.0-0"
+  },
   "devDependencies": {
-    "@babel/preset-env": "^7.28.0",
-    "@babel/preset-react": "^7.27.1",
-    "@happy-dom/global-registrator": "^20.0.11",
     "@testduet/wait-for": "^0.1.1-main.3a4f261",
     "@tsconfig/strictest": "^2.0.5",
     "@types/react": "^18.3.23",
@@ -109,11 +112,5 @@
   },
   "dependencies": {
     "react-chain-of-responsibility": "0.0.0-0"
-  },
-  "files": [
-    "**/*.cjs",
-    "**/*.js",
-    "**/*.mjs",
-    "webDriver/**/*"
-  ]
+  }
 }

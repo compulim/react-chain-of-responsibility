@@ -1,11 +1,11 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
-import React, { Fragment, useEffect, useState } from 'react';
+import { expect } from 'expect';
+import NodeTest from 'node:test';
+import React from 'react';
+import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback.tsx';
 
-import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback';
+const { Fragment, useEffect, useState } = React;
 
 type Props = { readonly children?: never };
 type Request = string;
@@ -65,4 +65,4 @@ scenario('middleware use hooks while changing request', bdd => {
       return result;
     })
     .then('textContent should match', (_, { container }) => expect(container).toHaveProperty('textContent', 'Video'));
-});
+}, NodeTest);
