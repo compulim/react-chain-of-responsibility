@@ -47,7 +47,7 @@
     "bump:prod": "PACKAGES_TO_BUMP=$(cat package.json | jq -r '(.pinDependencies // {}) as $P | (.localPeerDependencies // {}) as $L | (.dependencies // {}) | to_entries | map(select(.key as $K | $L | has($K) | not)) | map(.key + \"@\" + ($P[.key] // [\"latest\"])[0]) | join(\" \")') && [ ! -z \"$PACKAGES_TO_BUMP\" ] && npm install $PACKAGES_TO_BUMP || true",
     "init": "npm run init:dev --if-present && npm run init:prod --if-present",
     "init:dev": "npm install --save-dev @tsconfig/strictest @types/react@18 @types/react-dom@18 react@18 react-dom@18 react-test-renderer@18 resolve-cwd",
-    "init:prod": "npm install --save @happy-dom/global-registrator @testing-library/dom @testing-library/react escape-string-regexp expect typescript",
+    "init:prod": "npm install --save @happy-dom/global-registrator @testing-library/dom @testing-library/react esbuild escape-string-regexp expect typescript",
     "precommit": "npm run precommit:eslint && npm run precommit:typescript",
     "precommit:eslint": "ESLINT_USE_FLAT_CONFIG=false eslint --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts ./",
     "precommit:typescript": "tsc --noEmit --project ./src/tsconfig.precommit.json",
@@ -117,7 +117,6 @@
     "@tsconfig/strictest": "^2.0.8",
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",
-    "esbuild": "^0.27.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-test-renderer": "^18.3.1",
@@ -129,6 +128,7 @@
     "@happy-dom/global-registrator": "^20.0.11",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.1",
+    "esbuild": "^0.27.2",
     "escape-string-regexp": "^5.0.0",
     "expect": "^30.2.0"
   }
