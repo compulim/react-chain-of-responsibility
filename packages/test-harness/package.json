@@ -53,6 +53,8 @@
     "precommit:typescript": "tsc --noEmit --project ./src/tsconfig.precommit.json",
     "switch": "cat package.json | jq --arg SWITCH_NAME $SWITCH_NAME -r '(.[\"switch:\" + $SWITCH_NAME] // {}) as $TEMPLATE | .devDependencies += ($TEMPLATE.devDependencies // {}) | .dependencies += ($TEMPLATE.dependencies // {})' | tee ./package.json.tmp && mv ./package.json.tmp ./package.json"
   },
+  "author": "William Wong (https://github.com/compulim)",
+  "license": "MIT",
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
@@ -67,6 +69,7 @@
     "devDependencies": {
       "@types/react": "^16",
       "@types/react-dom": "^16",
+      "@types/react-test-renderer": "^16",
       "react": "16.8.0",
       "react-dom": "16.8.0",
       "react-test-renderer": "16.8.0"
@@ -80,6 +83,7 @@
     "devDependencies": {
       "@types/react": "^17",
       "@types/react-dom": "^17",
+      "@types/react-test-renderer": "^17",
       "react": "17.0.0",
       "react-dom": "17.0.0",
       "react-test-renderer": "17.0.0"
@@ -90,6 +94,7 @@
     "devDependencies": {
       "@types/react": "^18",
       "@types/react-dom": "^18",
+      "@types/react-test-renderer": "^18",
       "react": "18.0.0",
       "react-dom": "18.0.0",
       "react-test-renderer": "18.0.0"
@@ -102,6 +107,9 @@
     "@types/react-dom": [
       "18"
     ],
+    "@types/react-test-renderer": [
+      "18"
+    ],
     "react": [
       "18"
     ],
@@ -112,18 +120,16 @@
       "18"
     ]
   },
-  "main": "index.js",
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.8",
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",
+    "@types/react-test-renderer": "^18.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-test-renderer": "^18.3.1",
     "resolve-cwd": "^3.0.0"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@happy-dom/global-registrator": "^20.0.11",
     "@testing-library/dom": "^10.4.1",
