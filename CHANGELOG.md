@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - 👷🏻 Test framework moved from Jest to Node.js test runner, by [@compulim](https://github.com/compulim) in PR [#118](https://github.com/compulim/react-chain-of-responsibility/pull/118)
-  - Bumped development dependencies
+- 👷🏻 Bumped dependencies, in PR [#118](https://github.com/compulim/react-chain-of-responsibility/pull/118)
+  - Development dependencies
     - [`react-wrap-with@0.2.0`](https://npmjs.com/package/react-wrap-with/v/0.2.0)
 
 
