@@ -2,8 +2,10 @@ import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import { expect } from 'expect';
 import NodeTest from 'node:test';
-import React, { Fragment } from 'react';
+import React from 'react';
 import createChainOfResponsibility from '../../createChainOfResponsibility.tsx';
+
+const { Fragment } = React;
 
 type Props = { children?: never; text: string };
 

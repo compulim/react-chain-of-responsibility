@@ -3,9 +3,11 @@ import { render } from '@testing-library/react';
 import { expect } from 'expect';
 import { spyOn } from 'jest-mock';
 import NodeTest, { beforeEach } from 'node:test';
-import React, { Fragment, memo } from 'react';
+import React from 'react';
 import createChainOfResponsibility from '../../createChainOfResponsibility.tsx';
 import withBuildProps from '../../withBuildProps.tsx';
+
+const { Fragment, memo } = React;
 
 type Props = {
   children?: never;

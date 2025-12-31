@@ -1,17 +1,10 @@
 import { applyMiddleware } from 'handler-chain';
-import React, {
-  createContext,
-  isValidElement,
-  memo,
-  useCallback,
-  useContext,
-  useMemo,
-  type ComponentType,
-  type PropsWithChildren
-} from 'react';
+import React, { type ComponentType, type PropsWithChildren } from 'react';
 
 import isReactComponent from './isReactComponent.ts';
 import { type ComponentEnhancer, type ComponentMiddleware } from './types.ts';
+
+const { createContext, isValidElement, memo, useCallback, useContext, useMemo } = React;
 
 // TODO: Simplify to ComponentType<Props> | undefined.
 type ResultComponent<Props> = ComponentType<Props> | false | null | undefined;

@@ -1,7 +1,9 @@
 import { render } from '@testing-library/react';
 import { expect } from 'expect';
 import { mock, test } from 'node:test';
-import React, { Fragment, memo } from 'react';
+import React from 'react';
+
+const { Fragment, memo } = React;
 
 type Props = { children?: never; text: string };
 

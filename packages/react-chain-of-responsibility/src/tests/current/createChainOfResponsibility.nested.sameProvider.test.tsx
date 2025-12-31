@@ -1,8 +1,10 @@
 import { render } from '@testing-library/react';
 import { expect } from 'expect';
 import { test } from 'node:test';
-import React, { Fragment } from 'react';
+import React from 'react';
 import createChainOfResponsibility from '../../createChainOfResponsibility.tsx';
+
+const { Fragment } = React;
 
 type Props = { children?: never };
 

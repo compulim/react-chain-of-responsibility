@@ -1,9 +1,11 @@
 import { render } from '@testing-library/react';
 import { expect } from 'expect';
 import { test } from 'node:test';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { withProps, wrapWith } from 'react-wrap-with';
 import createChainOfResponsibilityForFluentUI from '../../createChainOfResponsibilityForFluentUI.tsx';
+
+const { Fragment } = React;
 
 type Props = { thing: string };
 

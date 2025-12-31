@@ -1,8 +1,10 @@
 import { render } from '@testing-library/react';
 import { expect } from 'expect';
 import { mock, test } from 'node:test';
-import React, { Fragment, useMemo } from 'react';
+import React from 'react';
 import createChainOfResponsibilityForFluentUI from '../../createChainOfResponsibilityForFluentUI.tsx';
+
+const { Fragment, useMemo } = React;
 
 type Props = { value?: number };
 

@@ -2,8 +2,10 @@ import { scenario } from '@testduet/given-when-then';
 import { render } from '@testing-library/react';
 import { expect } from 'expect';
 import NodeTest from 'node:test';
-import React, { Fragment, type ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 import createChainOfResponsibility, { type InferMiddleware } from '../createChainOfResponsibilityAsRenderCallback.tsx';
+
+const { Fragment } = React;
 
 type Props = {
   readonly value: number;
