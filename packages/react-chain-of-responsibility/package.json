@@ -17,16 +17,6 @@
         "default": "./dist/react-chain-of-responsibility.js"
       }
     },
-    "./fluentUI": {
-      "import": {
-        "types": "./dist/react-chain-of-responsibility.fluentUI.d.mts",
-        "default": "./dist/react-chain-of-responsibility.fluentUI.mjs"
-      },
-      "require": {
-        "types": "./dist/react-chain-of-responsibility.fluentUI.d.ts",
-        "default": "./dist/react-chain-of-responsibility.fluentUI.js"
-      }
-    },
     "./preview": {
       "import": {
         "types": "./dist/react-chain-of-responsibility.preview.d.mts",
@@ -138,7 +128,6 @@
   },
   "devDependencies": {
     "@compulim/test-harness": "0.0.0-0",
-    "@fluentui/react": "^8.123.1",
     "@testduet/given-when-then": "^0.1.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",

@@ -5,9 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-| Icon | Description                                                    |
-| ---- | -------------------------------------------------------------- |
-| 👷🏻   | Related to development experience and non-production impacting |
+| Icon | Description                                       |
+| ---- | ------------------------------------------------- |
+| 💢   | Breaking changes                                  |
+| 👷🏻   | Development experience (non-production impacting) |
 
 ## [Unreleased]
 
@@ -17,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 👷🏻 Bumped dependencies, in PR [#118](https://github.com/compulim/react-chain-of-responsibility/pull/118)
   - Development dependencies
     - [`react-wrap-with@0.2.0`](https://npmjs.com/package/react-wrap-with/v/0.2.0)
+
+### Removed
+
+- 💢 `createChainOfResponsibilityForFluentUI` is removed, by [@compulim](https://github.com/compulim) in PR [#118](https://github.com/compulim/react-chain-of-responsibility/pull/118)
 
 ## [0.4.2] - 2025-10-28
 

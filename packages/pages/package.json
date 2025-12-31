@@ -68,7 +68,6 @@
     ]
   },
   "devDependencies": {
-    "@fluentui/react": "^8.123.1",
     "@tsconfig/strictest": "^2.0.5",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",

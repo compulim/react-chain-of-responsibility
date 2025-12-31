@@ -245,59 +245,6 @@ The following code snippet shows the conversion from the `<Proxy>` component int
   }
 ```
 
-### Using as `IRenderFunction` in Fluent UI v8
-
-> We are considering deprecating the `IRenderFunction` as Fluent UI no longer adopt this pattern.
-
-The chain of responsibility design pattern can be used in Fluent UI v8.
-
-After calling `createChainOfResponsibilityForFluentUI`, it will return `useBuildRenderFunction` hook. This hook, when called, will return a function to use as [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts) in Fluent UI components.
-
-#### Sample code
-
-```jsx
-import { createChainOfResponsibilityForFluentUI } from 'react-chain-of-responsibility/fluentUI';
-
-// Creates a <Provider> providing the chain of responsibility service.
-const { Provider, Proxy } = createChainOfResponsibilityForFluentUI();
-
-// List of subcomponents.
-const Banana = () => <>🍌</>;
-const Orange = () => <>🍊</>;
-
-// Constructs an array of middleware to handle the request and return corresponding subcomponents.
-const middleware = [
-  () => next => props => (props?.iconProps?.iconName === 'Banana' ? Banana : next(props)),
-  () => next => props => (props?.iconProps?.iconName === 'Orange' ? Orange : next(props))
-  // Fallback to `defaultRender` of `IRenderFunction` is automatically injected.
-];
-
-const Inner = () => {
-  const renderIconFunction = useBuildRenderFunction();
-
-  return (
-    <Fragment>
-      <DefaultButton iconProps={{ iconName: 'Banana' }} onRenderIcon={renderIconFunction} />
-      <DefaultButton iconProps={{ iconName: 'Orange' }} onRenderIcon={renderIconFunction} />
-      <DefaultButton iconProps={{ iconName: 'OpenInNewTab' }} onRenderIcon={renderIconFunction} />
-    </Fragment>
-  );
-};
-
-render(
-  <Provider middleware={middleware}>
-    <Inner />
-  </Provider>
-);
-```
-
-There are subtle differences between the standard version and the Fluent UI version:
-
-- Entrypoint is `createChainOfResponsibilityForFluentUI()` and imported from 'react-chain-of-responsibility/fluentUI'
-- Request and props are always of same type
-  - They are optional too, as defined in [`IRenderFunction`](https://github.com/microsoft/fluentui/blob/master/packages/utilities/src/IRenderFunction.ts)
-- Automatic fallback to `defaultRender`
-
 ### Nesting `<Provider>`
 
 If the `<Provider>` from the same chain appears nested in the tree, the `<Proxy>` will render using the middleware from the closest `<Provider>` and fallback up the chain. The following code snippet will render "Second First".
@@ -406,32 +353,6 @@ type UseBuildComponentCallback<Request, Props> = (
 For simplicity, instead of returning a React component or `false`/`null`/`undefined`, the `useBuildComponentCallback` will only return a React component or `undefined`.
 
 The `fallbackComponent` is a component which all unhandled requests will sink into, including calls outside of `<Provider>`.
-
-### API for Fluent UI
-
-```ts
-export default function createChainOfResponsibilityForFluentUI<Props extends {}, Init = undefined>(
-  options?: Options
-): ReturnType<typeof createChainOfResponsibility<Props | undefined, Props, Init>> & {
-  useBuildRenderFunction: useBuildRenderFunction<Props>;
-};
-```
-
-#### Return value
-
-| Name                     | Type                                     | Description                                                      |
-| ------------------------ | ---------------------------------------- | ---------------------------------------------------------------- |
-| `useBuildRenderFunction` | `({ getKey }) => IRenderFunction<Props>` | Callback hook to build the `IRenderFunction` to use in Fluent UI |
-
-#### API of `useBuildRenderFunction`
-
-```ts
-type UseBuildRenderFunctionOptions<Props> = { getKey?: (props: Props | undefined) => Key };
-
-type UseBuildRenderFunction<Props> = (options?: UseBuildRenderFunctionOptions<Props>) => IRenderFunction<Props>;
-```
-
-When rendering the element, `getKey` is called to compute the `key` attribute. This is required for some `onRenderXXX` props. These props are usually used to render more than one elements, such as [`DetailsList.onRenderField`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist#implementation), which renders every field (a.k.a. cell) in the [`<DetailsList>`](https://developer.microsoft.com/en-us/fluentui#/controls/web/detailslist).
 
 ### `withBuildProps` higher-order helper function
 
