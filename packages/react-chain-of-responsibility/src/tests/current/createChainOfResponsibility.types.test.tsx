@@ -1,12 +1,10 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { render } from '@testing-library/react';
+import { expect } from 'expect';
+import { test } from 'node:test';
 import React from 'react';
 import { withProps, wrapWith } from 'react-wrap-with';
 import { type EmptyObject } from 'type-fest';
-
-import createChainOfResponsibility from '../../createChainOfResponsibility';
+import createChainOfResponsibility from '../../createChainOfResponsibility.tsx';
 
 test('constructing middleware using all typings from "types" should render', () => {
   // GIVEN: A chain of responsibility which specify init, props, and request.

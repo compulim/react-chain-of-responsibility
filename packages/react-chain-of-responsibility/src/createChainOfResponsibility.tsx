@@ -1,17 +1,10 @@
 import { applyMiddleware } from 'handler-chain';
-import React, {
-  createContext,
-  isValidElement,
-  memo,
-  useCallback,
-  useContext,
-  useMemo,
-  type ComponentType,
-  type PropsWithChildren
-} from 'react';
+import React, { type ComponentType, type PropsWithChildren } from 'react';
 
 import isReactComponent from './isReactComponent.ts';
 import { type ComponentEnhancer, type ComponentMiddleware } from './types.ts';
+
+const { createContext, isValidElement, memo, useCallback, useContext, useMemo } = React;
 
 // TODO: Simplify to ComponentType<Props> | undefined.
 type ResultComponent<Props> = ComponentType<Props> | false | null | undefined;
@@ -162,6 +155,8 @@ function createChainOfResponsibility<Request = void, Props extends object = { re
         applyMiddleware<ResultComponent<Props>, Request, Init>(
           ...[...patchedMiddleware, ...(parentEnhancer ? [() => parentEnhancer] : [])]
         )(init as Init),
+      // TODO: "middleware" should be "patchedMiddleware", however, "patchedMiddleware" is not cached properly.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [init, middleware, parentEnhancer]
     );
 
@@ -212,6 +207,8 @@ function createChainOfResponsibility<Request = void, Props extends object = { re
               ),
               request
             }),
+          // TODO: We should check "props" changes.
+          // eslint-disable-next-line react-hooks/exhaustive-deps
           []
         );
 

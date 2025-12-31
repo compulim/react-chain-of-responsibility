@@ -1,20 +1,11 @@
 import { applyMiddleware } from 'handler-chain';
-import React, {
-  createContext,
-  Fragment,
-  memo,
-  useCallback,
-  useContext,
-  useMemo,
-  type ComponentType,
-  type PropsWithChildren,
-  type ReactElement,
-  type ReactNode
-} from 'react';
+import React, { type ComponentType, type PropsWithChildren, type ReactElement, type ReactNode } from 'react';
 import { type SetOptional } from 'type-fest';
 import { custom, function_, object, parse, safeParse } from 'valibot';
 
 import arePropsEqual from './private/arePropsEqual.ts';
+
+const { createContext, Fragment, memo, useCallback, useContext, useMemo } = React;
 
 // TODO: Related to https://github.com/microsoft/TypeScript/issues/17002.
 //       typescript@5.2.2 has a bug, Array.isArray() is a type predicate but only works with mutable array, not readonly array.

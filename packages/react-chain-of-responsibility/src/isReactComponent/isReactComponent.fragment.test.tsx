@@ -1,6 +1,9 @@
-import { Fragment } from 'react';
+import { expect } from 'expect';
+import { test } from 'node:test';
+import React from 'react';
+import isReactComponent from '../isReactComponent.ts';
 
-import isReactComponent from '../isReactComponent';
+const { Fragment } = React;
 
 test('fragment should return true', () => {
   expect(isReactComponent(Fragment)).toBe(true);

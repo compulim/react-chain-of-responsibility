@@ -1,6 +1,9 @@
-import React, { forwardRef } from 'react';
+import { expect } from 'expect';
+import { test } from 'node:test';
+import React from 'react';
+import isReactComponent from '../isReactComponent.ts';
 
-import isReactComponent from '../isReactComponent';
+const { forwardRef } = React;
 
 test('function component with forwardRef should return true', () => {
   const FunctionComponent = forwardRef(() => <div>Hello, World!</div>);

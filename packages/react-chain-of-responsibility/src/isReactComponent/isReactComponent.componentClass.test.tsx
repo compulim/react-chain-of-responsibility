@@ -1,6 +1,9 @@
-import React, { Component } from 'react';
+import { expect } from 'expect';
+import { test } from 'node:test';
+import React from 'react';
+import isReactComponent from '../isReactComponent.ts';
 
-import isReactComponent from '../isReactComponent';
+const { Component } = React;
 
 test('component class should return true', () => {
   class ComponentClass extends Component {

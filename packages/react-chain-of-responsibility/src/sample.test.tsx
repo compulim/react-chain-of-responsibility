@@ -1,14 +1,15 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { render } from '@testing-library/react';
-import React, { Fragment, memo } from 'react';
+import { expect } from 'expect';
+import { mock, test } from 'node:test';
+import React from 'react';
+
+const { Fragment, memo } = React;
 
 type Props = { children?: never; text: string };
 
 let times = 0;
 
-const fn = jest.fn();
+const fn = mock.fn();
 
 const HelloWorld = memo(
   times++ % 2 === 0
@@ -29,11 +30,11 @@ test('middleware should render', () => {
 
   const result = render(<App />);
 
-  expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn.mock.callCount()).toBe(1);
   expect(result.container).toHaveProperty('textContent', 'Hello, World!');
 
   result.rerender(<App />);
 
-  expect(fn).toHaveBeenCalledTimes(1);
+  expect(fn.mock.callCount()).toBe(1);
   expect(result.container).toHaveProperty('textContent', 'Hello, World!');
 });

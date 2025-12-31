@@ -1,11 +1,11 @@
-/** @jest-environment jsdom */
-/// <reference types="@types/jest" />
-
 import { render } from '@testing-library/react';
-import React, { Component, Fragment } from 'react';
+import { expect } from 'expect';
+import { test } from 'node:test';
+import React from 'react';
 import { withProps, wrapWith } from 'react-wrap-with';
+import createChainOfResponsibility from '../../createChainOfResponsibility.tsx';
 
-import createChainOfResponsibility from '../../createChainOfResponsibility';
+const { Component, Fragment } = React;
 
 type Props = { children?: never };
 

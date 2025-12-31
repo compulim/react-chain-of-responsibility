@@ -1,6 +1,9 @@
-import { createContext } from 'react';
+import { expect } from 'expect';
+import { test } from 'node:test';
+import React from 'react';
+import isReactComponent from '../isReactComponent.ts';
 
-import isReactComponent from '../isReactComponent';
+const { createContext } = React;
 
 test('context provider should return true', () => {
   const Context = createContext(undefined);
