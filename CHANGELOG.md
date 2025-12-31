@@ -18,7 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Development dependencies
     - [`react-wrap-with@0.2.0`](https://npmjs.com/package/react-wrap-with/v/0.2.0)
 
-
 ## [0.4.2] - 2025-10-28
 
 ### Fixed
