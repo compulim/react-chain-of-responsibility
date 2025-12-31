@@ -26,30 +26,34 @@ function MyComponent({ value }: MyComponentProps) {
   return <Fragment>Hello, World! ({value})</Fragment>;
 }
 
-scenario('with wrapper component', bdd => {
-  bdd
-    .given('a TestComponent using chain of responsibility', () => {
-      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>();
+scenario(
+  'with wrapper component',
+  bdd => {
+    bdd
+      .given('a TestComponent using chain of responsibility', () => {
+        const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>();
 
-      const middleware: readonly InferMiddleware<typeof Provider>[] = [
-        () => () => request =>
-          reactComponent(
-            MyComponent,
-            {},
-            { wrapperComponent: MyWrapper, wrapperProps: props => ({ value: request + props.value }) }
-          )
-      ];
+        const middleware: readonly InferMiddleware<typeof Provider>[] = [
+          () => () => request =>
+            reactComponent(
+              MyComponent,
+              {},
+              { wrapperComponent: MyWrapper, wrapperProps: props => ({ value: request + props.value }) }
+            )
+        ];
 
-      return function TestComponent() {
-        return (
-          <Provider middleware={middleware}>
-            <Proxy request={1} value={2} />
-          </Provider>
-        );
-      };
-    })
-    .when('the component is rendered', TestComponent => render(<TestComponent />))
-    .then('textContent should match', (_, { container }) =>
-      expect(container).toHaveProperty('textContent', '<MyWrapper value={3}>Hello, World! (2)</MyWrapper>')
-    );
-}, NodeTest);
+        return function TestComponent() {
+          return (
+            <Provider middleware={middleware}>
+              <Proxy request={1} value={2} />
+            </Provider>
+          );
+        };
+      })
+      .when('the component is rendered', TestComponent => render(<TestComponent />))
+      .then('textContent should match', (_, { container }) =>
+        expect(container).toHaveProperty('textContent', '<MyWrapper value={3}>Hello, World! (2)</MyWrapper>')
+      );
+  },
+  NodeTest
+);

@@ -32,36 +32,40 @@ function Container({ renderNext1, renderNext2 }: ContainerProps) {
   );
 }
 
-scenario('call enhancer() twice', bdd => {
-  bdd
-    .given('a TestComponent using chain of responsiblity', () => {
-      const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>({
-        passModifiedRequest: true
-      });
+scenario(
+  'call enhancer() twice',
+  bdd => {
+    bdd
+      .given('a TestComponent using chain of responsiblity', () => {
+        const { Provider, Proxy, reactComponent } = createChainOfResponsibility<Request, Props>({
+          passModifiedRequest: true
+        });
 
-      const middleware: readonly InferMiddleware<typeof Provider>[] = [
-        () => next => request => {
-          const renderNext1 = next(`${request} (1)`)?.render;
-          const renderNext2 = next(`${request} (2)`)?.render;
+        const middleware: readonly InferMiddleware<typeof Provider>[] = [
+          () => next => request => {
+            const renderNext1 = next(`${request} (1)`)?.render;
+            const renderNext2 = next(`${request} (2)`)?.render;
 
-          return reactComponent(Container, { renderNext1, renderNext2 });
-        },
-        () => () => request => reactComponent(Strongize, { request })
-      ];
+            return reactComponent(Container, { renderNext1, renderNext2 });
+          },
+          () => () => request => reactComponent(Strongize, { request })
+        ];
 
-      return function TestComponent() {
-        return (
-          <Provider middleware={middleware}>
-            <Proxy request="Hello, World!" />
-          </Provider>
-        );
-      };
-    })
-    .when('the component is rendered', TestComponent => render(<TestComponent />))
-    .then('innerHTML should match', (_, { container }) =>
-      expect(container).toHaveProperty(
-        'innerHTML',
-        '<strong>Hello, World! (1)</strong><strong>Hello, World! (2)</strong>'
-      )
-    );
-}, NodeTest);
+        return function TestComponent() {
+          return (
+            <Provider middleware={middleware}>
+              <Proxy request="Hello, World!" />
+            </Provider>
+          );
+        };
+      })
+      .when('the component is rendered', TestComponent => render(<TestComponent />))
+      .then('innerHTML should match', (_, { container }) =>
+        expect(container).toHaveProperty(
+          'innerHTML',
+          '<strong>Hello, World! (1)</strong><strong>Hello, World! (2)</strong>'
+        )
+      );
+  },
+  NodeTest
+);

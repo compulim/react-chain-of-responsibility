@@ -162,6 +162,8 @@ function createChainOfResponsibility<Request = void, Props extends object = { re
         applyMiddleware<ResultComponent<Props>, Request, Init>(
           ...[...patchedMiddleware, ...(parentEnhancer ? [() => parentEnhancer] : [])]
         )(init as Init),
+      // TODO: "middleware" should be "patchedMiddleware", however, "patchedMiddleware" is not cached properly.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [init, middleware, parentEnhancer]
     );
 
@@ -212,6 +214,8 @@ function createChainOfResponsibility<Request = void, Props extends object = { re
               ),
               request
             }),
+          // TODO: We should check "props" changes.
+          // eslint-disable-next-line react-hooks/exhaustive-deps
           []
         );
 

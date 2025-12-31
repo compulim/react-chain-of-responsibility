@@ -1,5 +1,5 @@
 import React from 'react';
-import createChainOfResponsibility from '../../src/createChainOfResponsibility.tsx';
+import createChainOfResponsibility from '../../createChainOfResponsibility.tsx';
 
 const { Proxy } = createChainOfResponsibility<void>();
 
