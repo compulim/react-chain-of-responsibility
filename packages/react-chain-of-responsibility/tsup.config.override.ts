@@ -7,5 +7,5 @@ export default function override(options: Options): Options {
       'react-chain-of-responsibility': './src/index.ts',
       'react-chain-of-responsibility.preview': './src/index.preview.ts'
     }
-  } ;
+  };
 }
