@@ -1,23 +1,23 @@
 import { defineConfig, type Options } from 'tsup';
+import overrideConfig from './tsup.config.override.ts';
 
-const BASE_CONFIG: Options = {
+const baseConfig: Options = {
   dts: true,
   entry: {
-    'react-chain-of-responsibility': './src/index.ts',
-    'react-chain-of-responsibility.preview': './src/index.preview.ts'
+    'react-chain-of-responsibility': './src/index.ts'
   },
   sourcemap: true
 };
 
 export default defineConfig([
-  {
-    ...BASE_CONFIG,
+  overrideConfig({
+    ...baseConfig,
     format: ['esm'],
     target: 'esnext'
-  },
-  {
-    ...BASE_CONFIG,
+  }),
+  overrideConfig({
+    ...baseConfig,
     format: ['cjs'],
-    target: 'es2019'
-  }
+    target: 'es2019' // For compatibility with Webpack 4.
+  })
 ]);

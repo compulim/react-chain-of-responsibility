@@ -53,7 +53,7 @@ describe('with a link middleware', () => {
 
   const { Provider, Proxy, useBuildComponentCallback } = createChainOfResponsibility<string, LinkProps, string[]>();
 
-  describeEach<['hook' | 'proxy']>([['hook'], ['proxy']])('when rendering with %s', type => {
+  describeEach([['hook'] as const, ['proxy'] as const])('when rendering with %s', type => {
     let RenderLink: ComponentType<LinkProps>;
 
     before(() => {
