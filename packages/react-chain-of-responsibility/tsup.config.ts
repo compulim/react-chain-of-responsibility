@@ -1,14 +1,23 @@
 import { defineConfig, type Options } from 'tsup';
-import customConfig from './tsup.config.custom.ts';
+import overrideConfig from './tsup.config.override.ts';
 
 const baseConfig: Options = {
   dts: true,
   entry: {
-    '$package-local-name': './src/index.ts'
+    'react-chain-of-responsibility': './src/index.ts'
   },
-  format: ['cjs', 'esm'],
-  sourcemap: true,
-  target: 'esnext'
+  sourcemap: true
 };
 
-export default defineConfig([{ ...baseConfig, ...customConfig }]);
+export default defineConfig([
+  overrideConfig({
+    ...baseConfig,
+    format: ['esm'],
+    target: 'esnext'
+  }),
+  overrideConfig({
+    ...baseConfig,
+    format: ['cjs'],
+    target: 'es2019' // For compatibility with Webpack 4.
+  })
+]);
