@@ -30,16 +30,6 @@
         "types": "./src/act.d.ts"
       }
     },
-    "./renderHook": {
-      "import": {
-        "default": "./src/renderHook.mjs",
-        "types": "./src/renderHook.d.mts"
-      },
-      "require": {
-        "default": "./src/renderHook.js",
-        "types": "./src/renderHook.d.ts"
-      }
-    },
     "./render": {
       "import": {
         "default": "./src/render.mjs",
@@ -48,6 +38,16 @@
       "require": {
         "default": "./src/render.js",
         "types": "./src/render.d.ts"
+      }
+    },
+    "./renderHook": {
+      "import": {
+        "default": "./src/renderHook.mjs",
+        "types": "./src/renderHook.d.mts"
+      },
+      "require": {
+        "default": "./src/renderHook.js",
+        "types": "./src/renderHook.d.ts"
       }
     }
   },
